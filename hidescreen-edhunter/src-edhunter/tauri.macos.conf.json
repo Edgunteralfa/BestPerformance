@@ -1,0 +1,11 @@
+{
+  "productName": "Node Terminal",
+  "identifier": "com.node.terminal",
+  "mainBinaryName": "node-terminal",
+  "bundle": {
+    "macOS": {
+      "bundleName": "Node Terminal",
+      "infoPlist": "Info.macos.plist"
+    }
+  }
+}
