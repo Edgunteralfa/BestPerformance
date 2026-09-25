@@ -23,7 +23,7 @@
 <p align="center">
   <b>Support</b><br>
   The app is free. If it is useful, you can send <b>USDT (TRC-20)</b>.<br>
-  Программа бесплатная. Если она пригодилась, можно отправить <b>USDT (TRC-20)</b>.<br>
+  Программа бесплатная. Если она вам пригодилась, можно отправить благодарность на любую сумму в <b>USDT (TRC-20)</b>.<br>
   <code>TBoBBxmpbk5nkZWnaVK9nuDB4XH5c72mo7</code><br>
   <img src="assets/usdt-trc20.jpg" alt="USDT TRC-20" width="220">
 </p>
