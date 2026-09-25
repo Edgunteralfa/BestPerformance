@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: hidescreen-edhunter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm ci
+      - run: npm run tauri:build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BestPerformance-macos
+          if-no-files-found: error
+          path: |
+            hidescreen-edhunter/src-edhunter/target/release/bundle/dmg/*.dmg
+            hidescreen-edhunter/src-edhunter/target/release/bundle/macos/*.app
+            hidescreen-edhunter/src-edhunter/target/release/bundle/portable/*.zip

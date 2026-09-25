@@ -1,0 +1,48 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# HideScreen specific
+*.msi
+
+# Executables
+*.exe
+
+# Local settings (Claude Code)
+.claude/settings.local.json
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Git worktrees (development branches)
+mvp-core/
+mvp-ui/
+planning/
+winapi-tests/
+usage.txt
+
+# Internal development files (keep local only)
+CLAUDE.md
+HideScreen_Project_Spec_2026-02-01.md
+
+# Tauri build artifacts
+hidescreen-edhunter/src-edhunter/target/
+hidescreen-edhunter/node_modules/
+hidescreen-edhunter/dist/
+
+hero-video-main.gif

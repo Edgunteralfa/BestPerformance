@@ -1,0 +1,77 @@
+/* MIT License - Copyright (c) 2026 BestPerformance Contributors */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: default !important;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.app.is-active {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.72),
+    inset 0 0 16px rgba(255, 255, 255, 0.2);
+}
+
+.app.chapter-alarm::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  box-shadow:
+    inset 0 0 0 3px #ff5a5a,
+    inset 0 0 22px rgba(255, 70, 70, 0.45);
+  animation: chapter-edge 1.4s ease-out forwards;
+}
+
+@keyframes chapter-edge {
+  0%,
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.resize-grip {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 22px;
+  height: 22px;
+  z-index: 30;
+  cursor: nwse-resize !important;
+}
+
+.app.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e1e1e;
+}
+
+.loading-spinner {
+  color: #ffffff;
+  font-size: 16px;
+}
