@@ -9,6 +9,16 @@ export function pitchToFile(pitch: PitchMemory): string {
   return JSON.stringify({ kind: KIND, version: 1, pitch }, null, 2);
 }
 
+export function pitchToText(pitch: PitchMemory): string {
+  const parts = [`# ${pitch.name}`, ''];
+  for (const tab of pitch.tabs) {
+    parts.push(`## ${tab.name}`, '', tab.text.trimEnd(), '');
+  }
+  const facts = pitch.cardText.trim();
+  if (facts) parts.push('## 12', '', facts, '');
+  return `${parts.join('\n').trimEnd()}\n`;
+}
+
 export function pitchFromFile(raw: string): PitchMemory | null {
   let parsed: unknown;
   try {

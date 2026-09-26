@@ -11,7 +11,8 @@
 <p align="center">
   <a href="https://github.com/Edgunteralfa">Edgunteralfa</a> (EdHunter)
   · <a href="https://github.com/Edgunteralfa/BestPerformance">github.com/Edgunteralfa/BestPerformance</a>
-  · 1.0.0
+  · 1.1.0
+  · <a href="CHANGELOG.md">changelog</a>
 </p>
 
 <p align="center">
@@ -75,15 +76,15 @@ The search field sits with the tabs. It looks through the whole talk, and the ma
 
 ## Less on the screen
 
-Settings, **What to show**, is a set of checkboxes for the main window and the same idea for the facts window. Uncheck opacity and the slider leaves the title bar. The window stays at the opacity you already chose. Uncheck the text colors, the timer, the chapter list, search, or the lock, and that control leaves the window. The last setting stays. The gear and the close button stay, so you can always put a control back. Everything starts checked. The point is a talk where you only need the text, and a rehearsal where you want the timer and the chapter list back.
+Settings, **What to show**, is a set of checkboxes for the main window and the same idea for the numbers-and-definitions window. Uncheck opacity and the slider leaves the title bar. The window stays at the opacity you already chose. Uncheck the text colors, the timer, the chapter list, search, or the lock, and that control leaves the window. The last setting stays. The gear and the close button stay, so you can always put a control back. Everything starts checked. The point is a talk where you only need the text, and a rehearsal where you want the timer and the chapter list back.
 
 ## One talk as a file
 
-On a saved pitch, **File** writes that talk alone: tabs, chapter times, list colors, list widths, and the facts window. **Open file** adds it to the list of saved pitches. It does not replace the notes already on the machine. Use it when you want to hand one lecture to another computer without carrying every other pitch.
+On a saved pitch, **File** is one button. **JSON** writes that talk alone: tabs, chapter times, list colors, list widths, and the facts window. **Open file** adds it to the list of saved pitches. It does not replace the notes already on the machine. Use it when you want to hand one lecture to another computer without carrying every other pitch. **Text**, in the same menu, writes the script for a notepad. The save dialog offers `.txt` or `.md`. That file is for reading. It does not bring the talk back into the app.
 
 ## Thirty talks in memory
 
-Settings, **Saved pitches**, stores the tabs, the chapter times, and the facts window under a name you choose. You can keep 30. A short tag and a color sit on the row so a lecture, a pitch, and a weekly meeting are easy to tell apart.
+Settings, **Saved pitches**, stores the tabs, the chapter times, and the facts window under a name you choose. You can keep 30. A short tag sits on the row, and its color opens from one button, so a lecture, a pitch, and a weekly meeting are easy to tell apart.
 
 **Open** brings that talk back in full and keeps the draft you were writing. **Delete** removes only the saved copy. Whatever is on screen stays.
 
@@ -234,15 +235,15 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 ## Меньше на экране
 
-В настройках, в блоке «Что показывать», стоят галочки для главного окна и такие же для окна фактов. Снимите прозрачность — ползунок уйдёт из заголовка, а окно останется с той прозрачностью, которую вы уже выставили. То же с цветами текста, таймером, списком глав, поиском и замком: элемент пропадает с окна, настройка остаётся. Шестерёнка и крестик остаются всегда, чтобы галочку можно было вернуть. Сначала включено всё. Смысл в том, чтобы на сам питч оставить только текст, а на репетицию снова показать таймер и список глав.
+В настройках, в блоке «Что показывать», стоят галочки для главного окна и такие же для окна цифр и определений. Снимите прозрачность — ползунок уйдёт из заголовка, а окно останется с той прозрачностью, которую вы уже выставили. То же с цветами текста, таймером, списком глав, поиском и замком: элемент пропадает с окна, настройка остаётся. Шестерёнка и крестик остаются всегда, чтобы галочку можно было вернуть. Сначала включено всё. Смысл в том, чтобы на сам питч оставить только текст, а на репетицию снова показать таймер и список глав.
 
 ## Одно выступление файлом
 
-У сохранённого питча кнопка «Файл» записывает только его: вкладки, время глав, цвета и ширину списка, окно с фактами. «Открыть файл» добавляет его в список сохранённых. Остальные заметки на компьютере не затираются. Так удобно передать одну лекцию на другой компьютер, не таская все остальные питчи.
+У сохранённого питча кнопка **Файл** открывает два варианта. **JSON** записывает только это выступление: вкладки, время глав, цвета и ширину списка, окно с фактами. «Открыть файл» добавляет его в список сохранённых. Остальные заметки на компьютере не затираются. Так удобно передать одну лекцию на другой компьютер, не таская все остальные питчи. **Текст** в том же меню сохраняет сценарий для блокнота. В окне сохранения можно выбрать `.txt` или `.md`. Этот файл обратно в программу не загружается.
 
 ## Память на 30 выступлений
 
-В настройках, в разделе «Память питчей», можно сохранить вкладки, время глав и окно «Цифры и детали» под своим названием. Таких сохранений до 30: лекции, питчи, планёрки. У каждой записи есть короткий тег и цвет, чтобы в списке их не путать.
+В настройках, в разделе «Память питчей», можно сохранить вкладки, время глав и окно «Цифры и детали» под своим названием. Таких сохранений до 30: лекции, питчи, планёрки. У каждой записи короткий тег, а цвет тега открывается одной кнопкой, чтобы в списке их не путать.
 
 «Открыть» полностью возвращает выбранное выступление. То, что вы писали сейчас, тоже остаётся в списке. «Удалить» убирает только сохранённую копию. Текст на экране никуда не девается.
 

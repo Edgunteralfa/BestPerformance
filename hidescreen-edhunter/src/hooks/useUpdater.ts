@@ -9,7 +9,7 @@ import { confirm } from '@tauri-apps/plugin-dialog';
 import { checkForUpdates } from '../utils/updateChecker';
 import type { Language } from '../i18n';
 
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
 
 interface UpdaterState {
   checked: boolean; // true once the update check has completed

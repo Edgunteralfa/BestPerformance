@@ -6,7 +6,8 @@
   flex-direction: column;
   background-color: #2a2a2a;
   padding: 15px;
-  overflow-y: auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .settings-header {
@@ -38,7 +39,23 @@
 
 .settings-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+.settings-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
 }
 
 .settings-section {
@@ -320,6 +337,46 @@
   border-radius: 3px;
   border: 1px solid #555555;
   flex-shrink: 0;
+}
+
+.pitch-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pitch-menu-list {
+  position: absolute;
+  z-index: 6;
+  top: calc(100% + 4px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 88px;
+  margin: 0;
+  padding: 6px;
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.pitch-menu-list button {
+  background: transparent;
+  border: none;
+  color: #f2f2f2;
+  text-align: left;
+  padding: 4px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.pitch-menu-list button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pitch-menu-list.color-swatches {
+  flex-direction: row;
 }
 
 .color-swatches {

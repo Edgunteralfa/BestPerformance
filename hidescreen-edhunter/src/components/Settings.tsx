@@ -5,7 +5,7 @@ import { emit } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-shell';
 import { confirm, message, open as openFile, save } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
-import { pitchFromFile, pitchToFile } from '../pitchFile';
+import { pitchFromFile, pitchToFile, pitchToText } from '../pitchFile';
 import type { CardChrome, Config, MainChrome, PitchMemory } from '../types';
 import { formatMessage, useI18n, type Language } from '../i18n';
 import { formatClock, parseDuration } from '../hooks/usePitchTimer';
@@ -43,6 +43,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
   const [memoryTagColor, setMemoryTagColor] = useState(TAB_COLORS[0]);
   const [memoryEdits, setMemoryEdits] = useState<Record<string, { name: string; tag: string }>>({});
   const [editingTagId, setEditingTagId] = useState<string | null>(null);
+  const [pitchMenu, setPitchMenu] = useState<{ id: string; kind: 'file' | 'color' } | null>(null);
 
   useEffect(() => {
     setOpacity(config.opacity);
@@ -202,8 +203,8 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
     setMemoryTag('');
   };
 
-  const exportMemory = async (memory: PitchMemory) => {
-    const live = memory.id === config.activePitchId
+  const liveMemory = (memory: PitchMemory): PitchMemory => (
+    memory.id === config.activePitchId
       ? {
         ...memory,
         ...takeSnapshot(),
@@ -213,13 +214,32 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
         id: memory.id,
         savedAt: memory.savedAt,
       }
-      : memory;
+      : memory
+  );
+
+  const exportMemory = async (memory: PitchMemory) => {
+    const live = liveMemory(memory);
+    const safe = live.name.replace(/[<>:"/\\|?*]/g, ' ').trim() || 'pitch';
     const path = await save({
-      defaultPath: `${live.name.replace(/[<>:"/\\|?*]/g, ' ').trim() || 'pitch'}.bestperformance.json`,
+      defaultPath: `${safe}.bestperformance.json`,
       filters: [{ name: 'BestPerformance', extensions: ['json'] }],
     });
     if (typeof path !== 'string') return;
     await writeTextFile(path, pitchToFile(live));
+  };
+
+  const exportText = async (memory: PitchMemory) => {
+    const live = liveMemory(memory);
+    const safe = live.name.replace(/[<>:"/\\|?*]/g, ' ').trim() || 'pitch';
+    const path = await save({
+      defaultPath: `${safe}.txt`,
+      filters: [
+        { name: 'Text', extensions: ['txt'] },
+        { name: 'Markdown', extensions: ['md'] },
+      ],
+    });
+    if (typeof path !== 'string') return;
+    await writeTextFile(path, pitchToText(live));
   };
 
   const importMemory = async () => {
@@ -440,17 +460,34 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
                         {memory.tag || t('pitchMemoryTag')}
                       </button>
                     )}
-                    <div className="color-swatches">
-                      {TAB_COLORS.map((color) => (
-                        <button
-                          key={color}
-                          type="button"
-                          className={`color-swatch${memory.tagColor === color ? ' selected' : ''}`}
-                          style={{ backgroundColor: color }}
-                          onClick={() => { void patchMemory(memory.id, { tagColor: color }); }}
-                          title={color}
-                        />
-                      ))}
+                    <div className="pitch-menu">
+                      <button
+                        type="button"
+                        className="color-swatch"
+                        style={{ backgroundColor: memory.tagColor }}
+                        title={t('pitchMemoryColor')}
+                        aria-label={t('pitchMemoryColor')}
+                        onClick={() => setPitchMenu((menu) => (
+                          menu?.id === memory.id && menu.kind === 'color' ? null : { id: memory.id, kind: 'color' }
+                        ))}
+                      />
+                      {pitchMenu?.id === memory.id && pitchMenu.kind === 'color' ? (
+                        <div className="pitch-menu-list color-swatches">
+                          {TAB_COLORS.map((color) => (
+                            <button
+                              key={color}
+                              type="button"
+                              className={`color-swatch${memory.tagColor === color ? ' selected' : ''}`}
+                              style={{ backgroundColor: color }}
+                              onClick={() => {
+                                void patchMemory(memory.id, { tagColor: color });
+                                setPitchMenu(null);
+                              }}
+                              title={color}
+                            />
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     {current ? (
                       <span className="pitch-memory-current">{t('pitchMemoryCurrent')}</span>
@@ -459,9 +496,27 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
                         {t('pitchMemoryOpen')}
                       </button>
                     )}
-                    <button type="button" className="button" onClick={() => { void exportMemory(memory); }}>
-                      {t('pitchFileExport')}
-                    </button>
+                    <div className="pitch-menu">
+                      <button
+                        type="button"
+                        className="button"
+                        onClick={() => setPitchMenu((menu) => (
+                          menu?.id === memory.id && menu.kind === 'file' ? null : { id: memory.id, kind: 'file' }
+                        ))}
+                      >
+                        {t('pitchFileMenu')}
+                      </button>
+                      {pitchMenu?.id === memory.id && pitchMenu.kind === 'file' ? (
+                        <div className="pitch-menu-list">
+                          <button type="button" onClick={() => { setPitchMenu(null); void exportMemory(memory); }}>
+                            {t('pitchFileExport')}
+                          </button>
+                          <button type="button" onClick={() => { setPitchMenu(null); void exportText(memory); }}>
+                            {t('pitchFileText')}
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
                     <button type="button" className="tab-remove" onClick={() => { void deleteMemory(memory.id); }}>
                       {t('pitchMemoryDelete')}
                     </button>
@@ -560,7 +615,9 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
             <div className="font-row">
               <span className="font-label">{t('fontFamily')}</span>
               <select value={fontFamily} onChange={handleFontFamilyChange} className="font-select">
-                {FONT_FAMILIES.map((family) => (
+                {[...FONT_FAMILIES].sort((a, b) => (
+                  a.split(',')[0].replace(/['"]/g, '').localeCompare(b.split(',')[0].replace(/['"]/g, ''), undefined, { sensitivity: 'base' })
+                )).map((family) => (
                   <option key={family} value={family}>
                     {family.split(',')[0].replace(/['"]/g, '')}
                   </option>
@@ -738,9 +795,8 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="settings-section">
+        <div className="settings-section">
         <label>
           <strong>{t('chromeTitle')}</strong>
         </label>
@@ -794,6 +850,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
               {t(label)}
             </label>
           ))}
+        </div>
         </div>
       </div>
 

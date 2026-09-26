@@ -49,15 +49,18 @@ const en = {
   searchTabs: 'Tabs included in search',
   blindOn: 'Rehearse from the chapter list. Hold Ctrl+Alt+Shift+Period to show the current line.',
   blindOff: 'Show the notes again',
-  pitchFileExport: 'File',
+  pitchFileMenu: 'File',
+  pitchFileExport: 'JSON',
+  pitchFileText: 'Text',
+  pitchMemoryColor: 'Tag color',
   pitchFileImport: 'Open file',
   pitchFileBad: 'This file is not a BestPerformance pitch.',
   chromeTitle: 'What to show',
   chromeHint: 'Hiding a control only removes it from the window. The last setting stays.',
   chromeMain: 'Main window',
-  chromeCard: 'Facts window',
+  chromeCard: 'Numbers and definitions',
   chromeOpacity: 'Opacity slider',
-  chromeCardButton: 'Facts window button',
+  chromeCardButton: 'Numbers window button',
   chromeTabs: 'Tabs',
   chromeSearch: 'Search',
   chromeTimer: 'Timer',
@@ -168,15 +171,18 @@ const ru: typeof en = {
   searchTabs: 'Вкладки, в которых искать',
   blindOn: 'Репетиция по списку глав. Удерживайте Ctrl+Alt+Shift+Period, чтобы показать текущую строку.',
   blindOff: 'Снова показать текст',
-  pitchFileExport: 'Файл',
+  pitchFileMenu: 'Файл',
+  pitchFileExport: 'JSON',
+  pitchFileText: 'Текст',
+  pitchMemoryColor: 'Цвет тега',
   pitchFileImport: 'Открыть файл',
   pitchFileBad: 'Этот файл не является выступлением BestPerformance.',
   chromeTitle: 'Что показывать',
   chromeHint: 'Снятая галочка только убирает элемент с окна. Последняя настройка остаётся.',
   chromeMain: 'Основное окно',
-  chromeCard: 'Окно фактов',
+  chromeCard: 'Окно цифр и определений',
   chromeOpacity: 'Ползунок прозрачности',
-  chromeCardButton: 'Кнопка окна фактов',
+  chromeCardButton: 'Кнопка окна цифр',
   chromeTabs: 'Вкладки',
   chromeSearch: 'Поиск',
   chromeTimer: 'Таймер',
@@ -230,15 +236,19 @@ const ru: typeof en = {
   lock: 'Заблокировать: клики проходят сквозь окно',
   unlock: 'Снять блокировку: клики снова попадают в окно',
   placeholder: 'Напишите заметку… H — заголовок, цветные кнопки выделяют строку.',
-  noticeTitle: '{app} — важно прочитать',
+  noticeTitle: '{app}. Прочитайте',
   updateTitle: 'Обновление {app}',
   updatePrompt: 'Вышла версия v{version}.\n\nСкачать и установить сейчас?',
   ethicalNotice:
-    '{app} держит текст питча на вашем экране во время разговора или выступления.\n\n' +
-    'Не берите её на экзамен, не нарушайте ею правила учёбы или работы, не обходите чужие условия сервиса и не делайте того, что запрещено законом.\n\n' +
-    'Решение, как ей пользоваться, остаётся за вами.\n\n' +
-    'Текст хранится в файле на этом компьютере. Наружу, и только если вы не выключили проверку, уходит запрос о новой версии.\n\n' +
-    '«ОК» значит, что вы это прочитали.',
+    '{app} показывает ваш текст только вам:\nна выступлении, на созвоне, на лекции.\n\n' +
+    'Не берите её на экзамен.\n' +
+    'Не используйте её там, где это запрещено\nправилами учёбы, работы или сервиса.\n' +
+    'И не используйте её для того,\nчто запрещено законом.\n\n' +
+    'Как ей пользоваться, решаете вы.\n\n' +
+    'Заметки лежат в файле на этом компьютере.\n' +
+    'Если проверка обновлений включена,\nпри запуске программа один раз спрашивает,\nне вышла ли новая версия.\n' +
+    'Больше ничего никуда не отправляется.\n\n' +
+    'Кнопка «ОК» значит, что вы это прочитали.',
 };
 
 const dictionaries = { en, ru };
