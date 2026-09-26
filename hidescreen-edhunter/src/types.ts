@@ -1,5 +1,66 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
+export interface MainChrome {
+  opacity: boolean;
+  card: boolean;
+  tabs: boolean;
+  search: boolean;
+  timer: boolean;
+  chapters: boolean;
+  fontSize: boolean;
+  heading: boolean;
+  marks: boolean;
+  clear: boolean;
+  blind: boolean;
+  lock: boolean;
+}
+
+export interface CardChrome {
+  opacity: boolean;
+  fontSize: boolean;
+  heading: boolean;
+  marks: boolean;
+}
+
+export const DEFAULT_MAIN_CHROME: MainChrome = {
+  opacity: true,
+  card: true,
+  tabs: true,
+  search: true,
+  timer: true,
+  chapters: true,
+  fontSize: true,
+  heading: true,
+  marks: true,
+  clear: true,
+  blind: true,
+  lock: true,
+};
+
+export const DEFAULT_CARD_CHROME: CardChrome = {
+  opacity: true,
+  fontSize: true,
+  heading: true,
+  marks: true,
+};
+
+function normalizeFlags<T extends object>(value: unknown, defaults: T): T {
+  const source = value !== null && typeof value === 'object' ? value as Record<string, unknown> : {};
+  const next = { ...defaults };
+  for (const key of Object.keys(defaults) as Array<keyof T>) {
+    if (typeof source[key as string] === 'boolean') next[key] = source[key as string] as T[keyof T];
+  }
+  return next;
+}
+
+export function normalizeMainChrome(value: unknown): MainChrome {
+  return normalizeFlags(value, DEFAULT_MAIN_CHROME);
+}
+
+export function normalizeCardChrome(value: unknown): CardChrome {
+  return normalizeFlags(value, DEFAULT_CARD_CHROME);
+}
+
 export interface NoteTab {
   id: string;
   name: string;
@@ -16,6 +77,16 @@ export const TAB_COLORS = [
   '#8A3E62',
   '#5C4A8A',
   '#4E6A3A',
+];
+
+// Colors for names in the left chapter list. They do not paint the note text.
+export const CHAPTER_LIST_COLORS = [
+  '#7DFFB3',
+  '#7EC8FF',
+  '#FFD166',
+  '#FF9B71',
+  '#E59BFF',
+  '#F2F2F2',
 ];
 
 export function defaultTabs(existingText = ''): NoteTab[] {
@@ -40,6 +111,25 @@ export function normalizePitchSeconds(value: unknown): number {
   const seconds = typeof value === 'number' ? value : Number(value);
   if (!Number.isFinite(seconds) || seconds < 0) return 300;
   return Math.min(Math.round(seconds), 24 * 60 * 60);
+}
+
+export function normalizeChapterNavWidths(value: unknown): Record<string, number> {
+  if (value === null || typeof value !== 'object') return {};
+  const widths: Record<string, number> = {};
+  for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+    const width = typeof raw === 'number' ? raw : Number(raw);
+    if (key && Number.isFinite(width)) widths[key] = Math.min(360, Math.max(120, Math.round(width)));
+  }
+  return widths;
+}
+
+export function normalizeChapterListColors(value: unknown): Record<string, string> {
+  if (value === null || typeof value !== 'object') return {};
+  const colors: Record<string, string> = {};
+  for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+    if (key && typeof raw === 'string' && CHAPTER_LIST_COLORS.includes(raw)) colors[key] = raw;
+  }
+  return colors;
 }
 
 export function normalizeChapterBudgets(value: unknown): Record<string, number> {
@@ -97,6 +187,10 @@ export interface Config {
   // Pitch clock. 0 shows elapsed time. Chapter budgets are seconds, keyed by tab and heading.
   pitchSeconds: number;
   chapterBudgets: Record<string, number>;
+  chapterListColors: Record<string, string>;
+  chapterNavWidths: Record<string, number>;
+  mainChrome: MainChrome;
+  cardChrome: CardChrome;
 
   cardText: string;
   cardVisible: boolean;
@@ -113,6 +207,7 @@ export interface Config {
   // Named copies of the notes, chapter times, and the facts window.
   pitchMemories: PitchMemory[];
   activePitchId: string | null;
+  searchExcludedTabIds: string[];
   pitchEpoch: number;
 }
 
@@ -124,8 +219,11 @@ export interface PitchMemory {
   activeTabId: string;
   pitchSeconds: number;
   chapterBudgets: Record<string, number>;
+  chapterListColors: Record<string, string>;
+  chapterNavWidths: Record<string, number>;
   cardText: string;
   cardFontSize: number;
+  searchExcludedTabIds: string[];
   tag: string;
   tagColor: string;
 }
@@ -154,6 +252,10 @@ export const DEFAULT_CONFIG: Config = {
   language: 'en',
   pitchSeconds: 300,
   chapterBudgets: {},
+  chapterListColors: {},
+  chapterNavWidths: {},
+  mainChrome: DEFAULT_MAIN_CHROME,
+  cardChrome: DEFAULT_CARD_CHROME,
   cardText: '',
   cardVisible: false,
   cardX: 520,
@@ -165,6 +267,7 @@ export const DEFAULT_CONFIG: Config = {
   windowMask: 'node',
   pitchMemories: [],
   activePitchId: null,
+  searchExcludedTabIds: [],
   pitchEpoch: 0,
 };
 
@@ -184,6 +287,11 @@ export const WINDOW_MASKS = [
 ] as const;
 
 export type WindowMaskId = (typeof WINDOW_MASKS)[number]['id'];
+
+export function normalizeSearchExcluded(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === 'string').slice(0, MAX_TABS);
+}
 
 export function normalizePitchMemories(value: unknown): PitchMemory[] {
   if (!Array.isArray(value)) return [];
@@ -210,8 +318,11 @@ export function normalizePitchMemories(value: unknown): PitchMemory[] {
       activeTabId,
       pitchSeconds: normalizePitchSeconds(row.pitchSeconds),
       chapterBudgets: normalizeChapterBudgets(row.chapterBudgets),
+      chapterListColors: normalizeChapterListColors(row.chapterListColors),
+      chapterNavWidths: normalizeChapterNavWidths(row.chapterNavWidths),
       cardText: typeof row.cardText === 'string' ? row.cardText : '',
       cardFontSize: Math.min(48, Math.max(8, fontSize)),
+      searchExcludedTabIds: normalizeSearchExcluded(row.searchExcludedTabIds),
       tag: typeof row.tag === 'string' ? row.tag.trim().slice(0, 24) : '',
       tagColor,
     });

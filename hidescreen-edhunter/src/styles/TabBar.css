@@ -36,14 +36,16 @@
   font-size: 11px;
 }
 
-.timer-total.warn,
-.timer-chapter.warn {
-  color: #ffd166;
+.timer-total.soon,
+.timer-chapter.soon {
+  color: #ff9a3c;
 }
 
+.timer-total.warn,
+.timer-chapter.warn,
 .timer-total.over,
 .timer-chapter.over {
-  color: #ff6b6b;
+  color: #ff5a5a;
 }
 
 .timer-button {

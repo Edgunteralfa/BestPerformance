@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { load } from '@tauri-apps/plugin-store';
 import type { Config } from '../types';
-import { DEFAULT_CONFIG, normalizeChapterBudgets, normalizeOpacity, normalizePitchMemories, normalizePitchSeconds, normalizeTabs, normalizeWindowMask } from '../types';
+import { DEFAULT_CONFIG, normalizeCardChrome, normalizeChapterBudgets, normalizeChapterListColors, normalizeChapterNavWidths, normalizeMainChrome, normalizeOpacity, normalizePitchMemories, normalizePitchSeconds, normalizeSearchExcluded, normalizeTabs, normalizeWindowMask } from '../types';
 import { detectLanguage } from '../i18n';
 
 const STORE_FILE = 'config.json';
@@ -56,6 +56,10 @@ export function useConfig() {
           text: active.text,
           pitchSeconds: normalizePitchSeconds(loaded.pitchSeconds),
           chapterBudgets: normalizeChapterBudgets(loaded.chapterBudgets),
+          chapterListColors: normalizeChapterListColors(loaded.chapterListColors),
+          chapterNavWidths: normalizeChapterNavWidths(loaded.chapterNavWidths),
+          mainChrome: normalizeMainChrome(loaded.mainChrome),
+          cardChrome: normalizeCardChrome(loaded.cardChrome),
           cardText: typeof loaded.cardText === 'string' ? loaded.cardText : '',
           cardVisible: loaded.cardVisible === true,
           cardX: finiteOr(loaded.cardX, DEFAULT_CONFIG.cardX),
@@ -71,6 +75,7 @@ export function useConfig() {
             ? String(loaded.activePitchId)
             : null,
           pitchEpoch: finiteOr(loaded.pitchEpoch, 0),
+          searchExcludedTabIds: normalizeSearchExcluded(loaded.searchExcludedTabIds),
         });
       } catch (error) {
         console.error('Failed to load config:', error);

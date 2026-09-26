@@ -28,6 +28,7 @@ interface TitleBarProps {
   title: string;
   showBrand: boolean;
   opacity: number;
+  showOpacity?: boolean;
   onOpacityChange: (value: number) => void;
   onSettingsClick: () => void;
   onCardClick?: () => void;
@@ -38,7 +39,7 @@ interface TitleBarProps {
   onUpdateClick?: () => void;
 }
 
-function TitleBar({ title, showBrand, opacity, onOpacityChange, onSettingsClick, onCardClick, checked, updateAvailable, updateVersion, appVersion, onUpdateClick }: TitleBarProps) {
+function TitleBar({ title, showBrand, opacity, showOpacity = true, onOpacityChange, onSettingsClick, onCardClick, checked, updateAvailable, updateVersion, appVersion, onUpdateClick }: TitleBarProps) {
   const { t } = useI18n();
   const handleClose = async () => {
     await appWindow.close();
@@ -65,10 +66,12 @@ function TitleBar({ title, showBrand, opacity, onOpacityChange, onSettingsClick,
             v{appVersion} ✓
           </span>
         ) : null}
-        <OpacityControl value={opacity} onChange={onOpacityChange} />
-        <button className="title-bar-button" onClick={onCardClick} title={t('cardToggle')}>
-          12
-        </button>
+        {showOpacity ? <OpacityControl value={opacity} onChange={onOpacityChange} /> : null}
+        {onCardClick ? (
+          <button className="title-bar-button" onClick={onCardClick} title={t('cardToggle')}>
+            12
+          </button>
+        ) : null}
         <button className="title-bar-button settings" onClick={onSettingsClick} title={t('settings')}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="3" />

@@ -9,12 +9,13 @@ export function formatClock(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-export type Pace = 'none' | 'ok' | 'warn' | 'over';
+export type Pace = 'none' | 'ok' | 'soon' | 'warn' | 'over';
 
 export function paceOf(remainingMs: number, budgetMs: number): Pace {
   if (budgetMs <= 0) return 'none';
   if (remainingMs <= 0) return 'over';
-  if (remainingMs <= budgetMs * 0.15) return 'warn';
+  if (remainingMs <= budgetMs * 0.08) return 'warn';
+  if (remainingMs <= budgetMs * 0.2) return 'soon';
   return 'ok';
 }
 

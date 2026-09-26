@@ -190,7 +190,7 @@ function CardShell({
       <div data-tauri-drag-region className="title-bar card-title-bar">
         <div data-tauri-drag-region className="title-left">
           <span data-tauri-drag-region className="title card-title">{t('cardTitle')}</span>
-          <div className="card-font">
+          {config.cardChrome.fontSize ? <div className="card-font">
             <button
               type="button"
               className="card-font-button"
@@ -208,42 +208,50 @@ function CardShell({
             >
               +
             </button>
-          </div>
-          <div className="card-marks">
-            <button
-              type="button"
-              className="card-mark heading"
-              title={t('toggleHeading')}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => markLine('heading')}
-            >
-              H
-            </button>
-            <button
-              type="button"
-              className="card-mark"
-              title={t('toggleMark')}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => markLine('mark')}
-            >
-              <span className="card-swatch" style={{ backgroundColor: config.markColor }} />
-            </button>
-            <button
-              type="button"
-              className="card-mark"
-              title={t('toggleNote')}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => markLine('note')}
-            >
-              <span className="card-swatch" style={{ backgroundColor: config.noteColor }} />
-            </button>
-          </div>
+          </div> : null}
+          {(config.cardChrome.heading || config.cardChrome.marks) ? <div className="card-marks">
+            {config.cardChrome.heading ? (
+              <button
+                type="button"
+                className="card-mark heading"
+                title={t('toggleHeading')}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => markLine('heading')}
+              >
+                H
+              </button>
+            ) : null}
+            {config.cardChrome.marks ? (
+              <>
+                <button
+                  type="button"
+                  className="card-mark"
+                  title={t('toggleMark')}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => markLine('mark')}
+                >
+                  <span className="card-swatch" style={{ backgroundColor: config.markColor }} />
+                </button>
+                <button
+                  type="button"
+                  className="card-mark"
+                  title={t('toggleNote')}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => markLine('note')}
+                >
+                  <span className="card-swatch" style={{ backgroundColor: config.noteColor }} />
+                </button>
+              </>
+            ) : null}
+          </div> : null}
         </div>
         <div className="title-bar-buttons">
-          <OpacityControl
-            value={config.cardOpacity}
-            onChange={(value) => { void setConfig({ cardOpacity: value }); }}
-          />
+          {config.cardChrome.opacity ? (
+            <OpacityControl
+              value={config.cardOpacity}
+              onChange={(value) => { void setConfig({ cardOpacity: value }); }}
+            />
+          ) : null}
           <button type="button" className="title-bar-button close" onClick={hide} title={t('close')}>
             ✕
           </button>

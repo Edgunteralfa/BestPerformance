@@ -48,6 +48,27 @@
   margin-bottom: 10px;
 }
 
+.chrome-group {
+  margin: 12px 0 6px;
+  color: #dddddd;
+  font-size: 12px;
+}
+
+.chrome-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+}
+
+.settings-section label.chrome-row {
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: left;
+  cursor: pointer;
+}
+
 .settings-hint {
   margin: 8px 0 0;
   color: #aaaaaa;

@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, type RefObject } from 'react';
 import { formatClock, parseDuration } from '../hooks/usePitchTimer';
 import { fillEditor, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
-import { chapterBudgetKey, type Config } from '../types';
+import { CHAPTER_LIST_COLORS, chapterBudgetKey, type Config } from '../types';
 import { useI18n } from '../i18n';
 import '../styles/TextEditor.css';
 
@@ -14,11 +14,18 @@ interface TextEditorProps {
   editorRef: RefObject<TextEditorHandle | null>;
   navWidth: number;
   onNavWidthChange: (width: number) => void;
+  onNavWidthCommit: (width: number) => void;
   onActiveChapterChange: (index: number | null) => void;
   tabId: string;
   initialScroll: number;
   onScrollPosition: (tabId: string, top: number) => void;
   onChapterBudget: (heading: string, seconds: number | null) => void;
+  onChapterListColor: (heading: string, color: string | null) => void;
+  initialReveal: number | null;
+  onRevealConsumed: () => void;
+  blind: boolean;
+  peek: boolean;
+  showChapters: boolean;
 }
 
 export type { LineKind };
@@ -27,6 +34,9 @@ export interface TextEditorHandle {
   toggleKind: (kind: Exclude<LineKind, 'body'>) => void;
   moveChapter: (direction: 1 | -1) => void;
   moveReading: (direction: 1 | -1) => void;
+  revealLine: (index: number) => void;
+  readingIndex: () => number | null;
+  ensureReading: () => void;
 }
 
 function markReading(root: HTMLElement, index: number | null) {
@@ -73,12 +83,24 @@ function ChapterBudgetField({ seconds, onCommit }: { seconds: number | undefined
   );
 }
 
-function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidthChange, onActiveChapterChange, tabId, initialScroll, onScrollPosition, onChapterBudget }: TextEditorProps) {
+function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidthChange, onNavWidthCommit, onActiveChapterChange, tabId, initialScroll, onScrollPosition, onChapterBudget, onChapterListColor, initialReveal, onRevealConsumed, blind, peek, showChapters }: TextEditorProps) {
   const { t } = useI18n();
   const rootRef = useRef<HTMLDivElement>(null);
   const serializedRef = useRef(text);
   const pendingScroll = useRef(initialScroll);
   const readingRef = useRef<number | null>(null);
+  const [colorMenu, setColorMenu] = useState<{ heading: string; x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    if (!colorMenu) return;
+    const close = () => setColorMenu(null);
+    window.addEventListener('pointerdown', close);
+    window.addEventListener('keydown', close);
+    return () => {
+      window.removeEventListener('pointerdown', close);
+      window.removeEventListener('keydown', close);
+    };
+  }, [colorMenu]);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
@@ -187,6 +209,20 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
     return () => root.removeEventListener('scroll', sync);
   }, [chapters]);
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const fit = () => {
+      const line = root.querySelector<HTMLElement>('.line');
+      const lineHeight = line?.offsetHeight ?? Math.round(config.fontSize * 1.5);
+      root.style.paddingBottom = `${Math.max(10, root.clientHeight - lineHeight)}px`;
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [chapters, config.fontSize]);
+
   const setReading = (index: number) => {
     readingRef.current = index;
     const root = rootRef.current;
@@ -256,6 +292,12 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
       },
       moveChapter,
       moveReading,
+      revealLine: jumpTo,
+      readingIndex: () => readingRef.current,
+      ensureReading: () => {
+        if (readingRef.current !== null) return;
+        setReading(activeChapter ?? 0);
+      },
     };
     editorRef.current = handle;
     return () => {
@@ -263,11 +305,17 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
     };
   });
 
+  useLayoutEffect(() => {
+    if (initialReveal === null) return;
+    jumpTo(initialReveal);
+    onRevealConsumed();
+  }, [initialReveal, onRevealConsumed]);
+
   return (
     <div className="text-editor">
       <nav
         ref={navRef}
-        className="chapter-nav"
+        className={`chapter-nav${showChapters ? '' : ' is-hidden'}`}
         style={{ width: navWidth }}
         aria-label={t('chapters')}
         tabIndex={-1}
@@ -284,14 +332,22 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
         {chapters.length === 0 ? (
           <p className="chapter-empty">{t('chapterEmpty')}</p>
         ) : (
-          chapters.map((chapter) => (
+          chapters.map((chapter) => {
+            const listKey = chapterBudgetKey(tabId, chapter.text);
+            const listColor = config.chapterListColors[listKey];
+            return (
             <div key={chapter.index} className="chapter-row">
               <button
                 type="button"
                 className={`chapter-link${chapter.index === activeChapter ? ' active' : ''}`}
-                style={{ color: chapter.index === activeChapter ? config.headingColor : config.fontColor }}
+                style={{ color: listColor ?? (chapter.index === activeChapter ? config.headingColor : config.fontColor) }}
                 title={chapter.text}
                 onClick={() => jumpTo(chapter.index)}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setColorMenu({ heading: chapter.text, x: event.clientX, y: event.clientY });
+                }}
               >
                 {chapter.text}
               </button>
@@ -300,8 +356,50 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
                 onCommit={(seconds) => onChapterBudget(chapter.text, seconds)}
               />
             </div>
-          ))
+            );
+          })
         )}
+        {colorMenu ? (
+          <div
+            className="chapter-color-pop"
+            style={{
+              left: Math.min(colorMenu.x, window.innerWidth - 160),
+              top: Math.min(colorMenu.y, window.innerHeight - 130),
+            }}
+            onPointerDown={(event) => event.stopPropagation()}
+            onContextMenu={(event) => event.preventDefault()}
+          >
+            <span className="chapter-color-label">{t('chapterListColor')}</span>
+            <div className="chapter-color-swatches">
+              {CHAPTER_LIST_COLORS.map((color) => {
+                const selected = config.chapterListColors[chapterBudgetKey(tabId, colorMenu.heading)] === color;
+                return (
+                  <button
+                    key={color}
+                    type="button"
+                    className={`chapter-color-swatch${selected ? ' selected' : ''}`}
+                    style={{ backgroundColor: color }}
+                    aria-label={color}
+                    onClick={() => {
+                      onChapterListColor(colorMenu.heading, selected ? null : color);
+                      setColorMenu(null);
+                    }}
+                  />
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              className="chapter-color-reset"
+              onClick={() => {
+                onChapterListColor(colorMenu.heading, null);
+                setColorMenu(null);
+              }}
+            >
+              {t('chapterListColorReset')}
+            </button>
+          </div>
+        ) : null}
         <div
           className="chapter-resize"
           onPointerDown={(event) => {
@@ -309,11 +407,13 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
             event.stopPropagation();
             const startX = event.screenX;
             const startWidth = navWidth;
+            let latest = startWidth;
             const move = (moveEvent: PointerEvent) => {
-              const next = Math.min(360, Math.max(120, startWidth + moveEvent.screenX - startX));
-              onNavWidthChange(next);
+              latest = Math.min(360, Math.max(120, startWidth + moveEvent.screenX - startX));
+              onNavWidthChange(latest);
             };
             const stop = () => {
+              onNavWidthCommit(latest);
               window.removeEventListener('pointermove', move);
               window.removeEventListener('pointerup', stop);
             };
@@ -324,7 +424,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
       </nav>
       <div
         ref={rootRef}
-        className="text-area notes"
+        className={`text-area notes${blind ? ' is-blind' : ''}${blind && peek ? ' is-peek' : ''}`}
         style={{
           fontFamily: config.fontFamily,
           fontSize: `${config.fontSize}px`,

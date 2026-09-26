@@ -78,6 +78,16 @@
   flex: 1;
 }
 
+.blind-button {
+  width: 24px;
+  height: 20px;
+  margin-right: 36px;
+}
+
+.blind-button.on {
+  color: #ffaa00;
+}
+
 .lock-button {
   width: 24px;
   height: 20px;

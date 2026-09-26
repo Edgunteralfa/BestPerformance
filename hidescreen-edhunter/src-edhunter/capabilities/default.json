@@ -23,8 +23,19 @@
     "dialog:default",
     "store:default",
     "fs:allow-write-file",
+    "fs:allow-write-text-file",
+    "fs:allow-read-text-file",
     "fs:allow-exists",
     "fs:default",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        { "path": "$HOME/**" },
+        { "path": "$DESKTOP/**" },
+        { "path": "$DOCUMENT/**" },
+        { "path": "$DOWNLOAD/**" }
+      ]
+    },
     "process:allow-exit",
     "shell:allow-open",
     "global-shortcut:allow-register",

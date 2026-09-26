@@ -1,0 +1,149 @@
+/* MIT License - Copyright (c) 2026 BestPerformance Contributors */
+
+.pitch-search {
+  position: relative;
+  flex-shrink: 0;
+  width: 168px;
+}
+
+.pitch-search-field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.pitch-search-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 22px;
+  background: #1f1f1f;
+  color: #f2f2f2;
+  border: 1px solid #555555;
+  border-radius: 3px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+.pitch-search-input:focus {
+  outline: none;
+  border-color: #8a8a8a;
+}
+
+.pitch-search-scope {
+  flex-shrink: 0;
+  width: 18px;
+  height: 22px;
+  padding: 0;
+  background: #1f1f1f;
+  color: #c8c8c8;
+  border: 1px solid #555555;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.pitch-search-scope.open {
+  border-color: #8a8a8a;
+  color: #ffffff;
+}
+
+.pitch-search-scope-list {
+  position: absolute;
+  z-index: 21;
+  top: 26px;
+  right: 0;
+  width: 220px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.pitch-search-scope-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 2px;
+  color: #f2f2f2;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pitch-search-results {
+  position: absolute;
+  z-index: 20;
+  top: 26px;
+  right: 0;
+  width: 420px;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.pitch-search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pitch-search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pitch-search-results::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+}
+
+.pitch-search-empty {
+  color: #aaaaaa;
+  font-size: 11px;
+  padding: 6px;
+}
+
+.pitch-search-hit {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: #f2f2f2;
+  padding: 4px 6px;
+}
+
+.pitch-search-hit.selected {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pitch-search-tab {
+  color: #9ad;
+  font-size: 10px;
+}
+
+.pitch-search-line {
+  font-size: 12px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.pitch-search-line mark {
+  background: #ffd166;
+  color: #1a1a1a;
+  padding: 0 1px;
+}

@@ -32,16 +32,26 @@ body {
     inset 0 0 16px rgba(255, 255, 255, 0.2);
 }
 
-.app.chapter-alarm::after {
+.app.chapter-alarm-soon::after,
+.app.chapter-alarm-over::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 40;
+  animation: chapter-edge 1.4s ease-out forwards;
+}
+
+.app.chapter-alarm-soon::after {
+  box-shadow:
+    inset 0 0 0 3px #ff9a3c,
+    inset 0 0 22px rgba(255, 154, 60, 0.45);
+}
+
+.app.chapter-alarm-over::after {
   box-shadow:
     inset 0 0 0 3px #ff5a5a,
     inset 0 0 22px rgba(255, 70, 70, 0.45);
-  animation: chapter-edge 1.4s ease-out forwards;
 }
 
 @keyframes chapter-edge {

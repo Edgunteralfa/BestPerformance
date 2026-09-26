@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { emit } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-shell';
-import { confirm, message } from '@tauri-apps/plugin-dialog';
-import type { Config, PitchMemory } from '../types';
+import { confirm, message, open as openFile, save } from '@tauri-apps/plugin-dialog';
+import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { pitchFromFile, pitchToFile } from '../pitchFile';
+import type { CardChrome, Config, MainChrome, PitchMemory } from '../types';
 import { formatMessage, useI18n, type Language } from '../i18n';
 import { formatClock, parseDuration } from '../hooks/usePitchTimer';
 import { isMac } from '../platform';
@@ -120,8 +122,11 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       activeTabId: active.id,
       pitchSeconds: parseDuration(pitchDraft) ?? config.pitchSeconds,
       chapterBudgets: config.chapterBudgets,
+      chapterListColors: config.chapterListColors,
+      chapterNavWidths: config.chapterNavWidths,
       cardText: config.cardText,
       cardFontSize: config.cardFontSize,
+      searchExcludedTabIds: config.searchExcludedTabIds,
     };
   };
 
@@ -161,8 +166,11 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       text: active.text,
       pitchSeconds: memory.pitchSeconds,
       chapterBudgets: memory.chapterBudgets,
+      chapterListColors: memory.chapterListColors,
+      chapterNavWidths: memory.chapterNavWidths,
       cardText: memory.cardText,
       cardFontSize: memory.cardFontSize,
+      searchExcludedTabIds: memory.searchExcludedTabIds,
       pitchMemories: list,
       activePitchId: memory.id,
       pitchEpoch: config.pitchEpoch + 1,
@@ -192,6 +200,53 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
     await setConfig({ pitchMemories: list, activePitchId: memory.id });
     setMemoryName('');
     setMemoryTag('');
+  };
+
+  const exportMemory = async (memory: PitchMemory) => {
+    const live = memory.id === config.activePitchId
+      ? {
+        ...memory,
+        ...takeSnapshot(),
+        name: memory.name,
+        tag: memory.tag,
+        tagColor: memory.tagColor,
+        id: memory.id,
+        savedAt: memory.savedAt,
+      }
+      : memory;
+    const path = await save({
+      defaultPath: `${live.name.replace(/[<>:"/\\|?*]/g, ' ').trim() || 'pitch'}.bestperformance.json`,
+      filters: [{ name: 'BestPerformance', extensions: ['json'] }],
+    });
+    if (typeof path !== 'string') return;
+    await writeTextFile(path, pitchToFile(live));
+  };
+
+  const importMemory = async () => {
+    const picked = await openFile({
+      multiple: false,
+      filters: [{ name: 'BestPerformance', extensions: ['json'] }],
+    });
+    if (typeof picked !== 'string') return;
+    const pitch = pitchFromFile(await readTextFile(picked));
+    if (!pitch) {
+      await message(t('pitchFileBad'), { title: t('pitchMemory'), kind: 'warning' });
+      return;
+    }
+    if (config.pitchMemories.length >= MAX_PITCH_MEMORIES) {
+      await message(t('pitchMemoryFull'), { title: t('pitchMemory'), kind: 'warning' });
+      return;
+    }
+    let name = pitch.name;
+    const taken = new Set(config.pitchMemories.map((item) => item.name.toLowerCase()));
+    if (taken.has(name.toLowerCase())) {
+      let n = 2;
+      while (taken.has(`${name} ${n}`.toLowerCase())) n += 1;
+      name = `${name} ${n}`.slice(0, 60);
+    }
+    await setConfig({
+      pitchMemories: [...config.pitchMemories, { ...pitch, id: `pitch-${Date.now()}`, name, savedAt: Date.now() }],
+    });
   };
 
   const patchMemory = async (id: string, patch: Partial<Pick<PitchMemory, 'name' | 'tag' | 'tagColor'>>) => {
@@ -318,6 +373,9 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
             <button type="button" className="button" onClick={() => { void saveMemory(); }}>
               {t('pitchMemorySave')}
             </button>
+            <button type="button" className="button" onClick={() => { void importMemory(); }}>
+              {t('pitchFileImport')}
+            </button>
           </div>
           {config.pitchMemories.length > 0 && (
             <ul className="pitch-memory-list">
@@ -401,6 +459,9 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
                         {t('pitchMemoryOpen')}
                       </button>
                     )}
+                    <button type="button" className="button" onClick={() => { void exportMemory(memory); }}>
+                      {t('pitchFileExport')}
+                    </button>
                     <button type="button" className="tab-remove" onClick={() => { void deleteMemory(memory.id); }}>
                       {t('pitchMemoryDelete')}
                     </button>
@@ -676,6 +737,63 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
               </select>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="settings-section">
+        <label>
+          <strong>{t('chromeTitle')}</strong>
+        </label>
+        <p className="settings-hint">{t('chromeHint')}</p>
+        <p className="chrome-group">{t('chromeMain')}</p>
+        <div className="chrome-grid">
+          {([
+            ['opacity', 'chromeOpacity'],
+            ['card', 'chromeCardButton'],
+            ['tabs', 'chromeTabs'],
+            ['search', 'chromeSearch'],
+            ['timer', 'chromeTimer'],
+            ['chapters', 'chromeChapters'],
+            ['fontSize', 'chromeFontSize'],
+            ['heading', 'chromeHeading'],
+            ['marks', 'chromeMarks'],
+            ['clear', 'chromeClear'],
+            ['blind', 'chromeBlind'],
+            ['lock', 'chromeLock'],
+          ] as const).map(([key, label]) => (
+            <label key={key} className="chrome-row">
+              <input
+                type="checkbox"
+                checked={config.mainChrome[key]}
+                onChange={() => {
+                  const next: MainChrome = { ...config.mainChrome, [key]: !config.mainChrome[key] };
+                  void setConfig({ mainChrome: next });
+                }}
+              />
+              {t(label)}
+            </label>
+          ))}
+        </div>
+        <p className="chrome-group">{t('chromeCard')}</p>
+        <div className="chrome-grid">
+          {([
+            ['opacity', 'chromeOpacity'],
+            ['fontSize', 'chromeFontSize'],
+            ['heading', 'chromeHeading'],
+            ['marks', 'chromeMarks'],
+          ] as const).map(([key, label]) => (
+            <label key={key} className="chrome-row">
+              <input
+                type="checkbox"
+                checked={config.cardChrome[key]}
+                onChange={() => {
+                  const next: CardChrome = { ...config.cardChrome, [key]: !config.cardChrome[key] };
+                  void setConfig({ cardChrome: next });
+                }}
+              />
+              {t(label)}
+            </label>
+          ))}
         </div>
       </div>
 

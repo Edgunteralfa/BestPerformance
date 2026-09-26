@@ -27,6 +27,8 @@ export interface HotkeyHandlers {
   nextLine: () => void;
   toggleTimer: () => void;
   resetTimer: () => void;
+  toggleQuestion: () => void;
+  setLinePeek: (visible: boolean) => void;
 }
 
 // Wrapper that isolates each registration so one failure doesn't block the rest.
@@ -104,6 +106,14 @@ export function useGlobalHotkeys(handlers: HotkeyHandlers) {
       await tryRegister('CmdOrCtrl+Alt+ArrowDown', () => { if (mounted) h().nextLine(); });
       await tryRegister('CmdOrCtrl+Shift+T', () => { if (mounted) h().toggleTimer(); });
       await tryRegister('CmdOrCtrl+Shift+Y', () => { if (mounted) h().resetTimer(); });
+      await tryRegister('CmdOrCtrl+Alt+Shift+J', () => { if (mounted) h().toggleQuestion(); });
+      try {
+        await register('CmdOrCtrl+Alt+Shift+Period', (event) => {
+          if (mounted) h().setLinePeek(event.state === 'Pressed');
+        });
+      } catch (error) {
+        console.warn('Failed to register hotkey "CmdOrCtrl+Alt+Shift+Period":', error);
+      }
     };
 
     registerAll();

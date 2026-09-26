@@ -13,6 +13,14 @@ interface BottomBarProps {
   onToggleMark: () => void;
   onToggleNote: () => void;
   onClearText: () => void;
+  blind: boolean;
+  onToggleBlind: () => void;
+  showFontSize: boolean;
+  showHeading: boolean;
+  showMarks: boolean;
+  showClear: boolean;
+  showBlind: boolean;
+  showLock: boolean;
 }
 
 const LockIcon = () => (
@@ -29,7 +37,23 @@ const UnlockIcon = () => (
   </svg>
 );
 
-function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading, onToggleMark, onToggleNote, onClearText }: BottomBarProps) {
+const EyeIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 3l18 18" />
+    <path d="M10.6 6.2A10.7 10.7 0 0 1 12 6c6.5 0 10 6 10 6a18.4 18.4 0 0 1-4.1 4.6" />
+    <path d="M6.1 6.1C3.5 7.8 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 4.2-.8" />
+    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+  </svg>
+);
+
+function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading, onToggleMark, onToggleNote, onClearText, blind, onToggleBlind, showFontSize, showHeading, showMarks, showClear, showBlind, showLock }: BottomBarProps) {
   const { t } = useI18n();
   const increaseFontSize = () => {
     const newSize = Math.min(48, config.fontSize + 1);
@@ -41,9 +65,11 @@ function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading,
     setConfig({ fontSize: newSize });
   };
 
+  if (!showFontSize && !showHeading && !showMarks && !showClear && !showBlind && !showLock) return null;
+
   return (
     <div className="bottom-bar">
-      <div className="font-size-controls">
+      {showFontSize ? <div className="font-size-controls">
         <button className="control-button font-btn" onClick={decreaseFontSize} title={t('decreaseFont')}>
           <svg width="10" height="10" viewBox="0 0 10 10">
             <line x1="1" y1="5" x2="9" y2="5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -56,31 +82,49 @@ function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading,
             <line x1="5" y1="1" x2="5" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </button>
-      </div>
+      </div> : null}
 
-      <button className="control-button heading-button" onClick={onToggleHeading} title={t('toggleHeading')}>
-        H
-      </button>
-      <button className="control-button mark-button" onClick={onToggleMark} title={t('toggleMark')}>
-        <span className="mark-swatch" style={{ backgroundColor: config.markColor }} />
-      </button>
-      <button className="control-button mark-button" onClick={onToggleNote} title={t('toggleNote')}>
-        <span className="mark-swatch" style={{ backgroundColor: config.noteColor }} />
-      </button>
+      {showHeading ? (
+        <button className="control-button heading-button" onClick={onToggleHeading} title={t('toggleHeading')}>
+          H
+        </button>
+      ) : null}
+      {showMarks ? (
+        <>
+          <button className="control-button mark-button" onClick={onToggleMark} title={t('toggleMark')}>
+            <span className="mark-swatch" style={{ backgroundColor: config.markColor }} />
+          </button>
+          <button className="control-button mark-button" onClick={onToggleNote} title={t('toggleNote')}>
+            <span className="mark-swatch" style={{ backgroundColor: config.noteColor }} />
+          </button>
+        </>
+      ) : null}
 
-      <button className="control-button clear-button" onClick={onClearText} title={t('clearText')}>
-        {t('clear')}
-      </button>
+      {showClear ? (
+        <button className="control-button clear-button" onClick={onClearText} title={t('clearText')}>
+          {t('clear')}
+        </button>
+      ) : null}
 
       <div className="spacer" />
 
-      <button
+      {showBlind ? (
+        <button
+          className={`control-button blind-button${blind ? ' on' : ''}`}
+          onClick={onToggleBlind}
+          title={blind ? t('blindOff') : t('blindOn')}
+        >
+          {blind ? <EyeOffIcon /> : <EyeIcon />}
+        </button>
+      ) : null}
+
+      {showLock ? <button
         className={`control-button lock-button ${isLocked ? 'locked' : ''}`}
         onClick={onToggleLock}
         title={isLocked ? t('unlock') : t('lock')}
       >
         {isLocked ? <LockIcon /> : <UnlockIcon />}
-      </button>
+      </button> : null}
     </div>
   );
 }

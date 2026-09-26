@@ -62,10 +62,15 @@ function AppShell({
   const quickEditRef = useRef(false);
   const editorRef = useRef<TextEditorHandle | null>(null);
   const scrollByTab = useRef<Record<string, number>>({});
-  const [navWidth, setNavWidth] = useState(168);
+  const [liveNavWidth, setLiveNavWidth] = useState<number | null>(null);
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [showReview, setShowReview] = useState(false);
-  const [edgeAlarm, setEdgeAlarm] = useState(false);
+  const [edgeAlarm, setEdgeAlarm] = useState<'off' | 'soon' | 'over'>('off');
+  const [blind, setBlind] = useState(false);
+  const [peek, setPeek] = useState(false);
+  const pendingReveal = useRef<number | null>(null);
+  const consumeReveal = useCallback(() => { pendingReveal.current = null; }, []);
+  const questionPlace = useRef<{ tabId: string; line: number | null } | null>(null);
   const seenPitchEpoch = useRef(config.pitchEpoch);
   const overChapter = useRef('');
   const alarmTimer = useRef<number | null>(null);
@@ -332,6 +337,10 @@ function AppShell({
   // Copy all text
   const activeTab = config.tabs.find((tab) => tab.id === config.activeTabId) ?? config.tabs[0];
 
+  useEffect(() => {
+    setLiveNavWidth(null);
+  }, [activeTab.id]);
+
   const writeActiveText = useCallback(async (text: string) => {
     const tabs = config.tabs.map((tab) => (tab.id === activeTab.id ? { ...tab, text } : tab));
     await setConfig({ tabs, text, activeTabId: activeTab.id });
@@ -353,6 +362,14 @@ function AppShell({
     const active = tabs.find((tab) => tab.id === config.activeTabId) ?? tabs[0];
     await setConfig({ tabs, activeTabId: active.id, text: active.text });
   }, [config.activeTabId, setConfig]);
+
+  const setChapterListColor = useCallback(async (heading: string, color: string | null) => {
+    const key = chapterBudgetKey(activeTab.id, heading);
+    const chapterListColors = { ...config.chapterListColors };
+    if (!color) delete chapterListColors[key];
+    else chapterListColors[key] = color;
+    await setConfig({ chapterListColors });
+  }, [activeTab.id, config.chapterListColors, setConfig]);
 
   const setChapterBudget = useCallback(async (heading: string, seconds: number | null) => {
     const key = chapterBudgetKey(activeTab.id, heading);
@@ -414,6 +431,48 @@ function AppShell({
     setShowReview((open) => !open);
   }, []);
 
+  const jumpToLine = useCallback((tabId: string, line: number) => {
+    if (tabId === activeTab.id) {
+      editorRef.current?.revealLine(line);
+      return;
+    }
+    pendingReveal.current = line;
+    void selectTab(tabId);
+  }, [activeTab.id, selectTab]);
+
+  const setSearchExcluded = useCallback((excluded: string[]) => {
+    const pitchMemories = config.activePitchId
+      ? config.pitchMemories.map((item) => (
+        item.id === config.activePitchId ? { ...item, searchExcludedTabIds: excluded } : item
+      ))
+      : config.pitchMemories;
+    void setConfig({ searchExcludedTabIds: excluded, pitchMemories });
+  }, [config.activePitchId, config.pitchMemories, setConfig]);
+
+  const toggleQuestion = useCallback(() => {
+    const saved = questionPlace.current;
+    if (saved) {
+      questionPlace.current = null;
+      if (saved.line !== null) pendingReveal.current = saved.line;
+      if (saved.tabId !== activeTab.id) void selectTab(saved.tabId);
+      else if (saved.line !== null) editorRef.current?.revealLine(saved.line);
+      return;
+    }
+    const questions = config.tabs.find((tab) => /вопрос|question/i.test(tab.name));
+    if (!questions || questions.id === activeTab.id) return;
+    questionPlace.current = {
+      tabId: activeTab.id,
+      line: editorRef.current?.readingIndex() ?? activeChapter,
+    };
+    void selectTab(questions.id);
+  }, [activeChapter, activeTab.id, config.tabs, selectTab]);
+
+  const setLinePeek = useCallback((visible: boolean) => {
+    if (!blind) return;
+    if (visible) editorRef.current?.ensureReading();
+    setPeek(visible);
+  }, [blind]);
+
   useEffect(() => {
     if (seenPitchEpoch.current === config.pitchEpoch) return;
     seenPitchEpoch.current = config.pitchEpoch;
@@ -422,15 +481,20 @@ function AppShell({
   }, [config.pitchEpoch, timer.reset]);
 
   useEffect(() => {
-    const over = chapterBudgetMs > 0 && chapterRemaining <= 0;
-    if (over && overChapter.current !== chapterKey) {
-      overChapter.current = chapterKey;
-      setEdgeAlarm(true);
-      if (alarmTimer.current !== null) window.clearTimeout(alarmTimer.current);
-      alarmTimer.current = window.setTimeout(() => setEdgeAlarm(false), 1400);
+    const paced = chapterBudgetMs > 0 ? paceOf(chapterRemaining, chapterBudgetMs) : paceOf(totalRemaining, pitchMs);
+    const token = chapterBudgetMs > 0 ? chapterKey : 'pitch';
+    const kind = paced === 'soon' || paced === 'over' ? paced : null;
+    if (!kind) {
+      overChapter.current = '';
+      return;
     }
-    if (!over) overChapter.current = '';
-  }, [chapterBudgetMs, chapterRemaining, chapterKey]);
+    const mark = `${token}:${kind}`;
+    if (overChapter.current === mark) return;
+    overChapter.current = mark;
+    setEdgeAlarm(kind);
+    if (alarmTimer.current !== null) window.clearTimeout(alarmTimer.current);
+    alarmTimer.current = window.setTimeout(() => setEdgeAlarm('off'), 1400);
+  }, [chapterBudgetMs, chapterRemaining, chapterKey, pitchMs, totalRemaining]);
 
   const clearText = useCallback(async () => {
     if (!activeTab.text) return;
@@ -464,6 +528,8 @@ function AppShell({
     nextLine,
     toggleTimer: timer.toggle,
     resetTimer: timer.reset,
+    toggleQuestion,
+    setLinePeek,
   });
 
   // Update text in config
@@ -499,7 +565,7 @@ function AppShell({
 
   return (
     <div
-      className={`app${windowActive ? ' is-active' : ''}${edgeAlarm ? ' chapter-alarm' : ''}`}
+      className={`app${windowActive ? ' is-active' : ''}${edgeAlarm === 'soon' ? ' chapter-alarm-soon' : ''}${edgeAlarm === 'over' ? ' chapter-alarm-over' : ''}`}
       style={{
         backgroundColor: config.bgColor,
         opacity: config.opacity,
@@ -509,9 +575,10 @@ function AppShell({
         title={shellName}
         showBrand={!isMac}
         opacity={config.opacity}
+        showOpacity={config.mainChrome.opacity}
         onOpacityChange={(value) => { void setConfig({ opacity: value }); }}
         onSettingsClick={toggleSettings}
-        onCardClick={toggleCard}
+        onCardClick={config.mainChrome.card ? toggleCard : undefined}
         checked={updater.checked}
         updateAvailable={updater.updateAvailable}
         updateVersion={updater.updateVersion}
@@ -536,6 +603,12 @@ function AppShell({
         pauseLabel={t('timerPause')}
         resetLabel={t('timerReset')}
         reviewLabel={t('timerReview')}
+        onSearchJump={jumpToLine}
+        searchExcludedTabIds={config.searchExcludedTabIds}
+        onSearchTabsChange={setSearchExcluded}
+        showTabs={config.mainChrome.tabs}
+        showSearch={config.mainChrome.search}
+        showTimer={config.mainChrome.timer}
       />
 
       {showReview && !showSettings ? (
@@ -567,13 +640,25 @@ function AppShell({
           text={activeTab.text}
           onTextChange={updateText}
           editorRef={editorRef}
-          navWidth={navWidth}
-          onNavWidthChange={setNavWidth}
+          navWidth={liveNavWidth ?? config.chapterNavWidths[activeTab.id] ?? 168}
+          onNavWidthChange={setLiveNavWidth}
+          onNavWidthCommit={(width) => {
+            setLiveNavWidth(null);
+            void setConfig({
+              chapterNavWidths: { ...config.chapterNavWidths, [activeTab.id]: width },
+            });
+          }}
           onActiveChapterChange={setActiveChapter}
           tabId={activeTab.id}
           initialScroll={scrollByTab.current[activeTab.id] ?? 0}
           onScrollPosition={rememberScroll}
           onChapterBudget={setChapterBudget}
+          onChapterListColor={setChapterListColor}
+          initialReveal={pendingReveal.current}
+          onRevealConsumed={consumeReveal}
+          blind={blind}
+          peek={peek}
+          showChapters={config.mainChrome.chapters}
         />
       )}
 
@@ -586,6 +671,17 @@ function AppShell({
         onToggleMark={() => editorRef.current?.toggleKind('mark')}
         onToggleNote={() => editorRef.current?.toggleKind('note')}
         onClearText={clearText}
+        blind={blind}
+        onToggleBlind={() => {
+          setBlind((value) => !value);
+          setPeek(false);
+        }}
+        showFontSize={config.mainChrome.fontSize}
+        showHeading={config.mainChrome.heading}
+        showMarks={config.mainChrome.marks}
+        showClear={config.mainChrome.clear}
+        showBlind={config.mainChrome.blind}
+        showLock={config.mainChrome.lock}
       />
       <div
         className="resize-grip"

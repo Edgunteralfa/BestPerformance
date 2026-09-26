@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import type { Pace } from '../hooks/usePitchTimer';
 import type { NoteTab } from '../types';
+import PitchSearch from './PitchSearch';
 import '../styles/TabBar.css';
 
 interface TabBarProps {
@@ -22,6 +23,12 @@ interface TabBarProps {
   pauseLabel: string;
   resetLabel: string;
   reviewLabel: string;
+  onSearchJump: (tabId: string, line: number) => void;
+  searchExcludedTabIds: string[];
+  onSearchTabsChange: (excluded: string[]) => void;
+  showTabs: boolean;
+  showSearch: boolean;
+  showTimer: boolean;
 }
 
 function TabBar({
@@ -41,6 +48,12 @@ function TabBar({
   pauseLabel,
   resetLabel,
   reviewLabel,
+  onSearchJump,
+  searchExcludedTabIds,
+  onSearchTabsChange,
+  showTabs,
+  showSearch,
+  showTimer,
 }: TabBarProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ id: string; startX: number; moved: boolean } | null>(null);
@@ -115,9 +128,11 @@ function TabBar({
     onReorder(next);
   };
 
+  if (!showTabs && !showSearch && !showTimer) return null;
+
   return (
     <div className="tab-bar">
-      <div className="tab-list" ref={listRef}>
+      {showTabs ? <div className="tab-list" ref={listRef}>
       {shown.map((tab) => {
         const active = tab.id === activeTabId;
         const dragging = tab.id === dragId;
@@ -149,10 +164,18 @@ function TabBar({
           </button>
         );
       })}
-      </div>
-      <div className="pitch-timer">
-        <span className={`timer-total${totalPace === 'warn' || totalPace === 'over' ? ` ${totalPace}` : ''}`} title={totalLabel}>{totalLabel}</span>
-        <span className={`timer-chapter${chapterPace === 'warn' || chapterPace === 'over' ? ` ${chapterPace}` : ''}`} title={chapterLabel}>{chapterLabel}</span>
+      </div> : null}
+      {showSearch ? (
+        <PitchSearch
+          tabs={tabs}
+          excludedTabIds={searchExcludedTabIds}
+          onExcludedChange={onSearchTabsChange}
+          onJump={onSearchJump}
+        />
+      ) : null}
+      {showTimer ? <div className="pitch-timer">
+        <span className={`timer-total${totalPace === 'soon' || totalPace === 'warn' || totalPace === 'over' ? ` ${totalPace}` : ''}`} title={totalLabel}>{totalLabel}</span>
+        <span className={`timer-chapter${chapterPace === 'soon' || chapterPace === 'warn' || chapterPace === 'over' ? ` ${chapterPace}` : ''}`} title={chapterLabel}>{chapterLabel}</span>
         <button type="button" className="timer-button" onClick={onToggleTimer} title={running ? pauseLabel : startLabel}>
           {running ? pauseLabel : startLabel}
         </button>
@@ -162,7 +185,7 @@ function TabBar({
         <button type="button" className="timer-button" onClick={onReview} title={reviewLabel}>
           {reviewLabel}
         </button>
-      </div>
+      </div> : null}
     </div>
   );
 }
