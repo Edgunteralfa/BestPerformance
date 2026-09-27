@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { tempDir, join } from '@tauri-apps/api/path';
-import { writeFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { exit } from '@tauri-apps/plugin-process';
-import { confirm } from '@tauri-apps/plugin-dialog';
+import { confirm, message } from '@tauri-apps/plugin-dialog';
 import { checkForUpdates } from '../utils/updateChecker';
 import type { Language } from '../i18n';
 
@@ -35,25 +33,26 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
     downloading: false,
   });
 
-  const doDownloadAndInstall = useCallback(async (url: string, version: string) => {
+  const doDownloadAndInstall = useCallback(async (url: string) => {
     setState((s) => ({ ...s, downloading: true }));
 
     try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
-      const bytes = new Uint8Array(await response.arrayBuffer());
-
-      const filename = decodeURIComponent(url.split('/').pop() || `BestPerformance-${version}-setup`);
-      await writeFile(filename, bytes, { baseDir: BaseDirectory.Temp });
-
-      const tmp = await tempDir();
-      const fullPath = await join(tmp, filename);
-      await invoke('launch_update_installer', { path: fullPath });
-
+      await invoke('download_and_launch_update', { url });
       await exit(0);
     } catch (error) {
       console.error('Update failed:', error);
       setState((s) => ({ ...s, downloading: false }));
+      const name = displayNameRef.current;
+      const copy = languageRef.current === 'ru'
+        ? {
+            title: `Обновление ${name}`,
+            body: 'Не удалось скачать обновление. Закройте программу крестиком и установите файл из релиза вручную.',
+          }
+        : {
+            title: `${name} update`,
+            body: 'The update could not be downloaded. Close the app with the X and install the file from the release page.',
+          };
+      await message(copy.body, { title: copy.title, kind: 'error' });
     }
   }, []);
 
@@ -91,7 +90,7 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
       const yes = await confirm(copy.body, { title: copy.title, kind: 'info' });
 
       if (yes) {
-        await doDownloadAndInstall(info.downloadUrl, info.latestVersion);
+        await doDownloadAndInstall(info.downloadUrl);
       }
     };
 
@@ -100,8 +99,8 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
 
   const downloadAndInstall = useCallback(async () => {
     if (!state.downloadUrl) return;
-    await doDownloadAndInstall(state.downloadUrl, state.updateVersion);
-  }, [doDownloadAndInstall, state.downloadUrl, state.updateVersion]);
+    await doDownloadAndInstall(state.downloadUrl);
+  }, [doDownloadAndInstall, state.downloadUrl]);
 
   return {
     ...state,

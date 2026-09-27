@@ -147,6 +147,37 @@ fn uninstall_keyboard_hook() -> Result<(), String> {
 }
 
 #[tauri::command]
+async fn download_and_launch_update(url: String) -> Result<(), String> {
+    let allowed = url.starts_with("https://github.com/")
+        || url.starts_with("https://release-assets.githubusercontent.com/")
+        || url.starts_with("https://objects.githubusercontent.com/");
+    if !allowed {
+        return Err("Unexpected update address".to_string());
+    }
+
+    let client = reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::limited(10))
+        .build()
+        .map_err(|error| error.to_string())?;
+    let response = client.get(&url).send().await.map_err(|error| error.to_string())?;
+    if !response.status().is_success() {
+        return Err(format!("Download failed: {}", response.status()));
+    }
+    let bytes = response.bytes().await.map_err(|error| error.to_string())?;
+
+    let filename = url
+        .split('/')
+        .next_back()
+        .unwrap_or("BestPerformance-setup")
+        .split('?')
+        .next()
+        .unwrap_or("BestPerformance-setup");
+    let path = std::env::temp_dir().join(filename);
+    std::fs::write(&path, &bytes).map_err(|error| error.to_string())?;
+    launch_update_installer(path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
 fn launch_update_installer(path: String) -> Result<(), String> {
     #[cfg(windows)]
     let mut command = std::process::Command::new(&path);
@@ -248,6 +279,7 @@ pub fn run() {
             install_keyboard_hook,
             uninstall_keyboard_hook,
             launch_update_installer,
+            download_and_launch_update,
             config_store_path,
         ])
         .run(tauri::generate_context!())

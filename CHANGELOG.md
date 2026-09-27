@@ -10,6 +10,7 @@
 - The timer turns orange, then red. The window edge flashes the same way.
 - Save one talk as JSON, or as text for a notepad. JSON is what comes back into the app.
 - Settings scroll as one list. File export and the tag color each sit on one button.
+- The update button downloads the installer itself, then starts it.
 
 ## 1.0.0
 
@@ -27,6 +28,7 @@
 - Таймер сначала оранжевый, потом красный. Край окна мигает так же.
 - Одно выступление можно сохранить как JSON или как текст для блокнота. Обратно в программу возвращается JSON.
 - Настройки прокручиваются одним списком. Файл и цвет тега открываются с одной кнопки.
+- Кнопка обновления сама скачивает установщик и запускает его.
 
 ## 1.0.0
 
