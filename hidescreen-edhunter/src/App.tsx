@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow, LogicalPosition, LogicalSize, Window } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
-import { confirm, message } from '@tauri-apps/plugin-dialog';
+import AppDialog, { appConfirm, appMessage } from './components/AppDialog';
 import { formatMessage, I18nProvider, useI18n } from './i18n';
 import { useConfig } from './hooks/useConfig';
 import { useUpdater } from './hooks/useUpdater';
@@ -91,7 +91,7 @@ function AppShell({
     const showEthicalNotice = async () => {
       if (!config.firstRunShown) {
         try {
-          await message(formatMessage(t('ethicalNotice'), { app: shellName }), {
+          await appMessage(formatMessage(t('ethicalNotice'), { app: shellName }), {
             title: formatMessage(t('noticeTitle'), { app: shellName }),
             kind: 'warning',
           });
@@ -498,7 +498,7 @@ function AppShell({
 
   const clearText = useCallback(async () => {
     if (!activeTab.text) return;
-    const yes = await confirm(t('clearConfirm'), { title: t('clearConfirmTitle'), kind: 'warning' });
+    const yes = await appConfirm(t('clearConfirm'), { title: t('clearConfirmTitle'), kind: 'warning' });
     if (!yes) return;
     await writeActiveText('');
   }, [activeTab.text, t, writeActiveText]);
@@ -571,6 +571,7 @@ function AppShell({
         opacity: config.opacity,
       }}
     >
+      <AppDialog />
       <TitleBar
         title={shellName}
         showBrand={!isMac}

@@ -3,11 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { exit } from '@tauri-apps/plugin-process';
-import { confirm, message } from '@tauri-apps/plugin-dialog';
+import { appConfirm, appMessage } from '../components/AppDialog';
 import { checkForUpdates } from '../utils/updateChecker';
 import type { Language } from '../i18n';
 
 const APP_VERSION = '1.1.0';
+let updateCheckStarted = false;
 
 interface UpdaterState {
   checked: boolean; // true once the update check has completed
@@ -52,16 +53,30 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
             title: `${name} update`,
             body: 'The update could not be downloaded. Close the app with the X and install the file from the release page.',
           };
-      await message(copy.body, { title: copy.title, kind: 'error' });
+      await appMessage(copy.body, { title: copy.title, kind: 'error' });
     }
   }, []);
 
   // Check for updates and auto-prompt the user
   useEffect(() => {
-    if (!autoCheck) return;
+    if (!autoCheck || updateCheckStarted) return;
+    updateCheckStarted = true;
 
     const checkAndPrompt = async () => {
-      const info = await checkForUpdates(APP_VERSION);
+      let info;
+      try {
+        info = await checkForUpdates(APP_VERSION);
+      } catch (error) {
+        console.error('Update check failed:', error);
+        setState((s) => ({ ...s, checked: true }));
+        const name = displayNameRef.current;
+        const detail = error instanceof Error ? error.message : String(error);
+        const copy = languageRef.current === 'ru'
+          ? { title: `Обновление ${name}`, body: `Не удалось проверить, есть ли новая версия.\n\n${detail}` }
+          : { title: `${name} update`, body: `Could not check for a new version.\n\n${detail}` };
+        await appMessage(copy.body, { title: copy.title, kind: 'error' });
+        return;
+      }
 
       if (!info.updateAvailable || !info.downloadUrl) {
         setState((s) => ({ ...s, checked: true }));
@@ -87,7 +102,7 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
             title: `${name} update`,
             body: `Version v${info.latestVersion} is out.\n\nDownload and install it now?`,
           };
-      const yes = await confirm(copy.body, { title: copy.title, kind: 'info' });
+      const yes = await appConfirm(copy.body, { title: copy.title, kind: 'info' });
 
       if (yes) {
         await doDownloadAndInstall(info.downloadUrl);

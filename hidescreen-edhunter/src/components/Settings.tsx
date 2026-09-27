@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { emit } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-shell';
-import { confirm, message, open as openFile, save } from '@tauri-apps/plugin-dialog';
+import { open as openFile, save } from '@tauri-apps/plugin-dialog';
+import { appConfirm, appMessage } from './AppDialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { pitchFromFile, pitchToFile, pitchToText } from '../pitchFile';
 import type { CardChrome, Config, MainChrome, PitchMemory } from '../types';
@@ -184,7 +185,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
     if (!name) return;
     const existing = config.pitchMemories.find((item) => item.name.toLowerCase() === name.toLowerCase());
     if (!existing && config.pitchMemories.length >= MAX_PITCH_MEMORIES) {
-      await message(t('pitchMemoryFull'), { title: t('pitchMemory'), kind: 'warning' });
+      await appMessage(t('pitchMemoryFull'), { title: t('pitchMemory'), kind: 'warning' });
       return;
     }
     const memory: PitchMemory = {
@@ -250,11 +251,11 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
     if (typeof picked !== 'string') return;
     const pitch = pitchFromFile(await readTextFile(picked));
     if (!pitch) {
-      await message(t('pitchFileBad'), { title: t('pitchMemory'), kind: 'warning' });
+      await appMessage(t('pitchFileBad'), { title: t('pitchMemory'), kind: 'warning' });
       return;
     }
     if (config.pitchMemories.length >= MAX_PITCH_MEMORIES) {
-      await message(t('pitchMemoryFull'), { title: t('pitchMemory'), kind: 'warning' });
+      await appMessage(t('pitchMemoryFull'), { title: t('pitchMemory'), kind: 'warning' });
       return;
     }
     let name = pitch.name;
@@ -302,7 +303,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
   const deleteMemory = async (id: string) => {
     const memory = config.pitchMemories.find((item) => item.id === id);
     if (!memory) return;
-    const yes = await confirm(formatMessage(t('pitchMemoryDeleteConfirm'), { name: memory.name }), {
+    const yes = await appConfirm(formatMessage(t('pitchMemoryDeleteConfirm'), { name: memory.name }), {
       title: t('pitchMemoryDeleteTitle'),
       kind: 'warning',
     });
@@ -320,7 +321,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
   const handleShowNotice = async () => {
     try {
       const appName = isMac ? windowMaskTitle(config.windowMask) : 'BestPerformance';
-      await message(formatMessage(t('ethicalNotice'), { app: appName }), {
+      await appMessage(formatMessage(t('ethicalNotice'), { app: appName }), {
         title: formatMessage(t('noticeTitle'), { app: appName }),
         kind: 'warning',
       });

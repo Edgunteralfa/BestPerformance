@@ -147,6 +147,26 @@ fn uninstall_keyboard_hook() -> Result<(), String> {
 }
 
 #[tauri::command]
+async fn fetch_latest_release() -> Result<String, String> {
+    let client = reqwest::Client::builder()
+        .http1_only()
+        .build()
+        .map_err(|error| error.to_string())?;
+    let response = client
+        .get("https://api.github.com/repos/Edgunteralfa/BestPerformance/releases/latest")
+        .header("User-Agent", "BestPerformance/1.1.0")
+        .header("Accept", "application/vnd.github+json")
+        .header("X-GitHub-Api-Version", "2022-11-28")
+        .send()
+        .await
+        .map_err(|error| error.to_string())?;
+    if !response.status().is_success() {
+        return Err(format!("GitHub API returned {}", response.status()));
+    }
+    response.text().await.map_err(|error| error.to_string())
+}
+
+#[tauri::command]
 async fn download_and_launch_update(url: String) -> Result<(), String> {
     let allowed = url.starts_with("https://github.com/")
         || url.starts_with("https://release-assets.githubusercontent.com/")
@@ -156,6 +176,7 @@ async fn download_and_launch_update(url: String) -> Result<(), String> {
     }
 
     let client = reqwest::Client::builder()
+        .http1_only()
         .redirect(reqwest::redirect::Policy::limited(10))
         .build()
         .map_err(|error| error.to_string())?;
@@ -280,6 +301,7 @@ pub fn run() {
             uninstall_keyboard_hook,
             launch_update_installer,
             download_and_launch_update,
+            fetch_latest_release,
             config_store_path,
         ])
         .run(tauri::generate_context!())

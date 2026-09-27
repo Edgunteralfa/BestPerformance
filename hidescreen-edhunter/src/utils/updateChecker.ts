@@ -1,7 +1,6 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
-const GITHUB_API_URL =
-  'https://api.github.com/repos/Edgunteralfa/BestPerformance/releases/latest';
+import { invoke } from '@tauri-apps/api/core';
 
 export interface UpdateInfo {
   updateAvailable: boolean;
@@ -32,16 +31,11 @@ export function isNewerVersion(latest: string, current: string): boolean {
 export async function checkForUpdates(
   currentVersion: string,
 ): Promise<UpdateInfo> {
-  try {
-    const response = await fetch(GITHUB_API_URL, {
-      headers: { Accept: 'application/vnd.github.v3+json' },
-    });
-
-    if (!response.ok) {
-      throw new Error(`GitHub API returned ${response.status}`);
-    }
-
-    const release = await response.json();
+  const release = JSON.parse(await invoke<string>('fetch_latest_release')) as {
+      tag_name?: string;
+      body?: string;
+      assets?: Array<{ name: string; browser_download_url: string }>;
+    };
     const latestVersion: string = (release.tag_name || '').replace(/^v/, '');
     const updateAvailable = isNewerVersion(latestVersion, currentVersion);
 
@@ -63,13 +57,4 @@ export async function checkForUpdates(
       downloadUrl,
       releaseNotes: release.body || '',
     };
-  } catch (error) {
-    console.error('Update check failed:', error);
-    return {
-      updateAvailable: false,
-      latestVersion: currentVersion,
-      downloadUrl: null,
-      releaseNotes: '',
-    };
-  }
 }
