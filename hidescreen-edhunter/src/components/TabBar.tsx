@@ -15,6 +15,7 @@ interface TabBarProps {
   chapterLabel: string;
   totalPace: Pace;
   chapterPace: Pace;
+  totalPulse: boolean;
   running: boolean;
   onToggleTimer: () => void;
   onResetTimer: () => void;
@@ -40,6 +41,7 @@ function TabBar({
   chapterLabel,
   totalPace,
   chapterPace,
+  totalPulse,
   running,
   onToggleTimer,
   onResetTimer,
@@ -174,7 +176,7 @@ function TabBar({
         />
       ) : null}
       {showTimer ? <div className="pitch-timer">
-        <span className={`timer-total${totalPace === 'mid' || totalPace === 'soon' || totalPace === 'warn' || totalPace === 'over' ? ` ${totalPace}` : ''}`} title={totalLabel}>{totalLabel}</span>
+        <span className={`timer-total${totalPulse ? ' pulse' : ''}${totalPace === 'mid' || totalPace === 'soon' || totalPace === 'warn' || totalPace === 'over' ? ` ${totalPace}` : ''}`} title={totalLabel}>{totalLabel}</span>
         <span className={`timer-chapter${chapterPace === 'mid' || chapterPace === 'soon' || chapterPace === 'warn' || chapterPace === 'over' ? ` ${chapterPace}` : ''}`} title={chapterLabel}>{chapterLabel}</span>
         <button type="button" className="timer-button" onClick={onToggleTimer} title={running ? pauseLabel : startLabel}>
           {running ? pauseLabel : startLabel}

@@ -61,6 +61,24 @@ body {
     inset 0 0 22px rgba(255, 70, 70, 0.45);
 }
 
+.timer-callout {
+  position: absolute;
+  right: 28px;
+  bottom: 10px;
+  z-index: 35;
+  pointer-events: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(20, 20, 20, 0.88);
+  color: #4db8ff;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.timer-callout.urgent {
+  color: #ff9a3c;
+}
+
 @keyframes chapter-edge {
   0%,
   30% {

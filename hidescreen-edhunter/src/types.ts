@@ -6,6 +6,8 @@ export interface MainChrome {
   tabs: boolean;
   search: boolean;
   timer: boolean;
+  minuteCue: boolean;
+  thirtyCue: boolean;
   chapters: boolean;
   fontSize: boolean;
   heading: boolean;
@@ -28,6 +30,8 @@ export const DEFAULT_MAIN_CHROME: MainChrome = {
   tabs: true,
   search: true,
   timer: true,
+  minuteCue: true,
+  thirtyCue: true,
   chapters: true,
   fontSize: true,
   heading: true,

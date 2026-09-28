@@ -342,6 +342,64 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       <div className="settings-content">
         <div className="settings-section">
           <label>
+            <strong>{t('chromeTitle')}</strong>
+          </label>
+          <p className="settings-hint">{t('chromeHint')}</p>
+          <p className="chrome-group">{t('chromeMain')}</p>
+          <div className="chrome-grid">
+            {([
+              ['opacity', 'chromeOpacity'],
+              ['card', 'chromeCardButton'],
+              ['tabs', 'chromeTabs'],
+              ['search', 'chromeSearch'],
+              ['timer', 'chromeTimer'],
+              ['minuteCue', 'chromeMinuteCue'],
+              ['thirtyCue', 'chromeThirtyCue'],
+              ['chapters', 'chromeChapters'],
+              ['fontSize', 'chromeFontSize'],
+              ['heading', 'chromeHeading'],
+              ['marks', 'chromeMarks'],
+              ['clear', 'chromeClear'],
+              ['blind', 'chromeBlind'],
+              ['lock', 'chromeLock'],
+            ] as const).map(([key, label]) => (
+              <label key={key} className="chrome-row">
+                <input
+                  type="checkbox"
+                  checked={config.mainChrome[key]}
+                  onChange={() => {
+                    const next: MainChrome = { ...config.mainChrome, [key]: !config.mainChrome[key] };
+                    void setConfig({ mainChrome: next });
+                  }}
+                />
+                {t(label)}
+              </label>
+            ))}
+          </div>
+          <p className="chrome-group">{t('chromeCard')}</p>
+          <div className="chrome-grid">
+            {([
+              ['opacity', 'chromeOpacity'],
+              ['fontSize', 'chromeFontSize'],
+              ['heading', 'chromeHeading'],
+              ['marks', 'chromeMarks'],
+            ] as const).map(([key, label]) => (
+              <label key={key} className="chrome-row">
+                <input
+                  type="checkbox"
+                  checked={config.cardChrome[key]}
+                  onChange={() => {
+                    const next: CardChrome = { ...config.cardChrome, [key]: !config.cardChrome[key] };
+                    void setConfig({ cardChrome: next });
+                  }}
+                />
+                {t(label)}
+              </label>
+            ))}
+          </div>
+        </div>
+        <div className="settings-section">
+          <label>
             <strong>{t('pitchLength')}</strong>
           </label>
           <p className="settings-hint">{t('pitchHint')}</p>
@@ -797,62 +855,6 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
           </div>
         </div>
 
-        <div className="settings-section">
-        <label>
-          <strong>{t('chromeTitle')}</strong>
-        </label>
-        <p className="settings-hint">{t('chromeHint')}</p>
-        <p className="chrome-group">{t('chromeMain')}</p>
-        <div className="chrome-grid">
-          {([
-            ['opacity', 'chromeOpacity'],
-            ['card', 'chromeCardButton'],
-            ['tabs', 'chromeTabs'],
-            ['search', 'chromeSearch'],
-            ['timer', 'chromeTimer'],
-            ['chapters', 'chromeChapters'],
-            ['fontSize', 'chromeFontSize'],
-            ['heading', 'chromeHeading'],
-            ['marks', 'chromeMarks'],
-            ['clear', 'chromeClear'],
-            ['blind', 'chromeBlind'],
-            ['lock', 'chromeLock'],
-          ] as const).map(([key, label]) => (
-            <label key={key} className="chrome-row">
-              <input
-                type="checkbox"
-                checked={config.mainChrome[key]}
-                onChange={() => {
-                  const next: MainChrome = { ...config.mainChrome, [key]: !config.mainChrome[key] };
-                  void setConfig({ mainChrome: next });
-                }}
-              />
-              {t(label)}
-            </label>
-          ))}
-        </div>
-        <p className="chrome-group">{t('chromeCard')}</p>
-        <div className="chrome-grid">
-          {([
-            ['opacity', 'chromeOpacity'],
-            ['fontSize', 'chromeFontSize'],
-            ['heading', 'chromeHeading'],
-            ['marks', 'chromeMarks'],
-          ] as const).map(([key, label]) => (
-            <label key={key} className="chrome-row">
-              <input
-                type="checkbox"
-                checked={config.cardChrome[key]}
-                onChange={() => {
-                  const next: CardChrome = { ...config.cardChrome, [key]: !config.cardChrome[key] };
-                  void setConfig({ cardChrome: next });
-                }}
-              />
-              {t(label)}
-            </label>
-          ))}
-        </div>
-        </div>
       </div>
 
       <div className="settings-version-info">

@@ -411,6 +411,8 @@ function AppShell({
     t(pitchMs > 0 ? (totalRemaining < 0 ? 'timerOver' : 'timerLeft') : 'timerTotal'),
     { time: totalClock },
   );
+  const minuteLeft = config.mainChrome.minuteCue && pitchMs > 0 && totalRemaining <= 60_000 && totalRemaining > 30_000;
+  const totalPulse = config.mainChrome.thirtyCue && pitchMs > 0 && totalRemaining <= 30_000 && totalRemaining > 0;
   const chapterLabel = formatMessage(
     t(chapterBudgetMs > 0 ? (chapterRemaining < 0 ? 'timerChapterOver' : 'timerChapterLeft') : 'timerChapter'),
     { time: chapterClock },
@@ -596,6 +598,7 @@ function AppShell({
         chapterLabel={chapterLabel}
         totalPace={paceOf(totalRemaining, pitchMs)}
         chapterPace={paceOf(chapterRemaining, chapterBudgetMs)}
+        totalPulse={totalPulse}
         running={timer.running}
         onToggleTimer={timer.toggle}
         onResetTimer={timer.reset}
@@ -684,6 +687,11 @@ function AppShell({
         showBlind={config.mainChrome.blind}
         showLock={config.mainChrome.lock}
       />
+      {minuteLeft || totalPulse ? (
+        <div className={`timer-callout${totalPulse ? ' urgent' : ''}`}>
+          {t(totalPulse ? 'timerThirty' : 'timerMinute')}
+        </div>
+      ) : null}
       <div
         className="resize-grip"
         onPointerDown={async (event) => {

@@ -46,6 +46,21 @@
   color: #ff9a3c;
 }
 
+.timer-total.pulse {
+  color: #ff9a3c;
+  animation: timer-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
 .timer-total.warn,
 .timer-chapter.warn,
 .timer-total.over,
