@@ -2,8 +2,9 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, type RefObject } from 'react';
 import { formatClock, parseDuration } from '../hooks/usePitchTimer';
-import { fillEditor, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
-import { CHAPTER_LIST_COLORS, chapterBudgetKey, type Config } from '../types';
+import { applyWordInk, fillEditor, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
+import { CHAPTER_LIST_COLORS, chapterBudgetKey, visibleText, type Config } from '../types';
+import WordInkMenu from './WordInkMenu';
 import { useI18n } from '../i18n';
 import '../styles/TextEditor.css';
 
@@ -90,6 +91,8 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
   const pendingScroll = useRef(initialScroll);
   const readingRef = useRef<number | null>(null);
   const [colorMenu, setColorMenu] = useState<{ heading: string; x: number; y: number } | null>(null);
+  const [wordMenu, setWordMenu] = useState<{ x: number; y: number } | null>(null);
+  const wordRange = useRef<Range | null>(null);
 
   useEffect(() => {
     if (!colorMenu) return;
@@ -185,7 +188,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
   const isEmpty = text.length === 0;
   const chapters = useMemo(
     () => parseText(text)
-      .map((line, index) => ({ index, text: line.text.trim(), kind: line.kind }))
+      .map((line, index) => ({ index, text: visibleText(line.text).trim(), kind: line.kind }))
       .filter((line) => line.kind === 'heading' && line.text.length > 0),
     [text],
   );
@@ -443,7 +446,36 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
         onBlur={publish}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
+        onContextMenu={(event) => {
+          const selection = window.getSelection();
+          if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return;
+          const range = selection.getRangeAt(0);
+          const edge = (node: Node) => (node instanceof Element ? node : node.parentElement)?.closest('.line');
+          if (edge(range.startContainer) !== edge(range.endContainer)) return;
+          if (!event.currentTarget.contains(range.commonAncestorContainer)) return;
+          event.preventDefault();
+          wordRange.current = range.cloneRange();
+          setWordMenu({ x: event.clientX, y: event.clientY });
+        }}
       />
+      {wordMenu ? (
+        <WordInkMenu
+          x={wordMenu.x}
+          y={wordMenu.y}
+          onClose={() => setWordMenu(null)}
+          onPick={(color) => {
+            const root = rootRef.current;
+            const saved = wordRange.current;
+            const selection = window.getSelection();
+            if (root && saved && selection) {
+              selection.removeAllRanges();
+              selection.addRange(saved);
+              if (applyWordInk(root, color)) publish();
+            }
+            setWordMenu(null);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

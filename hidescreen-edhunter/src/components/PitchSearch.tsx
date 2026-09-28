@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { NoteTab } from '../types';
+import { visibleText, type NoteTab } from '../types';
 import { useI18n } from '../i18n';
 import '../styles/PitchSearch.css';
 
@@ -30,7 +30,7 @@ function hitsFor(tabs: NoteTab[], query: string): Hit[] {
   for (const tab of tabs) {
     const lines = tab.text.split('\n');
     for (let line = 0; line < lines.length; line += 1) {
-      const text = lines[line] ?? '';
+      const text = visibleText(lines[line] ?? '');
       if (!fold(text).includes(needle)) continue;
       found.push({ tabId: tab.id, tabName: tab.name, line, text: text.trim() || text });
       if (found.length >= 40) return found;

@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
 import type { PitchMemory } from './types';
-import { normalizePitchMemories } from './types';
+import { normalizePitchMemories, visibleText } from './types';
 
 const KIND = 'bestperformance-pitch';
 
@@ -12,9 +12,9 @@ export function pitchToFile(pitch: PitchMemory): string {
 export function pitchToText(pitch: PitchMemory): string {
   const parts = [`# ${pitch.name}`, ''];
   for (const tab of pitch.tabs) {
-    parts.push(`## ${tab.name}`, '', tab.text.trimEnd(), '');
+    parts.push(`## ${tab.name}`, '', visibleText(tab.text).trimEnd(), '');
   }
-  const facts = pitch.cardText.trim();
+  const facts = visibleText(pitch.cardText).trim();
   if (facts) parts.push('## 12', '', facts, '');
   return `${parts.join('\n').trimEnd()}\n`;
 }

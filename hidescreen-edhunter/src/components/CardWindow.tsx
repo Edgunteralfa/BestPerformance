@@ -6,7 +6,8 @@ import { listen } from '@tauri-apps/api/event';
 import LocalCursor from './LocalCursor';
 import { I18nProvider, useI18n } from '../i18n';
 import { useConfig } from '../hooks/useConfig';
-import { fillEditor, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
+import { applyWordInk, fillEditor, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
+import WordInkMenu from './WordInkMenu';
 import { isMac } from '../platform';
 import { windowMaskTitle, type Config } from '../types';
 import { OpacityControl } from './TitleBar';
@@ -110,6 +111,8 @@ function CardShell({
 
   const editorRef = useRef<HTMLDivElement>(null);
   const serializedRef = useRef(text);
+  const wordRange = useRef<Range | null>(null);
+  const [wordMenu, setWordMenu] = useState<{ x: number; y: number } | null>(null);
   const skipCardSave = useRef(false);
 
   useEffect(() => {
@@ -285,7 +288,36 @@ function CardShell({
         onBlur={publish}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
+        onContextMenu={(event) => {
+          const selection = window.getSelection();
+          if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return;
+          const range = selection.getRangeAt(0);
+          const edge = (node: Node) => (node instanceof Element ? node : node.parentElement)?.closest('.line');
+          if (edge(range.startContainer) !== edge(range.endContainer)) return;
+          if (!event.currentTarget.contains(range.commonAncestorContainer)) return;
+          event.preventDefault();
+          wordRange.current = range.cloneRange();
+          setWordMenu({ x: event.clientX, y: event.clientY });
+        }}
       />
+      {wordMenu ? (
+        <WordInkMenu
+          x={wordMenu.x}
+          y={wordMenu.y}
+          onClose={() => setWordMenu(null)}
+          onPick={(color) => {
+            const root = editorRef.current;
+            const saved = wordRange.current;
+            const selection = window.getSelection();
+            if (root && saved && selection) {
+              selection.removeAllRanges();
+              selection.addRange(saved);
+              if (applyWordInk(root, color)) publish();
+            }
+            setWordMenu(null);
+          }}
+        />
+      ) : null}
       <div
         className="resize-grip"
         onPointerDown={async (event) => {

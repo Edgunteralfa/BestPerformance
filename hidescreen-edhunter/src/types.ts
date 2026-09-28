@@ -104,10 +104,15 @@ export function chapterBudgetKey(tabId: string, heading: string): string {
   return `${tabId}:${heading}`;
 }
 
+/** Drops per-word color marks so search, chapters, and text export see the words themselves. */
+export function visibleText(text: string): string {
+  return text.replace(/\{\{#[0-9a-fA-F]{6}\}\}|\{\{\/\}\}/g, '');
+}
+
 export function headingAt(text: string, index: number | null): string {
   if (index === null) return '';
   const line = text.split('\n')[index] ?? '';
-  return line.startsWith('# ') ? line.slice(2).trim() : '';
+  return line.startsWith('# ') ? visibleText(line.slice(2)).trim() : '';
 }
 
 export function normalizePitchSeconds(value: unknown): number {

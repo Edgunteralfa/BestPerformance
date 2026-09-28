@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { formatMessage, useI18n } from '../i18n';
 import { formatClock } from '../hooks/usePitchTimer';
 import { parseText } from '../lineMarkup';
-import { chapterBudgetKey } from '../types';
+import { chapterBudgetKey, visibleText } from '../types';
 import '../styles/RehearsalPanel.css';
 
 interface RehearsalPanelProps {
@@ -66,7 +66,7 @@ function RehearsalPanel({
     const next: ReviewRow[] = [];
     parseText(text).forEach((line, index) => {
       if (line.kind !== 'heading') return;
-      const name = line.text.trim();
+      const name = visibleText(line.text).trim();
       if (!name) return;
       const spentMs = byChapter[`${tabId}:${index}`] ?? 0;
       const budgetMs = (chapterBudgets[chapterBudgetKey(tabId, name)] ?? 0) * 1000;
