@@ -174,8 +174,8 @@ function TabBar({
         />
       ) : null}
       {showTimer ? <div className="pitch-timer">
-        <span className={`timer-total${totalPace === 'soon' || totalPace === 'warn' || totalPace === 'over' ? ` ${totalPace}` : ''}`} title={totalLabel}>{totalLabel}</span>
-        <span className={`timer-chapter${chapterPace === 'soon' || chapterPace === 'warn' || chapterPace === 'over' ? ` ${chapterPace}` : ''}`} title={chapterLabel}>{chapterLabel}</span>
+        <span className={`timer-total${totalPace === 'mid' || totalPace === 'soon' || totalPace === 'warn' || totalPace === 'over' ? ` ${totalPace}` : ''}`} title={totalLabel}>{totalLabel}</span>
+        <span className={`timer-chapter${chapterPace === 'mid' || chapterPace === 'soon' || chapterPace === 'warn' || chapterPace === 'over' ? ` ${chapterPace}` : ''}`} title={chapterLabel}>{chapterLabel}</span>
         <button type="button" className="timer-button" onClick={onToggleTimer} title={running ? pauseLabel : startLabel}>
           {running ? pauseLabel : startLabel}
         </button>

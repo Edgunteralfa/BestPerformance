@@ -36,6 +36,11 @@
   font-size: 11px;
 }
 
+.timer-total.mid,
+.timer-chapter.mid {
+  color: #4db8ff;
+}
+
 .timer-total.soon,
 .timer-chapter.soon {
   color: #ff9a3c;

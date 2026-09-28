@@ -65,7 +65,7 @@ function AppShell({
   const [liveNavWidth, setLiveNavWidth] = useState<number | null>(null);
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [showReview, setShowReview] = useState(false);
-  const [edgeAlarm, setEdgeAlarm] = useState<'off' | 'soon' | 'over'>('off');
+  const [edgeAlarm, setEdgeAlarm] = useState<'off' | 'mid' | 'soon' | 'over'>('off');
   const [blind, setBlind] = useState(false);
   const [peek, setPeek] = useState(false);
   const pendingReveal = useRef<number | null>(null);
@@ -483,7 +483,7 @@ function AppShell({
   useEffect(() => {
     const paced = chapterBudgetMs > 0 ? paceOf(chapterRemaining, chapterBudgetMs) : paceOf(totalRemaining, pitchMs);
     const token = chapterBudgetMs > 0 ? chapterKey : 'pitch';
-    const kind = paced === 'soon' || paced === 'over' ? paced : null;
+    const kind = paced === 'mid' || paced === 'soon' || paced === 'over' ? paced : null;
     if (!kind) {
       overChapter.current = '';
       return;
@@ -565,7 +565,7 @@ function AppShell({
 
   return (
     <div
-      className={`app${windowActive ? ' is-active' : ''}${edgeAlarm === 'soon' ? ' chapter-alarm-soon' : ''}${edgeAlarm === 'over' ? ' chapter-alarm-over' : ''}`}
+      className={`app${windowActive ? ' is-active' : ''}${edgeAlarm === 'mid' ? ' chapter-alarm-mid' : ''}${edgeAlarm === 'soon' ? ' chapter-alarm-soon' : ''}${edgeAlarm === 'over' ? ' chapter-alarm-over' : ''}`}
       style={{
         backgroundColor: config.bgColor,
         opacity: config.opacity,
