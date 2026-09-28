@@ -55,11 +55,17 @@ One talk lives in tabs. Six tabs is the limit. Each tab has its own text, name, 
 
 A chapter is a line you mark with **H**, or a line that starts with `# `. On a wide window those lines become the list on the left. Click one to jump. `Ctrl+Shift+←` and `Ctrl+Shift+→` move between chapters and leave the arrow keys for your slides. `Ctrl+Alt+↑` and `Ctrl+Alt+↓` walk the lines inside the current chapter. A white bar sits on the line you are reading.
 
-Give a chapter a time in the field beside its name, `0:45` or `1:30`. The label turns orange while a little time is left, then red when almost none is left. The window edge flashes once in the same color, orange first and red when the time is gone. **Review** shows how long each chapter actually took. A short last chapter can still scroll up to the top, so its clock starts the same way as the others.
+Give a chapter a time in the field beside its name, `0:45` or `1:30`. When half of that time is gone the label turns blue and the window edge flashes blue once. Orange is still the short remainder, then red when almost none is left and when the time is gone. If the chapter has no time of its own, the same colors follow the clock for the whole talk. **Review** shows how long each chapter actually took. A short last chapter can still scroll up to the top, so its clock starts the same way as the others.
+
+On the whole talk, a note in the corner says one minute is left, then thirty seconds. At thirty seconds the total clock pulses orange. Both notes start on. Each has its own checkbox under **What to show**.
 
 Right-click a chapter in the left list to give that row one of six colors. The color is only in the list, so the script on the right stays as you typed it. Drag the edge of the list to make it wider or narrower. Each tab remembers its own width.
 
+Select a word and right-click to give that word its own color. The rest of the line keeps the line color. **Remove color** puts the word back. A heading, a highlight, and a note still color the whole line, the way they did before. Search, the chapter list, and a text export show the words without those marks.
+
 The eye to the left of the lock hides the script and leaves the chapter list. That is for a rehearsal where you only want the headings. Hold `Ctrl+Alt+Shift+Period` to peek at the current line, then let go and it hides again. `Ctrl+Alt+Shift+J` jumps to the tab whose name is Questions, and the next press brings you back to the line you left.
+
+The arrow just left of the eye hides your pointer from the person watching the share. It starts off. Over this window their cursor disappears at the edge, so it does not trace the notes. You still see a pointer, and you can still click and select text. The same switch covers the facts window. The checkbox at the top of settings does the same thing and applies at once.
 
 A practical split:
 
@@ -70,7 +76,7 @@ A practical split:
 | Numbers | Only if it is long; short figures belong in the **12** window |
 | Close | The ask, the date, the next step |
 
-The **12** window is a second page for figures and definitions. It has its own type size and its own opacity. Closing it hides it. It does not quit the app.
+The **12** window is a second page for figures and definitions. It has its own type size and its own opacity. It scrolls with the same thin dark bar as the chapter list. Closing it hides it. It does not quit the app.
 
 The search field sits with the tabs. It looks through the whole talk, and the match list uses the same thin dark scrollbar as the chapter list. The arrow beside the field is the part you will use more often than the field itself: uncheck the tabs you do not want in the results. A pitch tab can stay out while Questions and Numbers stay in. That choice is remembered for this talk, and a different talk keeps its own.
 
@@ -139,7 +145,7 @@ xattr -dr com.apple.quarantine "/path/to/Node Terminal.app"
 
 ## Daily use
 
-Drag the title to move the window. On Windows the title carries a small “by EdHunter”. Drag the bottom-right corner to resize. The gear opens settings. Colors, type, tab names, opacity, and the Alt+Tab name apply when you press Save. The checkboxes that hide controls apply at once. The interface language switches at once.
+Drag the title to move the window. On Windows the title carries a small “by EdHunter”. Drag the bottom-right corner to resize. The next launch opens where you left it, at the size you left it. A first launch, or a window that was never resized from the old 400 by 200 size, opens at 800 by 400. `Ctrl+Shift+R` still puts it back to that default place and size. The gear opens settings. Colors, type, tab names, opacity, and the Alt+Tab name apply when you press Save. The checkboxes that hide controls, and the cursor checkbox, apply at once. The interface language switches at once.
 
 The lock lets clicks fall through. While it is on, use `Ctrl+Shift+L` or `Escape`. `Ctrl+Shift+E` unlocks for a quick edit and locks again when the click leaves the window.
 
@@ -214,11 +220,17 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 Глава — строка с кнопкой **H** или строка, которая начинается с `# `. Если окно достаточно широкое, эти строки собираются в список слева. Нажатие открывает нужное место. `Ctrl+Shift+←` и `Ctrl+Shift+→` переключают главы и не мешают стрелкам в слайдах. `Ctrl+Alt+↑` и `Ctrl+Alt+↓` идут по строкам текущей главы. У строки, на которой вы остановились, слева белая черта.
 
-Справа от названия главы можно задать время: `0:45` или `1:30`. Когда времени остаётся немного, подпись становится оранжевой, а когда его почти не осталось — красной. Край окна один раз мигает тем же цветом: сначала оранжевым, потом красным, когда время вышло. Кнопка «Итог» показывает, сколько на самом деле ушло на каждую главу. Короткая последняя глава тоже доезжает до верхнего края, и её таймер начинается так же, как у остальных.
+Справа от названия главы можно задать время: `0:45` или `1:30`. Когда проходит половина этого времени, подпись становится голубой, и край окна один раз мигает голубым. Оранжевый по-прежнему значит, что осталось немного, красный — что почти ничего не осталось или время уже вышло. Если у главы своего времени нет, те же цвета идут по часам всего выступления. Кнопка «Итог» показывает, сколько на самом деле ушло на каждую главу. Короткая последняя глава тоже доезжает до верхнего края, и её таймер начинается так же, как у остальных.
+
+На всё выступление в углу появляется надпись «Осталась 1 минута», затем «Осталось 30 секунд». На последних тридцати секундах общие часы пульсируют оранжевым. Обе подсказки сначала включены. У каждой своя галочка в блоке «Что показывать».
 
 Правый клик по главе в списке слева ставит строке один из шести цветов. Цвет только в списке, текст справа остаётся таким, каким вы его написали. Край списка можно потянуть и сделать его шире или уже. У каждой вкладки своя ширина, и она запоминается.
 
+Выделите слово и нажмите правую кнопку, чтобы задать цвет только ему. Остальная строка сохраняет цвет строки. «Убрать цвет» возвращает слово к цвету строки. Заголовок, выделение и заметка по-прежнему красят строку целиком. Поиск, список глав и текстовый файл показывают слова без этих меток.
+
 Глаз слева от замка прячет текст и оставляет список глав. Так удобно репетировать, когда нужны только заголовки. Удерживайте `Ctrl+Alt+Shift+Period`, чтобы на секунду увидеть текущую строку. Отпустите — она снова спрячется. `Ctrl+Alt+Shift+J` переходит во вкладку, в названии которой есть «Вопросы», а следующее нажатие возвращает к строке, с которой вы ушли.
+
+Стрелка сразу слева от глаза прячет курсор от того, кто смотрит демонстрацию. Сначала она выключена. Над окном заметок его курсор пропадает у границы и не обводит невидимый текст. Вы свою стрелку видите и по-прежнему можете нажимать и выделять текст. Та же кнопка действует и на окно цифр. Галочка в самом верху настроек делает то же самое и срабатывает сразу.
 
 Пример, как разложить питч:
 
@@ -229,7 +241,7 @@ BestPerformance бесплатная. Навсегда и для всех.
 | Цифры | Если цифр много. Короткие лучше вынести в окно **12** |
 | Финал | Просьба, дата, следующий шаг |
 
-Окно **12** — отдельная страница для цифр и коротких формулировок. Размер шрифта и прозрачность у него свои. Крестик только прячет это окно, программа при этом не закрывается.
+Окно **12** — отдельная страница для цифр и коротких формулировок. Размер шрифта и прозрачность у него свои. Полоса прокрутки такая же тонкая и тёмная, как у списка глав. Крестик только прячет это окно, программа при этом не закрывается.
 
 Поле поиска стоит рядом с вкладками и смотрит по всему выступлению. Список совпадений прокручивается такой же тонкой тёмной полосой, как список глав. Стрелка у поля важнее самого поля: снимите галочки с вкладок, в которых искать не нужно. Питч можно исключить, а «Вопросы» и «Цифры» оставить. Выбор запоминается для этого выступления. У другого выступления свой.
 
@@ -298,7 +310,7 @@ xattr -dr com.apple.quarantine "/путь/к/Node Terminal.app"
 
 ## В работе
 
-Окно переносится за заголовок. На Windows рядом с названием мелким шрифтом написано by EdHunter. За правый нижний угол меняются ширина и высота. Шестерёнка открывает настройки. Цвета, шрифт, названия вкладок, прозрачность и имя в Alt+Tab начинают действовать после кнопки «Сохранить». Галочки, которые прячут кнопки с окна, срабатывают сразу. Язык интерфейса меняется сразу.
+Окно переносится за заголовок. На Windows рядом с названием мелким шрифтом написано by EdHunter. За правый нижний угол меняются ширина и высота. Следующий запуск открывает его там же и того же размера. Первый запуск, или окно, которое так и осталось старым 400 на 200, открывается 800 на 400. `Ctrl+Shift+R` по-прежнему возвращает это место и размер по умолчанию. Шестерёнка открывает настройки. Цвета, шрифт, названия вкладок, прозрачность и имя в Alt+Tab начинают действовать после кнопки «Сохранить». Галочки, которые прячут кнопки с окна, и галочка курсора срабатывают сразу. Язык интерфейса меняется сразу.
 
 Замок пропускает клики в программу под окном. Пока он включён, снять его можно сочетанием `Ctrl+Shift+L` или клавишей `Escape`. `Ctrl+Shift+E` ненадолго открывает текст для правки и снова включает замок, когда вы нажимаете мимо окна.
 
