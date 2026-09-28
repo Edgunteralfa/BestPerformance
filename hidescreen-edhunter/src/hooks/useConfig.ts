@@ -61,6 +61,7 @@ export function useConfig() {
           mainChrome: normalizeMainChrome(loaded.mainChrome),
           cardChrome: normalizeCardChrome(loaded.cardChrome),
           cardText: typeof loaded.cardText === 'string' ? loaded.cardText : '',
+          cursorCloak: loaded.cursorCloak === true,
           cardVisible: loaded.cardVisible === true,
           x: finiteOr(loaded.x, DEFAULT_CONFIG.x),
           y: finiteOr(loaded.y, DEFAULT_CONFIG.y),

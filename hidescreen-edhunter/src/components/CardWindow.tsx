@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent } from 'react';
 import { getCurrentWindow, LogicalPosition, LogicalSize } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
+import LocalCursor from './LocalCursor';
 import { I18nProvider, useI18n } from '../i18n';
 import { useConfig } from '../hooks/useConfig';
 import { fillEditor, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
@@ -36,6 +37,7 @@ function CardShell({
 }) {
   const { t } = useI18n();
   const [text, setText] = useState(config.cardText);
+  const [cursorCloak, setCursorCloak] = useState(config.cursorCloak);
   const [active, setActive] = useState(false);
   const resizeDrag = useRef<{ x: number; y: number; w: number; h: number } | null>(null);
   const placed = useRef(false);
@@ -63,6 +65,15 @@ function CardShell({
     }, 300);
     return () => window.clearTimeout(id);
   }, [setConfig, text]);
+
+  useEffect(() => {
+    const unlisten = listen<boolean>('cursor-cloak', (event) => {
+      setCursorCloak(event.payload);
+    });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, []);
 
   useEffect(() => {
     const unlisten = cardWindow.onFocusChanged(({ payload }) => {
@@ -184,9 +195,10 @@ function CardShell({
 
   return (
     <div
-      className={active ? 'app is-active' : 'app'}
+      className={`app${active ? ' is-active' : ''}${cursorCloak ? ' cursor-cloak' : ''}`}
       style={{ backgroundColor: config.bgColor, opacity: config.cardOpacity }}
     >
+      <LocalCursor active={cursorCloak} />
       <div data-tauri-drag-region className="title-bar card-title-bar">
         <div data-tauri-drag-region className="title-left">
           <span data-tauri-drag-region className="title card-title">{t('cardTitle')}</span>

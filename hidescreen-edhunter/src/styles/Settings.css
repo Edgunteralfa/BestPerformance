@@ -77,6 +77,11 @@
   gap: 6px 16px;
 }
 
+.settings-section label.checkbox-label {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
 .settings-section label.chrome-row {
   justify-content: flex-start;
   gap: 8px;

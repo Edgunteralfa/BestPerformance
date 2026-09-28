@@ -341,6 +341,21 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
 
       <div className="settings-content">
         <div className="settings-section">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={config.cursorCloak}
+              onChange={() => {
+                const enabled = !config.cursorCloak;
+                void setConfig({ cursorCloak: enabled });
+                void emit('cursor-cloak', enabled);
+              }}
+            />
+            <strong>{t('cursorCloak')}</strong>
+          </label>
+          <p className="settings-hint">{t('cursorCloakHint')}</p>
+        </div>
+        <div className="settings-section">
           <label>
             <strong>{t('chromeTitle')}</strong>
           </label>

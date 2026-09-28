@@ -78,6 +78,15 @@
   flex: 1;
 }
 
+.cursor-cloak-button {
+  width: 24px;
+  height: 20px;
+}
+
+.cursor-cloak-button.on {
+  color: #4db8ff;
+}
+
 .blind-button {
   width: 24px;
   height: 20px;

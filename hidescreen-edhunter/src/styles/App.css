@@ -26,6 +26,27 @@ body {
   position: relative;
 }
 
+.app.cursor-cloak,
+.app.cursor-cloak * {
+  cursor: none !important;
+}
+
+.local-cursor {
+  position: fixed;
+  z-index: 80;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.local-cursor.beam {
+  width: 2px;
+  height: 18px;
+  margin-left: -1px;
+  margin-top: -9px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px #111111;
+}
+
 .app.is-active {
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.72),

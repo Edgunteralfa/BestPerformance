@@ -181,6 +181,7 @@ export interface Config {
   activeTabId: string;
   firstRunShown: boolean;
   locked: boolean; // Mouse pass-through mode
+  cursorCloak: boolean; // Hide the system pointer over this window
 
   // Updates
   autoCheckUpdates: boolean;
@@ -252,6 +253,7 @@ export const DEFAULT_CONFIG: Config = {
   activeTabId: 'tab-1',
   firstRunShown: false,
   locked: false,
+  cursorCloak: false,
   autoCheckUpdates: true,
   language: 'en',
   pitchSeconds: 300,

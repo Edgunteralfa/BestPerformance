@@ -86,6 +86,71 @@ fn set_click_through(window: WebviewWindow, enabled: bool) -> Result<(), String>
     }
 }
 
+/// A cursor picture that stays in the capture. It is not a webview, so it cannot
+/// take clicks from the notes window. The notes window is excluded and covers it
+/// on the local screen.
+#[tauri::command]
+fn place_cursor_decoy(app: AppHandle, x: f64, y: f64) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("cursor-decoy") {
+        let _ = window.destroy();
+    }
+    #[cfg(windows)]
+    {
+        let main = app.get_webview_window("main");
+        let scale = main
+            .as_ref()
+            .and_then(|window| window.scale_factor().ok())
+            .unwrap_or(1.0);
+        let cover = main.and_then(|window| window.hwnd().ok()).map(|hwnd| hwnd.0 as isize);
+        return windows_api::show_cursor_mark((x * scale) as i32, (y * scale) as i32, cover);
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = (x, y);
+        Ok(())
+    }
+}
+
+#[tauri::command]
+fn cursor_inside_app(app: AppHandle) -> Result<bool, String> {
+    #[cfg(windows)]
+    {
+        let mut rects = Vec::new();
+        for label in ["main", "card"] {
+            let Some(window) = app.get_webview_window(label) else {
+                continue;
+            };
+            if !window.is_visible().unwrap_or(false) {
+                continue;
+            }
+            let pos = window.outer_position().map_err(|error| error.to_string())?;
+            let size = window.outer_size().map_err(|error| error.to_string())?;
+            rects.push((
+                pos.x,
+                pos.y,
+                pos.x + size.width as i32,
+                pos.y + size.height as i32,
+            ));
+        }
+        return Ok(windows_api::cursor_inside(&rects));
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = app;
+        Ok(false)
+    }
+}
+
+#[tauri::command]
+fn hide_cursor_decoy(app: AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("cursor-decoy") {
+        let _ = window.destroy();
+    }
+    #[cfg(windows)]
+    windows_api::hide_cursor_mark();
+    Ok(())
+}
+
 #[tauri::command]
 fn get_screen_size(window: WebviewWindow) -> Result<(u32, u32), String> {
     if let Some(monitor) = window.current_monitor().map_err(|e| e.to_string())? {
@@ -287,6 +352,11 @@ pub fn run() {
                 if let Some(card) = window.app_handle().get_webview_window("card") {
                     let _ = card.destroy();
                 }
+                if let Some(decoy) = window.app_handle().get_webview_window("cursor-decoy") {
+                    let _ = decoy.destroy();
+                }
+                #[cfg(windows)]
+                windows_api::destroy_cursor_mark();
             }
         })
         .invoke_handler(tauri::generate_handler![
@@ -294,6 +364,9 @@ pub fn run() {
             check_windows_version,
             apply_capture_exclusion,
             set_click_through,
+            place_cursor_decoy,
+            hide_cursor_decoy,
+            cursor_inside_app,
             get_screen_size,
             install_scroll_hook,
             uninstall_scroll_hook,

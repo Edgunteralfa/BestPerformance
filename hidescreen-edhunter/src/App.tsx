@@ -12,6 +12,7 @@ import { useGlobalHotkeys } from './hooks/useGlobalHotkeys';
 import { formatClock, paceOf, usePitchTimer } from './hooks/usePitchTimer';
 import { isMac } from './platform';
 import { OPACITY_LEVELS, DEFAULT_CONFIG, chapterBudgetKey, headingAt, windowMaskTitle, type NoteTab } from './types';
+import LocalCursor from './components/LocalCursor';
 import TitleBar from './components/TitleBar';
 import TabBar from './components/TabBar';
 import TextEditor, { type TextEditorHandle } from './components/TextEditor';
@@ -589,13 +590,14 @@ function AppShell({
 
   return (
     <div
-      className={`app${windowActive ? ' is-active' : ''}${edgeAlarm === 'mid' ? ' chapter-alarm-mid' : ''}${edgeAlarm === 'soon' ? ' chapter-alarm-soon' : ''}${edgeAlarm === 'over' ? ' chapter-alarm-over' : ''}`}
+      className={`app${windowActive ? ' is-active' : ''}${config.cursorCloak ? ' cursor-cloak' : ''}${edgeAlarm === 'mid' ? ' chapter-alarm-mid' : ''}${edgeAlarm === 'soon' ? ' chapter-alarm-soon' : ''}${edgeAlarm === 'over' ? ' chapter-alarm-over' : ''}`}
       style={{
         backgroundColor: config.bgColor,
         opacity: config.opacity,
       }}
     >
       <AppDialog />
+      <LocalCursor active={config.cursorCloak} />
       <TitleBar
         title={shellName}
         showBrand={!isMac}

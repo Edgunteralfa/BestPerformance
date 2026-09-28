@@ -1,5 +1,6 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
+import { emit } from '@tauri-apps/api/event';
 import type { Config } from '../types';
 import '../styles/BottomBar.css';
 import { useI18n } from '../i18n';
@@ -65,7 +66,11 @@ function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading,
     setConfig({ fontSize: newSize });
   };
 
-  if (!showFontSize && !showHeading && !showMarks && !showClear && !showBlind && !showLock) return null;
+  const toggleCursorCloak = () => {
+    const enabled = !config.cursorCloak;
+    void setConfig({ cursorCloak: enabled });
+    void emit('cursor-cloak', enabled);
+  };
 
   return (
     <div className="bottom-bar">
@@ -107,6 +112,17 @@ function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading,
       ) : null}
 
       <div className="spacer" />
+
+      <button
+        type="button"
+        className={`control-button cursor-cloak-button${config.cursorCloak ? ' on' : ''}`}
+        onClick={toggleCursorCloak}
+        title={t('cursorCloakButton')}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 18" fill="none" aria-hidden="true">
+          <path d="M1 1 L1 15 L4.2 11.6 L7.4 17 L9.2 16 L6 10.6 L11 10.6 Z" fill="currentColor" />
+        </svg>
+      </button>
 
       {showBlind ? (
         <button
