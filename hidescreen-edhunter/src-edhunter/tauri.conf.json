@@ -14,8 +14,8 @@
     "windows": [
       {
         "title": "Node Terminal",
-        "width": 400,
-        "height": 200,
+        "width": 800,
+        "height": 400,
         "minWidth": 200,
         "minHeight": 150,
         "resizable": false,

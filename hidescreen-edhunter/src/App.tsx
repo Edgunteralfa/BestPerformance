@@ -546,9 +546,31 @@ function AppShell({
   };
 
   useEffect(() => {
-    appWindow.show();
     document.documentElement.lang = config.language;
   }, [config.language]);
+
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      await appWindow.setSize(new LogicalSize(config.width, config.height));
+      await appWindow.setPosition(new LogicalPosition(config.x, config.y));
+      if (alive) await appWindow.show();
+    })();
+    const unlisten = appWindow.onMoved(({ payload }) => {
+      void appWindow.scaleFactor().then((scale) => {
+        void setConfig({
+          x: Math.round(payload.x / scale),
+          y: Math.round(payload.y / scale),
+        });
+      });
+    });
+    return () => {
+      alive = false;
+      void unlisten.then((fn) => fn());
+    };
+    // Place the window once from the saved size and position.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!config.cardVisible) return;
@@ -715,6 +737,14 @@ function AppShell({
         }}
         onPointerUp={() => {
           resizeDrag.current = null;
+          void (async () => {
+            const size = await appWindow.innerSize();
+            const scale = await appWindow.scaleFactor();
+            await setConfig({
+              width: Math.round(size.width / scale),
+              height: Math.round(size.height / scale),
+            });
+          })();
         }}
       />
     </div>

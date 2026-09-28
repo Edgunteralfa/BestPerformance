@@ -237,8 +237,8 @@ export const MAX_PITCH_MEMORIES = 30;
 export const DEFAULT_CONFIG: Config = {
   x: 100,
   y: 100,
-  width: 400,
-  height: 200,
+  width: 800,
+  height: 400,
   opacity: 0.85,
   fontFamily: 'Consolas, "Courier New", monospace',
   fontSize: 14,

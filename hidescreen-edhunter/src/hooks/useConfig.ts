@@ -62,6 +62,14 @@ export function useConfig() {
           cardChrome: normalizeCardChrome(loaded.cardChrome),
           cardText: typeof loaded.cardText === 'string' ? loaded.cardText : '',
           cardVisible: loaded.cardVisible === true,
+          x: finiteOr(loaded.x, DEFAULT_CONFIG.x),
+          y: finiteOr(loaded.y, DEFAULT_CONFIG.y),
+          width: loaded.width === 400 && loaded.height === 200
+            ? DEFAULT_CONFIG.width
+            : finiteOr(loaded.width, DEFAULT_CONFIG.width),
+          height: loaded.width === 400 && loaded.height === 200
+            ? DEFAULT_CONFIG.height
+            : finiteOr(loaded.height, DEFAULT_CONFIG.height),
           cardX: finiteOr(loaded.cardX, DEFAULT_CONFIG.cardX),
           cardY: finiteOr(loaded.cardY, DEFAULT_CONFIG.cardY),
           cardWidth: finiteOr(loaded.cardWidth, DEFAULT_CONFIG.cardWidth),
