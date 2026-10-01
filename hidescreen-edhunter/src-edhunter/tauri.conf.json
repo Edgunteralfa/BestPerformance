@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "BestPerformance",
   "mainBinaryName": "BestPerformance",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "identifier": "com.hidescreen.app",
   "build": {
     "frontendDist": "../dist",

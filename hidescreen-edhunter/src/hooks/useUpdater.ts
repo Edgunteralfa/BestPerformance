@@ -7,7 +7,7 @@ import { appConfirm, appMessage } from '../components/AppDialog';
 import { checkForUpdates } from '../utils/updateChecker';
 import type { Language } from '../i18n';
 
-const APP_VERSION = '1.1.0';
+const APP_VERSION = __APP_VERSION__;
 let updateCheckStarted = false;
 
 interface UpdaterState {

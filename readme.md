@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/Edgunteralfa">Edgunteralfa</a> (EdHunter)
   · <a href="https://github.com/Edgunteralfa/BestPerformance">github.com/Edgunteralfa/BestPerformance</a>
-  · 1.2.0
+  · 1.2.1
   · <a href="CHANGELOG.md">changelog</a>
 </p>
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- The update check uses the version of the build itself. After 1.2.1 is installed, the app no longer asks to install 1.2.0 again.
+
 ## 1.2.0
 
 - Halfway through a chapter the label turns blue and the window edge flashes blue once. Orange and red still mark the short remainder and the end.
@@ -27,6 +31,10 @@
 - First public release. A notes window for talks and calls, on top of other programs, and on Windows left out of screen capture.
 
 # История изменений
+
+## 1.2.1
+
+- Проверка обновления берёт номер самой сборки. После установки 1.2.1 программа больше не предлагает поставить 1.2.0 ещё раз.
 
 ## 1.2.0
 

@@ -1,6 +1,6 @@
 [package]
 name = "hidescreen"
-version = "1.2.0"
+version = "1.2.1"
 description = "Transparent overlay excluded from screen capture"
 authors = ["Edgunteralfa"]
 repository = "https://github.com/Edgunteralfa/BestPerformance"

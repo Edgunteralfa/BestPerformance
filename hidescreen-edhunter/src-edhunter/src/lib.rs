@@ -219,7 +219,7 @@ async fn fetch_latest_release() -> Result<String, String> {
         .map_err(|error| error.to_string())?;
     let response = client
         .get("https://api.github.com/repos/Edgunteralfa/BestPerformance/releases/latest")
-        .header("User-Agent", "BestPerformance/1.1.0")
+        .header("User-Agent", concat!("BestPerformance/", env!("CARGO_PKG_VERSION")))
         .header("Accept", "application/vnd.github+json")
         .header("X-GitHub-Api-Version", "2022-11-28")
         .send()
