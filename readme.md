@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/Edgunteralfa">Edgunteralfa</a> (EdHunter)
   · <a href="https://github.com/Edgunteralfa/BestPerformance">github.com/Edgunteralfa/BestPerformance</a>
-  · 1.1.0
+  · 1.2.0
   · <a href="CHANGELOG.md">changelog</a>
 </p>
 
@@ -61,7 +61,7 @@ On the whole talk, a note in the corner says one minute is left, then thirty sec
 
 Right-click a chapter in the left list to give that row one of six colors. The color is only in the list, so the script on the right stays as you typed it. Drag the edge of the list to make it wider or narrower. Each tab remembers its own width.
 
-Select a word and right-click to give that word its own color. The rest of the line keeps the line color. **Remove color** puts the word back. A heading, a highlight, and a note still color the whole line, the way they did before. Search, the chapter list, and a text export show the words without those marks.
+Select a word and right-click to give that word its own color. The rest of the line keeps the line color. **Remove color** puts the word back. A heading, a highlight, and a note still color the whole line, the way they did before. The same colors show in the chapter list. A text export shows the words without those marks. A search hit opens on that line and the matched words flash blue twice, so a long question still shows which word was found. If that chapter was below the left list, the list scrolls until the heading is in view.
 
 The eye to the left of the lock hides the script and leaves the chapter list. That is for a rehearsal where you only want the headings. Hold `Ctrl+Alt+Shift+Period` to peek at the current line, then let go and it hides again. `Ctrl+Alt+Shift+J` jumps to the tab whose name is Questions, and the next press brings you back to the line you left.
 
@@ -226,7 +226,7 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 Правый клик по главе в списке слева ставит строке один из шести цветов. Цвет только в списке, текст справа остаётся таким, каким вы его написали. Край списка можно потянуть и сделать его шире или уже. У каждой вкладки своя ширина, и она запоминается.
 
-Выделите слово и нажмите правую кнопку, чтобы задать цвет только ему. Остальная строка сохраняет цвет строки. «Убрать цвет» возвращает слово к цвету строки. Заголовок, выделение и заметка по-прежнему красят строку целиком. Поиск, список глав и текстовый файл показывают слова без этих меток.
+Выделите слово и нажмите правую кнопку, чтобы задать цвет только ему. Остальная строка сохраняет цвет строки. «Убрать цвет» возвращает слово к цвету строки. Заголовок, выделение и заметка по-прежнему красят строку целиком. Те же цвета видны в списке глав слева. Текстовый файл показывает слова без этих меток. Результат поиска открывается на своей строке, и найденные слова дважды мигают синим, так что в длинном вопросе видно, какое слово нашлось. Если эта глава была ниже левого списка, список прокручивается, пока заголовок не окажется в поле зрения.
 
 Глаз слева от замка прячет текст и оставляет список глав. Так удобно репетировать, когда нужны только заголовки. Удерживайте `Ctrl+Alt+Shift+Period`, чтобы на секунду увидеть текущую строку. Отпустите — она снова спрячется. `Ctrl+Alt+Shift+J` переходит во вкладку, в названии которой есть «Вопросы», а следующее нажатие возвращает к строке, с которой вы ушли.
 

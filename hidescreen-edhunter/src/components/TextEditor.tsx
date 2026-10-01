@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, type RefObject } from 'react';
 import { formatClock, parseDuration } from '../hooks/usePitchTimer';
-import { applyWordInk, fillEditor, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
+import { applyWordInk, fillEditor, inkRuns, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
 import { CHAPTER_LIST_COLORS, chapterBudgetKey, visibleText, type Config } from '../types';
 import WordInkMenu from './WordInkMenu';
 import { useI18n } from '../i18n';
@@ -23,6 +23,7 @@ interface TextEditorProps {
   onChapterBudget: (heading: string, seconds: number | null) => void;
   onChapterListColor: (heading: string, color: string | null) => void;
   initialReveal: number | null;
+  initialQuery: string;
   onRevealConsumed: () => void;
   blind: boolean;
   peek: boolean;
@@ -35,9 +36,50 @@ export interface TextEditorHandle {
   toggleKind: (kind: Exclude<LineKind, 'body'>) => void;
   moveChapter: (direction: 1 | -1) => void;
   moveReading: (direction: 1 | -1) => void;
-  revealLine: (index: number) => void;
+  revealLine: (index: number, query?: string) => void;
   readingIndex: () => number | null;
   ensureReading: () => void;
+}
+
+function clearSearchFlash(root: HTMLElement) {
+  root.querySelectorAll('mark.search-flash').forEach((mark) => {
+    mark.replaceWith(document.createTextNode(mark.textContent ?? ''));
+  });
+  root.normalize();
+}
+
+function flashMatches(line: HTMLElement, query: string) {
+  const needle = query.trim().toLocaleLowerCase();
+  if (!needle) return;
+  const nodes: Text[] = [];
+  const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+  let current = walker.nextNode();
+  while (current) {
+    nodes.push(current as Text);
+    current = walker.nextNode();
+  }
+  for (const textNode of nodes) {
+    const value = textNode.data;
+    const folded = value.toLocaleLowerCase();
+    const fragment = document.createDocumentFragment();
+    let from = 0;
+    let found = false;
+    while (from < value.length) {
+      const at = folded.indexOf(needle, from);
+      if (at < 0) {
+        fragment.append(value.slice(from));
+        break;
+      }
+      found = true;
+      if (at > from) fragment.append(value.slice(from, at));
+      const mark = document.createElement('mark');
+      mark.className = 'search-flash';
+      mark.textContent = value.slice(at, at + needle.length);
+      fragment.append(mark);
+      from = at + needle.length;
+    }
+    if (found) textNode.replaceWith(fragment);
+  }
 }
 
 function markReading(root: HTMLElement, index: number | null) {
@@ -84,7 +126,7 @@ function ChapterBudgetField({ seconds, onCommit }: { seconds: number | undefined
   );
 }
 
-function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidthChange, onNavWidthCommit, onActiveChapterChange, tabId, initialScroll, onScrollPosition, onChapterBudget, onChapterListColor, initialReveal, onRevealConsumed, blind, peek, showChapters }: TextEditorProps) {
+function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidthChange, onNavWidthCommit, onActiveChapterChange, tabId, initialScroll, onScrollPosition, onChapterBudget, onChapterListColor, initialReveal, initialQuery, onRevealConsumed, blind, peek, showChapters }: TextEditorProps) {
   const { t } = useI18n();
   const rootRef = useRef<HTMLDivElement>(null);
   const serializedRef = useRef(text);
@@ -93,6 +135,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
   const [colorMenu, setColorMenu] = useState<{ heading: string; x: number; y: number } | null>(null);
   const [wordMenu, setWordMenu] = useState<{ x: number; y: number } | null>(null);
   const wordRange = useRef<Range | null>(null);
+  const flashTimer = useRef<number | null>(null);
 
   useEffect(() => {
     if (!colorMenu) return;
@@ -188,7 +231,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
   const isEmpty = text.length === 0;
   const chapters = useMemo(
     () => parseText(text)
-      .map((line, index) => ({ index, text: visibleText(line.text).trim(), kind: line.kind }))
+      .map((line, index) => ({ index, text: visibleText(line.text).trim(), source: line.text, kind: line.kind }))
       .filter((line) => line.kind === 'heading' && line.text.length > 0),
     [text],
   );
@@ -244,14 +287,39 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
     }
   };
 
-  const jumpTo = (index: number) => {
+  const jumpTo = (index: number, query = '') => {
     const root = rootRef.current;
     const line = root?.querySelectorAll<HTMLElement>('.line')[index];
     if (!root || !line) return;
     root.scrollTop = line.offsetTop;
-    setActiveChapter(index);
+    const owning = chapters.reduce<number | null>(
+      (found, chapter) => (chapter.index <= index ? chapter.index : found),
+      null,
+    );
+    setActiveChapter(owning ?? index);
     setReading(index);
+    const rootNow = rootRef.current;
+    if (!rootNow || !query.trim()) return;
+    if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
+    clearSearchFlash(rootNow);
+    flashMatches(line, query);
+    flashTimer.current = window.setTimeout(() => {
+      const latest = rootRef.current;
+      if (latest) clearSearchFlash(latest);
+      flashTimer.current = null;
+    }, 1600);
   };
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav || activeChapter === null) return;
+    const row = nav.querySelector<HTMLElement>('.chapter-link.active')?.closest('.chapter-row');
+    if (!(row instanceof HTMLElement)) return;
+    const navRect = nav.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
+    if (rowRect.top < navRect.top) nav.scrollTop -= navRect.top - rowRect.top;
+    else if (rowRect.bottom > navRect.bottom) nav.scrollTop += rowRect.bottom - navRect.bottom;
+  }, [activeChapter, chapters]);
 
   const moveChapter = (direction: 1 | -1) => {
     if (chapters.length === 0) return;
@@ -295,7 +363,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
       },
       moveChapter,
       moveReading,
-      revealLine: jumpTo,
+      revealLine: (index, query) => jumpTo(index, query),
       readingIndex: () => readingRef.current,
       ensureReading: () => {
         if (readingRef.current !== null) return;
@@ -310,9 +378,9 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
 
   useLayoutEffect(() => {
     if (initialReveal === null) return;
-    jumpTo(initialReveal);
+    jumpTo(initialReveal, initialQuery);
     onRevealConsumed();
-  }, [initialReveal, onRevealConsumed]);
+  }, [initialReveal, initialQuery, onRevealConsumed]);
 
   return (
     <div className="text-editor">
@@ -352,7 +420,11 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
                   setColorMenu({ heading: chapter.text, x: event.clientX, y: event.clientY });
                 }}
               >
-                {chapter.text}
+                {inkRuns(chapter.source).map((run, runIndex) => (
+                  run.color
+                    ? <span key={runIndex} style={{ color: run.color }}>{run.text}</span>
+                    : <span key={runIndex}>{run.text}</span>
+                ))}
               </button>
               <ChapterBudgetField
                 seconds={config.chapterBudgets[chapterBudgetKey(tabId, chapter.text)]}

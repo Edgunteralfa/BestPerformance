@@ -49,6 +49,15 @@ function mergePieces(pieces: InkPiece[]): InkPiece[] {
   return merged;
 }
 
+export function inkRuns(raw: string): InkPiece[] {
+  const pieces = parsePieces(raw).map((piece) => ({ ...piece }));
+  const first = pieces[0];
+  const last = pieces[pieces.length - 1];
+  if (first) first.text = first.text.trimStart();
+  if (last) last.text = last.text.trimEnd();
+  return mergePieces(pieces);
+}
+
 function parsePieces(raw: string): InkPiece[] {
   const pieces: InkPiece[] = [];
   const pattern = /\{\{(#[0-9a-fA-F]{6})\}\}([\s\S]*?)\{\{\/\}\}/g;

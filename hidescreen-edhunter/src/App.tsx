@@ -69,7 +69,7 @@ function AppShell({
   const [edgeAlarm, setEdgeAlarm] = useState<'off' | 'mid' | 'soon' | 'over'>('off');
   const [blind, setBlind] = useState(false);
   const [peek, setPeek] = useState(false);
-  const pendingReveal = useRef<number | null>(null);
+  const pendingReveal = useRef<{ line: number; query: string } | null>(null);
   const consumeReveal = useCallback(() => { pendingReveal.current = null; }, []);
   const questionPlace = useRef<{ tabId: string; line: number | null } | null>(null);
   const seenPitchEpoch = useRef(config.pitchEpoch);
@@ -434,12 +434,12 @@ function AppShell({
     setShowReview((open) => !open);
   }, []);
 
-  const jumpToLine = useCallback((tabId: string, line: number) => {
+  const jumpToLine = useCallback((tabId: string, line: number, query: string) => {
     if (tabId === activeTab.id) {
-      editorRef.current?.revealLine(line);
+      editorRef.current?.revealLine(line, query);
       return;
     }
-    pendingReveal.current = line;
+    pendingReveal.current = { line, query };
     void selectTab(tabId);
   }, [activeTab.id, selectTab]);
 
@@ -456,7 +456,7 @@ function AppShell({
     const saved = questionPlace.current;
     if (saved) {
       questionPlace.current = null;
-      if (saved.line !== null) pendingReveal.current = saved.line;
+      if (saved.line !== null) pendingReveal.current = { line: saved.line, query: '' };
       if (saved.tabId !== activeTab.id) void selectTab(saved.tabId);
       else if (saved.line !== null) editorRef.current?.revealLine(saved.line);
       return;
@@ -682,7 +682,8 @@ function AppShell({
           onScrollPosition={rememberScroll}
           onChapterBudget={setChapterBudget}
           onChapterListColor={setChapterListColor}
-          initialReveal={pendingReveal.current}
+          initialReveal={pendingReveal.current?.line ?? null}
+          initialQuery={pendingReveal.current?.query ?? ''}
           onRevealConsumed={consumeReveal}
           blind={blind}
           peek={peek}

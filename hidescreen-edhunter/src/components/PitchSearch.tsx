@@ -9,7 +9,7 @@ interface PitchSearchProps {
   tabs: NoteTab[];
   excludedTabIds: string[];
   onExcludedChange: (excluded: string[]) => void;
-  onJump: (tabId: string, line: number) => void;
+  onJump: (tabId: string, line: number, query: string) => void;
 }
 
 interface Hit {
@@ -83,7 +83,7 @@ function PitchSearch({ tabs, excludedTabIds, onExcludedChange, onJump }: PitchSe
 
   const jump = (hit: Hit | undefined) => {
     if (!hit) return;
-    onJump(hit.tabId, hit.line);
+    onJump(hit.tabId, hit.line, query);
     setOpen(false);
   };
 

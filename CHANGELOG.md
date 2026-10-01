@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.0
+
+- Halfway through a chapter the label turns blue and the window edge flashes blue once. Orange and red still mark the short remainder and the end.
+- One minute left, then thirty seconds, for the whole talk. At thirty seconds the total clock pulses orange. Both notes start on, and each has its own checkbox.
+- The window opens where you left it, at the size you left it. A first launch, or the old 400 by 200 size, opens at 800 by 400.
+- Hide the shared pointer over the notes. It starts off. Their cursor disappears at the edge. You still see a pointer and can still click. The same switch covers the facts window.
+- Select a word and right-click to color it. Line colors stay. The same colors show in the chapter list. Notes and settings already saved stay where they are.
+- The facts window scrolls with the same thin dark bar as the chapter list.
+- A search hit opens on that line. The matched words flash blue twice, so a long question still shows which word was found. If that chapter was outside the left list, the list scrolls until the heading is in view.
+
 ## 1.1.0
 
 - Hide buttons and sliders you do not need. The last setting stays.
@@ -17,6 +27,16 @@
 - First public release. A notes window for talks and calls, on top of other programs, and on Windows left out of screen capture.
 
 # История изменений
+
+## 1.2.0
+
+- На половине времени главы подпись становится синей, и край окна один раз мигает синим. Оранжевый и красный по-прежнему отмечают короткий остаток и конец.
+- На всём выступлении отдельно звучат «осталась минута» и «осталось тридцать секунд». На тридцати секундах общие часы пульсируют оранжевым. Обе подсказки включены сразу, и у каждой своя галочка.
+- Окно открывается там, где его оставили, и того же размера. Первый запуск, или старый размер 400 на 200, открывается как 800 на 400.
+- Можно спрятать курсор от собеседника. Сначала выключено. Над окном заметок его стрелка пропадает у границы. Свою стрелку вы видите и по-прежнему можете нажимать. Та же кнопка действует на окно цифр.
+- Выделите слово и правой кнопкой задайте ему цвет. Цвета строк остаются. Те же цвета видны в списке глав слева. Уже сохранённые заметки и настройки остаются на месте.
+- Окно цифр прокручивается такой же тонкой тёмной полосой, как список глав.
+- Результат поиска открывается на своей строке. Найденные слова дважды мигают синим, так что в длинном вопросе видно, какое слово нашлось. Если глава была вне левого списка, список прокручивается, пока заголовок не окажется в поле зрения.
 
 ## 1.1.0
 

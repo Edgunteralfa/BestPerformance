@@ -24,7 +24,7 @@ interface TabBarProps {
   pauseLabel: string;
   resetLabel: string;
   reviewLabel: string;
-  onSearchJump: (tabId: string, line: number) => void;
+  onSearchJump: (tabId: string, line: number, query: string) => void;
   searchExcludedTabIds: string[];
   onSearchTabsChange: (excluded: string[]) => void;
   showTabs: boolean;

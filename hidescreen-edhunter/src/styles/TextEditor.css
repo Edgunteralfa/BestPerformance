@@ -183,6 +183,23 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+.notes .line mark.search-flash {
+  color: inherit;
+  background: transparent;
+  animation: search-flash 0.7s ease-in-out 2;
+}
+
+@keyframes search-flash {
+  0%,
+  100% {
+    background: transparent;
+  }
+  40%,
+  60% {
+    background: rgba(77, 184, 255, 0.7);
+  }
+}
+
 .text-area.is-blind .line {
   opacity: 0;
 }
