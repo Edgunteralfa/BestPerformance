@@ -362,7 +362,7 @@ function AppShell({
     if (area instanceof HTMLElement) scrollByTab.current[activeTab.id] = area.scrollTop;
     setGlideOn(false);
     setGlideHeld(false);
-    await setConfig({ activeTabId: tab.id, text: tab.text });
+    await setConfig({ activeTabId: tab.id, text: tab.text, readingMode: tab.readingMode });
   }, [activeTab.id, config.tabs, setConfig]);
 
   const reorderTabs = useCallback(async (tabs: NoteTab[]) => {
@@ -472,20 +472,34 @@ function AppShell({
     setShowReview((open) => !open);
   }, [storeRehearsal]);
 
+  const pauseGlide = useCallback(() => {
+    setGlideOn(false);
+    setGlideHeld(false);
+    if (config.glideWithTimer && timer.running) {
+      storeRehearsal();
+      timer.pause();
+    }
+  }, [config.glideWithTimer, storeRehearsal, timer]);
+
+  const armChapter = useCallback((index: number) => {
+    setGlideHeld(false);
+    if (config.glideWithTimer) timer.clearChapter(`${activeTab.id}:${index}`);
+  }, [activeTab.id, config.glideWithTimer, timer]);
+
   const setReadingMode = useCallback((mode: ReadingMode) => {
-    void setConfig({ readingMode: mode });
+    const tabs = config.tabs.map((tab) => (tab.id === activeTab.id ? { ...tab, readingMode: mode } : tab));
+    void setConfig({ tabs, readingMode: mode });
     if (mode !== 'glide') {
       setGlideOn(false);
       setGlideHeld(false);
     }
-  }, [setConfig]);
+  }, [activeTab.id, config.tabs, setConfig]);
 
   const toggleGlide = useCallback(() => {
     if (config.readingMode !== 'glide') return;
     if (glideHeld && glideLive) {
       if (editorRef.current?.atLastChapter()) {
-        setGlideOn(false);
-        setGlideHeld(false);
+        pauseGlide();
         return;
       }
       editorRef.current?.moveChapter(1);
@@ -493,15 +507,15 @@ function AppShell({
       return;
     }
     if (glideLive) {
-      setGlideOn(false);
-      setGlideHeld(false);
+      pauseGlide();
       return;
     }
     storeRehearsal();
     setGlideEpoch(config.pitchEpoch);
     setGlideHeld(false);
     setGlideOn(true);
-  }, [config.pitchEpoch, config.readingMode, glideHeld, glideLive, storeRehearsal]);
+    if (config.glideWithTimer && !timer.running) timer.start();
+  }, [config.glideWithTimer, config.pitchEpoch, config.readingMode, glideHeld, glideLive, pauseGlide, storeRehearsal, timer]);
 
   const jumpToLine = useCallback((tabId: string, line: number, query: string) => {
     if (tabId === activeTab.id) {
@@ -544,11 +558,6 @@ function AppShell({
     if (visible) editorRef.current?.ensureReading();
     setPeek(visible);
   }, [blind]);
-
-  const pauseGlide = useCallback(() => {
-    setGlideOn(false);
-    setGlideHeld(false);
-  }, []);
 
   useEffect(() => {
     if (seenPitchEpoch.current === config.pitchEpoch) return;
@@ -766,6 +775,7 @@ function AppShell({
           glideHeld={glideHeld}
           onGlideHold={setGlideHeld}
           onGlidePause={pauseGlide}
+          onArmChapter={armChapter}
         />
       )}
 

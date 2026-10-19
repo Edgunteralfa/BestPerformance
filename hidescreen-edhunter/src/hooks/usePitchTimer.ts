@@ -62,6 +62,24 @@ export function usePitchTimer(chapterKey: string) {
     setRunning((value) => !value);
   }, []);
 
+  const start = useCallback(() => {
+    setRunning(true);
+  }, []);
+
+  const pause = useCallback(() => {
+    setRunning(false);
+  }, []);
+
+  const clearChapter = useCallback((key: string) => {
+    if (!key) return;
+    setByChapter((value) => {
+      if (!(key in value)) return value;
+      const next = { ...value };
+      delete next[key];
+      return next;
+    });
+  }, []);
+
   const reset = useCallback(() => {
     setRunning(false);
     setTotalMs(0);
@@ -74,6 +92,9 @@ export function usePitchTimer(chapterKey: string) {
     byChapter,
     chapterMs: chapterKey ? byChapter[chapterKey] ?? 0 : 0,
     toggle,
+    start,
+    pause,
+    clearChapter,
     reset,
   };
 }

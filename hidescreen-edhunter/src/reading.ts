@@ -2,8 +2,6 @@
 
 export const EYE_RATIO = 0.16;
 export const GLIDE_DEFAULT_PX_PER_SEC = 32;
-const GLIDE_MIN_PX_PER_SEC = 6;
-const GLIDE_MAX_PX_PER_SEC = 160;
 
 export interface ChapterSpan {
   start: number;
@@ -28,8 +26,8 @@ export function chapterSpan(headingIndexes: number[], active: number | null, lin
 }
 
 export function glideSeconds(rehearsed: number | undefined, planned: number | undefined): number {
-  if (rehearsed !== undefined && rehearsed > 0) return rehearsed;
   if (planned !== undefined && planned > 0) return planned;
+  if (rehearsed !== undefined && rehearsed > 0) return rehearsed;
   return 0;
 }
 
@@ -47,11 +45,25 @@ export function mergeRehearsal(
   return next;
 }
 
+export function glideTravel(spokenHeights: number[]): number {
+  if (spokenHeights.length < 2) return 0;
+  let distance = 0;
+  for (let index = 0; index < spokenHeights.length - 1; index += 1) distance += spokenHeights[index];
+  return distance;
+}
+
 export function glidePixelsPerSecond(distancePx: number, budgetSeconds: number): number {
-  if (budgetSeconds > 0 && distancePx > 0) {
-    return Math.min(GLIDE_MAX_PX_PER_SEC, Math.max(GLIDE_MIN_PX_PER_SEC, distancePx / budgetSeconds));
-  }
+  if (budgetSeconds > 0 && distancePx > 0) return distancePx / budgetSeconds;
   return GLIDE_DEFAULT_PX_PER_SEC;
+}
+
+const BRIDGE_TAU_SEC = 0.08;
+
+/** Closes a skipped block quickly, without a one-frame jump and without spending the chapter time on it. */
+export function glideBridgeStep(gapPx: number, dt: number, spokenStep: number): number {
+  if (gapPx <= 1) return Math.max(0, gapPx);
+  const eased = gapPx * (1 - Math.exp(-dt / BRIDGE_TAU_SEC));
+  return Math.min(gapPx, Math.max(spokenStep, eased));
 }
 
 export function isAsideLine(visible: string): boolean {
@@ -60,9 +72,5 @@ export function isAsideLine(visible: string): boolean {
 }
 
 export function isCommentLine(kind: string, visible: string): boolean {
-  return kind === 'note' || isAsideLine(visible);
-}
-
-export function spokenHeight(lines: { height: number; comment: boolean }[]): number {
-  return lines.reduce((sum, line) => (line.comment ? sum : sum + line.height), 0);
+  return kind === 'heading' || kind === 'note' || isAsideLine(visible);
 }

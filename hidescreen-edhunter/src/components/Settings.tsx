@@ -99,6 +99,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
         name: tab.name.trim() || `${t('tabDefault')} ${index + 1}`,
       })),
       activeTabId: tabs.some((tab) => tab.id === config.activeTabId) ? config.activeTabId : tabs[0].id,
+      readingMode: (tabs.find((tab) => tab.id === config.activeTabId) ?? tabs[0]).readingMode,
       pitchSeconds: parseDuration(pitchDraft) ?? config.pitchSeconds,
       windowMask,
     });
@@ -179,6 +180,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       searchExcludedTabIds: memory.searchExcludedTabIds,
       pitchMemories: list,
       activePitchId: memory.id,
+      readingMode: active.readingMode,
       pitchEpoch: config.pitchEpoch + 1,
     });
     await emit('pitch-applied', { cardText: memory.cardText, cardFontSize: memory.cardFontSize });
@@ -423,6 +425,17 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
             <strong>{t('pitchLength')}</strong>
           </label>
           <p className="settings-hint">{t('pitchHint')}</p>
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={config.glideWithTimer}
+              onChange={(event) => {
+                void setConfig({ glideWithTimer: event.target.checked });
+              }}
+            />
+            {t('glideWithTimer')}
+          </label>
+          <p className="settings-hint">{t('glideWithTimerHint')}</p>
           <input
             className="pitch-length-input"
             value={pitchDraft}
@@ -658,6 +671,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
                     name: `${t('tabDefault')} ${current.length + 1}`,
                     color: TAB_COLORS[current.length % TAB_COLORS.length],
                     text: '',
+                    readingMode: 'outline',
                   },
                 ]);
               }}

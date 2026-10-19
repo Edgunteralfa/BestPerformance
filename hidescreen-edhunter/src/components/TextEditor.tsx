@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, type RefObject } from 'react';
 import { formatClock, parseDuration } from '../hooks/usePitchTimer';
 import { applyWordInk, fillEditor, inkRuns, paintLine, parseText, readLines, serialize, toggleLineKind, type LineKind } from '../lineMarkup';
-import { chapterSpan, EYE_RATIO, glidePixelsPerSecond, glideSeconds, isCommentLine, spokenHeight } from '../reading';
+import { chapterSpan, EYE_RATIO, glideBridgeStep, glidePixelsPerSecond, glideSeconds, glideTravel, isCommentLine } from '../reading';
 import { CHAPTER_LIST_COLORS, chapterBudgetKey, visibleText, type Config, type ReadingMode } from '../types';
 import WordInkMenu from './WordInkMenu';
 import { useI18n } from '../i18n';
@@ -33,6 +33,7 @@ interface TextEditorProps {
   glideHeld: boolean;
   onGlideHold: (held: boolean) => void;
   onGlidePause: () => void;
+  onArmChapter: (index: number) => void;
 }
 
 export type { LineKind };
@@ -134,7 +135,7 @@ function ChapterBudgetField({ seconds, onCommit }: { seconds: number | undefined
   );
 }
 
-function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidthChange, onNavWidthCommit, onActiveChapterChange, tabId, readScroll, onScrollPosition, onChapterBudget, onChapterListColor, queuedReveal, onRevealConsumed, blind, peek, showChapters, readingMode, glideOn, glideHeld, onGlideHold, onGlidePause }: TextEditorProps) {
+function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidthChange, onNavWidthCommit, onActiveChapterChange, tabId, readScroll, onScrollPosition, onChapterBudget, onChapterListColor, queuedReveal, onRevealConsumed, blind, peek, showChapters, readingMode, glideOn, glideHeld, onGlideHold, onGlidePause, onArmChapter }: TextEditorProps) {
   const { t } = useI18n();
   const rootRef = useRef<HTMLDivElement>(null);
   const serializedRef = useRef(text);
@@ -144,7 +145,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
   const [wordMenu, setWordMenu] = useState<{ x: number; y: number } | null>(null);
   const wordRange = useRef<Range | null>(null);
   const flashTimer = useRef<number | null>(null);
-  const programmaticScroll = useRef(false);
+  const glideOffset = useRef(0);
   const activeChapterRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -193,13 +194,10 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
     if (!root) return;
     const remember = () => {
       onScrollPosition(tabId, root.scrollTop);
-      if (!programmaticScroll.current && readingMode === 'glide' && glideOn && !glideHeld) {
-        onGlidePause();
-      }
     };
     root.addEventListener('scroll', remember, { passive: true });
     return () => root.removeEventListener('scroll', remember);
-  }, [onScrollPosition, tabId, readingMode, glideOn, glideHeld, onGlidePause]);
+  }, [onScrollPosition, tabId]);
 
   const publish = () => {
     const root = rootRef.current;
@@ -298,11 +296,8 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
   }, [chapters, config.fontSize, readingMode]);
 
   const moveScroll = (root: HTMLElement, top: number) => {
-    programmaticScroll.current = true;
+    if (Math.abs(root.scrollTop - top) < 0.5) return;
     root.scrollTop = top;
-    queueMicrotask(() => {
-      programmaticScroll.current = false;
-    });
   };
 
   const setReading = (index: number) => {
@@ -343,9 +338,9 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
       null,
     );
     const nextChapter = owning ?? index;
-    if (glideHeld && nextChapter !== activeChapter) onGlideHold(false);
     keepChapter(nextChapter);
     setReading(index);
+    if (glideHeld && nextChapter !== activeChapter) onGlideHold(false);
     const rootNow = rootRef.current;
     if (!rootNow || !query.trim()) return;
     if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
@@ -375,17 +370,28 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
     const root = rootRef.current;
     if (!root) return;
     const headings = chapters.map((chapter) => chapter.index);
-    const lineCount = root.querySelectorAll('.line').length;
-    const span = chapterSpan(headings, activeChapterRef.current ?? readingRef.current, lineCount);
-    const eye = root.clientHeight * EYE_RATIO;
-    const lines = [...root.querySelectorAll<HTMLElement>('.line')];
     const commentLine = (line: HTMLElement) => isCommentLine(line.dataset.kind ?? 'body', line.textContent ?? '');
-    const firstSpoken = lines.findIndex((line, index) => index >= span.start && index < span.end && !commentLine(line));
-    const anchorIndex = readingRef.current ?? span.start;
-    const anchor = lines[anchorIndex];
-    const startIndex = anchor && !commentLine(anchor) ? anchorIndex : firstSpoken;
+    const eyeY = () => root.getBoundingClientRect().top + root.clientHeight * EYE_RATIO;
+    const lines = [...root.querySelectorAll<HTMLElement>('.line')];
+    const span = chapterSpan(headings, activeChapterRef.current ?? readingRef.current, lines.length);
+    const guide = eyeY();
+    let startIndex = -1;
+    let bestStart = Number.POSITIVE_INFINITY;
+    for (let index = span.start; index < span.end; index += 1) {
+      const line = lines[index];
+      if (!line || commentLine(line)) continue;
+      const delta = Math.abs(line.getBoundingClientRect().top - guide);
+      if (delta < bestStart) {
+        bestStart = delta;
+        startIndex = index;
+      }
+    }
     const startLine = startIndex >= 0 ? lines[startIndex] : undefined;
-    if (startLine) moveScroll(root, Math.max(0, startLine.offsetTop - eye));
+    if (startLine) {
+      const top = startLine.getBoundingClientRect().top;
+      moveScroll(root, root.scrollTop + top - eyeY());
+    }
+    glideOffset.current = root.scrollTop;
     let last = performance.now();
     let frame = 0;
     let stopped = false;
@@ -394,7 +400,10 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       const currentLines = [...root.querySelectorAll<HTMLElement>('.line')];
-      if (currentLines.length === 0) return;
+      if (currentLines.length === 0) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
       const currentSpan = chapterSpan(headings, activeChapterRef.current ?? readingRef.current, currentLines.length);
       const slice = currentLines.slice(currentSpan.start, currentSpan.end);
       const spoken = slice.filter((line) => !commentLine(line));
@@ -403,36 +412,49 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
         onGlideHold(true);
         return;
       }
-      const distance = spokenHeight(slice.map((line) => ({
-        height: line.offsetHeight,
-        comment: commentLine(line),
-      })));
+      const guide = eyeY();
+      if (lastSpoken.getBoundingClientRect().top <= guide) {
+        onGlideHold(true);
+        return;
+      }
+      const distance = glideTravel(spoken.map((line) => line.offsetHeight));
       const heading = chapters.find((chapter) => chapter.index === currentSpan.start)?.text ?? '';
       const paceKey = heading ? chapterBudgetKey(tabId, heading) : '';
       const seconds = glideSeconds(config.chapterPaces[paceKey], config.chapterBudgets[paceKey]);
-      moveScroll(root, root.scrollTop + glidePixelsPerSecond(distance, seconds) * dt);
-      const eyeNow = root.clientHeight * EYE_RATIO;
-      let under = currentSpan.start;
+      const speed = glidePixelsPerSecond(distance, seconds);
+      let at = currentSpan.end - 1;
+      for (let index = currentSpan.start; index < currentSpan.end; index += 1) {
+        const line = currentLines[index];
+        if (!line) continue;
+        at = index;
+        if (line.getBoundingClientRect().bottom > guide + 0.5) break;
+      }
+      let step = speed * dt;
+      const atLine = currentLines[at];
+      if (atLine && commentLine(atLine)) {
+        const next = currentLines.findIndex((line, index) => (
+          index > at && index < currentSpan.end && !commentLine(line)
+        ));
+        if (next < 0) {
+          onGlideHold(true);
+          return;
+        }
+        const gap = currentLines[next].getBoundingClientRect().top - guide;
+        step = glideBridgeStep(gap, dt, step);
+      }
+      if (Math.abs(root.scrollTop - glideOffset.current) > 2) glideOffset.current = root.scrollTop;
+      glideOffset.current += step;
+      moveScroll(root, glideOffset.current);
+      let nearest = at;
       let best = Number.POSITIVE_INFINITY;
       for (let index = currentSpan.start; index < currentSpan.end; index += 1) {
         const line = currentLines[index];
         if (!line) continue;
-        const delta = Math.abs(line.offsetTop - (root.scrollTop + eyeNow));
+        const delta = Math.abs(line.getBoundingClientRect().top - guide);
         if (delta < best) {
           best = delta;
-          under = index;
+          nearest = index;
         }
-      }
-      let nearest = under;
-      const landed = currentLines[under];
-      if (landed && commentLine(landed)) {
-        const jumped = currentLines.findIndex((line, index) => index >= under && index < currentSpan.end && !commentLine(line));
-        if (jumped < 0) {
-          onGlideHold(true);
-          return;
-        }
-        moveScroll(root, Math.max(0, currentLines[jumped].offsetTop - eyeNow));
-        nearest = jumped;
       }
       setReading(nearest);
       const owning = chapters.reduce<number | null>(
@@ -440,10 +462,6 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
         null,
       );
       if (owning !== null && owning !== activeChapterRef.current) keepChapter(owning);
-      if (root.scrollTop + eyeNow >= lastSpoken.offsetTop + lastSpoken.offsetHeight * 0.35) {
-        onGlideHold(true);
-        return;
-      }
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
@@ -464,11 +482,16 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
     else if (rowRect.bottom > navRect.bottom) nav.scrollTop += rowRect.bottom - navRect.bottom;
   }, [activeChapter, chapters]);
 
+  const armChapter = (index: number) => {
+    jumpTo(index);
+    onArmChapter(index);
+  };
+
   const moveChapter = (direction: 1 | -1) => {
     if (chapters.length === 0) return;
     const position = chapters.findIndex((chapter) => chapter.index === activeChapter);
     const next = chapters[Math.min(chapters.length - 1, Math.max(0, (position === -1 ? 0 : position) + direction))];
-    if (next) jumpTo(next.index);
+    if (next) armChapter(next.index);
   };
 
   const moveReading = (direction: 1 | -1) => {
@@ -561,7 +584,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
                 className={`chapter-link${chapter.index === activeChapter ? ' active' : ''}`}
                 style={{ color: listColor ?? (chapter.index === activeChapter ? config.headingColor : config.fontColor) }}
                 title={chapter.text}
-                onClick={() => jumpTo(chapter.index)}
+                onClick={() => armChapter(chapter.index)}
                 onContextMenu={(event) => {
                   event.preventDefault();
                   event.stopPropagation();

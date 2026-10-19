@@ -74,6 +74,7 @@ export interface NoteTab {
   name: string;
   color: string;
   text: string;
+  readingMode: ReadingMode;
 }
 
 export const MAX_TABS = 6;
@@ -106,8 +107,8 @@ export const CHAPTER_LIST_COLORS = [
 
 export function defaultTabs(existingText = ''): NoteTab[] {
   return [
-    { id: 'tab-1', name: 'Notes', color: TAB_COLORS[0], text: existingText },
-    { id: 'tab-2', name: 'Notes 2', color: TAB_COLORS[1], text: '' },
+    { id: 'tab-1', name: 'Notes', color: TAB_COLORS[0], text: existingText, readingMode: 'outline' },
+    { id: 'tab-2', name: 'Notes 2', color: TAB_COLORS[1], text: '', readingMode: 'outline' },
   ];
 }
 
@@ -162,7 +163,7 @@ export function normalizeChapterBudgets(value: unknown): Record<string, number> 
   return budgets;
 }
 
-export function normalizeTabs(value: unknown, fallbackText: string): NoteTab[] {
+export function normalizeTabs(value: unknown, fallbackText: string, fallbackMode: ReadingMode = 'outline'): NoteTab[] {
   if (!Array.isArray(value) || value.length === 0) return defaultTabs(fallbackText);
   return value.slice(0, MAX_TABS).map((item, index) => {
     const row = item !== null && typeof item === 'object' ? item as Record<string, unknown> : {};
@@ -170,7 +171,8 @@ export function normalizeTabs(value: unknown, fallbackText: string): NoteTab[] {
     const color = typeof row.color === 'string' && row.color ? row.color : TAB_COLORS[index % TAB_COLORS.length];
     const text = typeof row.text === 'string' ? row.text : '';
     const id = typeof row.id === 'string' && row.id ? row.id : `tab-${index + 1}`;
-    return { id, name, color, text };
+    const readingMode = normalizeReadingMode(row.readingMode === undefined ? fallbackMode : row.readingMode);
+    return { id, name, color, text, readingMode };
   });
 }
 
@@ -223,8 +225,10 @@ export interface Config {
   cardFontSize: number;
   cardOpacity: number;
 
-  // How the open tab is read. Outline is the full script.
+  // How the open tab is read. Each tab keeps its own mode. Outline is the full script.
   readingMode: ReadingMode;
+  // When set, Glide play starts and pauses the pitch timer with it.
+  glideWithTimer: boolean;
 
   // OS window title shown in Alt+Tab and share pickers. The in-app title stays BestPerformance.
   windowMask: WindowMaskId;
@@ -293,6 +297,7 @@ export const DEFAULT_CONFIG: Config = {
   cardFontSize: 16,
   cardOpacity: 0.85,
   readingMode: 'outline',
+  glideWithTimer: false,
   windowMask: 'node',
   pitchMemories: [],
   activePitchId: null,
@@ -322,7 +327,7 @@ export function normalizeSearchExcluded(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === 'string').slice(0, MAX_TABS);
 }
 
-export function normalizePitchMemories(value: unknown): PitchMemory[] {
+export function normalizePitchMemories(value: unknown, fallbackMode: ReadingMode = 'outline'): PitchMemory[] {
   if (!Array.isArray(value)) return [];
   const memories: PitchMemory[] = [];
   for (const item of value) {
@@ -332,7 +337,7 @@ export function normalizePitchMemories(value: unknown): PitchMemory[] {
     const id = typeof row.id === 'string' ? row.id : '';
     const name = typeof row.name === 'string' ? row.name.trim().slice(0, 60) : '';
     if (!id || !name) continue;
-    const tabs = normalizeTabs(row.tabs, '');
+    const tabs = normalizeTabs(row.tabs, '', fallbackMode);
     const activeTabId = tabs.some((tab) => tab.id === row.activeTabId) ? String(row.activeTabId) : tabs[0].id;
     const savedAt = typeof row.savedAt === 'number' && Number.isFinite(row.savedAt) ? row.savedAt : 0;
     const fontSize = typeof row.cardFontSize === 'number' ? row.cardFontSize : DEFAULT_CONFIG.cardFontSize;

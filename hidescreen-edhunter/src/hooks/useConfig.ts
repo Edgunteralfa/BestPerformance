@@ -41,8 +41,9 @@ export function useConfig() {
           loaded.language = detectLanguage();
         }
 
-        const tabs = normalizeTabs(loaded.tabs, typeof loaded.text === 'string' ? loaded.text : '');
-        const pitchMemories = normalizePitchMemories(loaded.pitchMemories);
+        const savedMode = normalizeReadingMode(loaded.readingMode);
+        const tabs = normalizeTabs(loaded.tabs, typeof loaded.text === 'string' ? loaded.text : '', savedMode);
+        const pitchMemories = normalizePitchMemories(loaded.pitchMemories, savedMode);
         const activeTabId = tabs.some((tab) => tab.id === loaded.activeTabId)
           ? loaded.activeTabId
           : tabs[0].id;
@@ -79,7 +80,8 @@ export function useConfig() {
           cardFontSize: Math.min(48, Math.max(8, finiteOr(loaded.cardFontSize, DEFAULT_CONFIG.cardFontSize))),
           opacity: normalizeOpacity(loaded.opacity),
           cardOpacity: normalizeOpacity(loaded.cardOpacity === undefined ? loaded.opacity : loaded.cardOpacity),
-          readingMode: normalizeReadingMode(loaded.readingMode),
+          readingMode: active.readingMode,
+          glideWithTimer: loaded.glideWithTimer === true,
           windowMask: normalizeWindowMask(loaded.windowMask),
           pitchMemories,
           activePitchId: pitchMemories.some((item) => item.id === loaded.activePitchId)
