@@ -86,7 +86,7 @@ body {
 
 .timer-callout {
   position: absolute;
-  right: 28px;
+  inset-inline-end: 28px;
   bottom: 10px;
   z-index: 35;
   pointer-events: none;

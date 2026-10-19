@@ -67,7 +67,7 @@
   font-weight: normal;
   padding: 2px 8px;
   height: 20px;
-  margin-left: 18px;
+  margin-inline-start: 18px;
 }
 
 .clear-button:hover {
@@ -116,7 +116,7 @@
 .blind-button {
   width: 24px;
   height: 20px;
-  margin-right: 36px;
+  margin-inline-end: 36px;
 }
 
 .blind-button.on {
@@ -126,7 +126,7 @@
 .lock-button {
   width: 24px;
   height: 20px;
-  margin-right: 28px;
+  margin-inline-end: 28px;
 }
 
 .lock-button.locked {

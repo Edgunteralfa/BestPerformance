@@ -116,7 +116,7 @@
   align-items: flex-start;
   gap: 2px;
   width: 100%;
-  text-align: left;
+  text-align: start;
   background: transparent;
   border: none;
   border-radius: 3px;

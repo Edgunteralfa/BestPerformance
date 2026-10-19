@@ -22,14 +22,6 @@ body {
   height: 100vh;
 }
 
-[dir='rtl'] .chapter-link,
-[dir='rtl'] .chapter-color-reset,
-[dir='rtl'] .pitch-search-hit,
-[dir='rtl'] .settings-section label.chrome-row,
-[dir='rtl'] .pitch-menu-list button {
-  text-align: right;
-}
-
-[dir='rtl'] .pitch-search-hit {
-  align-items: flex-end;
+[dir='rtl'] .timer-callout {
+  direction: ltr;
 }
