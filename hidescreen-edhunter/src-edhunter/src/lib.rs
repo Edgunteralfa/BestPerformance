@@ -17,29 +17,56 @@ fn app_config_file(app: &AppHandle) -> PathBuf {
         .join("config.json")
 }
 
+/// An installed copy keeps notes in the profile. A folder with an empty `portable`
+/// file keeps them in `data` beside the executable, and copies an existing profile
+/// file across once so the first launch of a portable copy does not start empty.
+fn resolve_portable_config(exe_dir: &std::path::Path, app_data_file: &std::path::Path) -> Result<PathBuf, String> {
+    if !exe_dir.join("portable").is_file() {
+        return Ok(app_data_file.to_path_buf());
+    }
+    let data_dir = exe_dir.join("data");
+    std::fs::create_dir_all(&data_dir).map_err(|error| error.to_string())?;
+    let dest = data_dir.join("config.json");
+    if !dest.exists() && app_data_file.is_file() {
+        std::fs::copy(app_data_file, &dest).map_err(|error| error.to_string())?;
+    }
+    Ok(dest)
+}
+
+fn update_url_allowed(url: &str) -> bool {
+    url.starts_with("https://github.com/")
+        || url.starts_with("https://release-assets.githubusercontent.com/")
+        || url.starts_with("https://objects.githubusercontent.com/")
+}
+
+/// The last path piece of an allowed release URL, without a query. `.` and `..`
+/// are rejected so the download cannot leave the temp directory.
+fn update_installer_name(url: &str) -> Result<String, String> {
+    let path = url.split(['?', '#']).next().unwrap_or(url);
+    let name = path.rsplit('/').next().unwrap_or("").trim();
+    let single = !name.is_empty()
+        && name != "."
+        && name != ".."
+        && !name.contains('\\')
+        && !name.contains('/')
+        && !name.contains('\0');
+    if !single {
+        return Err("Unexpected update file".to_string());
+    }
+    Ok(name.to_string())
+}
+
 /// Installed copies keep notes in the Windows profile. A portable copy, marked by
 /// an empty `portable` file next to the exe, keeps them in `data` beside that exe
 /// so a flash drive carries the pitches to another computer.
 #[tauri::command]
 fn config_store_path(app: AppHandle) -> Result<String, String> {
+    let stored = app_config_file(&app);
     let exe = std::env::current_exe().map_err(|error| error.to_string())?;
     let Some(dir) = exe.parent() else {
-        return Ok(app_config_file(&app).to_string_lossy().to_string());
+        return Ok(stored.to_string_lossy().to_string());
     };
-    if !dir.join("portable").is_file() {
-        return Ok(app_config_file(&app).to_string_lossy().to_string());
-    }
-
-    let data_dir = dir.join("data");
-    std::fs::create_dir_all(&data_dir).map_err(|error| error.to_string())?;
-    let dest = data_dir.join("config.json");
-    if !dest.exists() {
-        let src = app_config_file(&app);
-        if src.is_file() {
-            std::fs::copy(&src, &dest).map_err(|error| error.to_string())?;
-        }
-    }
-    Ok(dest.to_string_lossy().to_string())
+    resolve_portable_config(dir, &stored).map(|path| path.to_string_lossy().to_string())
 }
 
 #[tauri::command]
@@ -233,12 +260,10 @@ async fn fetch_latest_release() -> Result<String, String> {
 
 #[tauri::command]
 async fn download_and_launch_update(url: String) -> Result<(), String> {
-    let allowed = url.starts_with("https://github.com/")
-        || url.starts_with("https://release-assets.githubusercontent.com/")
-        || url.starts_with("https://objects.githubusercontent.com/");
-    if !allowed {
+    if !update_url_allowed(&url) {
         return Err("Unexpected update address".to_string());
     }
+    let filename = update_installer_name(&url)?;
 
     let client = reqwest::Client::builder()
         .http1_only()
@@ -251,13 +276,6 @@ async fn download_and_launch_update(url: String) -> Result<(), String> {
     }
     let bytes = response.bytes().await.map_err(|error| error.to_string())?;
 
-    let filename = url
-        .split('/')
-        .next_back()
-        .unwrap_or("BestPerformance-setup")
-        .split('?')
-        .next()
-        .unwrap_or("BestPerformance-setup");
     let path = std::env::temp_dir().join(filename);
     std::fs::write(&path, &bytes).map_err(|error| error.to_string())?;
     launch_update_installer(path.to_string_lossy().to_string())
@@ -379,4 +397,126 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{resolve_portable_config, update_installer_name, update_url_allowed};
+    use std::fs;
+    use std::path::PathBuf;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn scratch() -> PathBuf {
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static N: AtomicU64 = AtomicU64::new(0);
+        let tick = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
+        let n = N.fetch_add(1, Ordering::Relaxed);
+        let dir = std::env::temp_dir().join(format!("bp-{tick}-{n}"));
+        fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    #[test]
+    fn installed_copy_keeps_notes_in_the_profile() {
+        let root = scratch();
+        let profile = root.join("profile").join("config.json");
+        fs::create_dir_all(profile.parent().unwrap()).unwrap();
+        fs::write(&profile, "notes").unwrap();
+        let exe = root.join("Program");
+        fs::create_dir_all(&exe).unwrap();
+        let resolved = resolve_portable_config(&exe, &profile).unwrap();
+        assert_eq!(resolved, profile);
+        assert!(!exe.join("data").exists());
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn a_directory_named_portable_is_not_a_portable_copy() {
+        let root = scratch();
+        let profile = root.join("config.json");
+        fs::write(&profile, "notes").unwrap();
+        let exe = root.join("Program");
+        fs::create_dir_all(exe.join("portable")).unwrap();
+        let resolved = resolve_portable_config(&exe, &profile).unwrap();
+        assert_eq!(resolved, profile);
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn portable_copy_takes_the_profile_once_and_then_keeps_its_own() {
+        let root = scratch();
+        let profile = root.join("profile").join("config.json");
+        fs::create_dir_all(profile.parent().unwrap()).unwrap();
+        fs::write(&profile, "pitch").unwrap();
+        let exe = root.join("stick");
+        fs::create_dir_all(&exe).unwrap();
+        fs::write(exe.join("portable"), "").unwrap();
+
+        let first = resolve_portable_config(&exe, &profile).unwrap();
+        assert_eq!(first, exe.join("data").join("config.json"));
+        assert_eq!(fs::read_to_string(&first).unwrap(), "pitch");
+
+        fs::write(&profile, "changed later").unwrap();
+        let second = resolve_portable_config(&exe, &profile).unwrap();
+        assert_eq!(fs::read_to_string(second).unwrap(), "pitch");
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn portable_copy_without_a_profile_starts_its_own_empty_file() {
+        let root = scratch();
+        let profile = root.join("missing").join("config.json");
+        let exe = root.join("stick");
+        fs::create_dir_all(&exe).unwrap();
+        fs::write(exe.join("portable"), "").unwrap();
+        let dest = resolve_portable_config(&exe, &profile).unwrap();
+        assert!(!dest.exists());
+        fs::write(&dest, "new pitch").unwrap();
+        let again = resolve_portable_config(&exe, &profile).unwrap();
+        assert_eq!(fs::read_to_string(again).unwrap(), "new pitch");
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn update_address_must_be_a_github_release() {
+        assert!(update_url_allowed(
+            "https://github.com/Edgunteralfa/BestPerformance/releases/download/v1/setup.exe"
+        ));
+        assert!(update_url_allowed(
+            "https://release-assets.githubusercontent.com/abc/setup.exe"
+        ));
+        assert!(update_url_allowed(
+            "https://objects.githubusercontent.com/abc/setup.exe"
+        ));
+        assert!(!update_url_allowed(
+            "http://github.com/Edgunteralfa/BestPerformance/setup.exe"
+        ));
+        assert!(!update_url_allowed("https://github.com.evil.example/setup.exe"));
+        assert!(!update_url_allowed(
+            "https://evil.example/https://github.com/setup.exe"
+        ));
+        assert!(!update_url_allowed(
+            "https://objects.githubusercontent.com.evil/setup.exe"
+        ));
+    }
+
+    #[test]
+    fn update_file_name_cannot_leave_the_temp_directory() {
+        let named = update_installer_name(
+            "https://github.com/Edgunteralfa/BestPerformance/releases/download/v1/BestPerformance-setup.exe?name=1#top",
+        )
+        .unwrap();
+        assert_eq!(named, "BestPerformance-setup.exe");
+        assert!(update_installer_name("https://github.com/Edgunteralfa/..").is_err());
+        assert!(update_installer_name("https://github.com/Edgunteralfa/.").is_err());
+        assert!(update_installer_name("https://github.com/Edgunteralfa/").is_err());
+        let safe = update_installer_name(
+            "https://objects.githubusercontent.com/github-production-release-asset/setup.exe",
+        )
+        .unwrap();
+        assert_eq!(
+            std::env::temp_dir().join(safe).parent().unwrap(),
+            std::env::temp_dir()
+        );
+    }
 }
