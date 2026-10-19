@@ -37,86 +37,107 @@
   <img alt="Glide" src="https://img.shields.io/badge/Glide-the%20line%20near%20the%20camera-8A3E62">
 </p>
 
+<p align="center">
+  <a href="#on-screen">On screen</a>
+  &nbsp;·&nbsp;
+  <a href="#three-ways-to-read">Three ways</a>
+  &nbsp;·&nbsp;
+  <a href="#who-it-is-for">The call</a>
+  &nbsp;·&nbsp;
+  <a href="#chapters">Chapters</a>
+  &nbsp;·&nbsp;
+  <a href="#install-on-windows">Install</a>
+  &nbsp;·&nbsp;
+  <a href="#shortcuts">Shortcuts</a>
+  &nbsp;·&nbsp;
+  <a href="#russian">Русский</a>
+</p>
+
 ## On screen
 
-The window below is a demo pitch, Harbor. The recording of a real talk does not get this window. These pictures were taken from a local copy made only for the page.
+A demo pitch called Harbor. A recording of a real talk does not get this window. These pictures were taken from a local copy made only for the page.
+
+### Notes · Текст
 
 <p align="center">
   <img src="assets/readme/notes-clear.png" alt="Notes: the whole script, with chapters on the left" width="840">
 </p>
 
-**Notes** is the whole script. Chapters sit on the left, each with its own time. A heading is gold, a line you say is green, and a line that starts with `//` is a reminder you do not say.
+| **Notes** | **Текст** |
+| --- | --- |
+| The whole script. Chapters sit on the left, each with its own time. A heading is gold, a line you say is green, and a line that starts with `//` is a reminder you do not say. | Весь сценарий. Главы слева, у каждой своё время. Заголовок золотой, речь зелёная, строка с `//` — ремарка, её не произносят. |
 
-**Текст** — весь сценарий. Главы слева, у каждой своё время. Заголовок золотой, речь зелёная, строка с `//` — ремарка, её не произносят.
+### Beat · Такт
 
 <p align="center">
   <img src="assets/readme/beat-clear.png" alt="Beat: one chapter fills the window" width="840">
 </p>
 
-**Beat** keeps a single chapter on screen. The list on the left still jumps to the others.
+| **Beat** | **Такт** |
+| --- | --- |
+| One chapter fills the window. The list on the left still jumps to the others. | На экране одна глава. Список слева по-прежнему переключает остальные. |
 
-**Такт** оставляет на экране одну главу. Список слева по-прежнему переключает остальные.
+### Glide · Ход
 
 <p align="center">
   <img src="assets/readme/glide-clear.png" alt="Glide: the line you are saying stays near the top" width="840">
 </p>
 
-**Glide** holds the line you are saying near the top, close to the camera. The thin line across the text is the eye line. Play moves the script. The wheel pauses it.
+| **Glide** | **Ход** |
+| --- | --- |
+| The line you are saying stays near the top, close to the camera. The thin line across the text is the eye line. Play moves the script. The wheel pauses it. | Произносимая строка держится у верхнего края, ближе к камере. Тонкая черта — линия глаза. Пуск везёт текст, колесо ставит паузу. |
 
-**Ход** держит произносимую строку у верхнего края, ближе к камере. Тонкая черта — линия глаза. Пуск везёт текст, колесо ставит паузу.
+### Figures · Цифры
 
 <p align="center">
   <img src="assets/readme/figures.png" alt="A second window for figures" width="840">
 </p>
 
-The **12** button opens a second window for the few numbers you need while you talk. It has its own type size and its own opacity.
+| **12** | **12** |
+| --- | --- |
+| A second window for the few numbers you need while you talk. Its own type size. Its own opacity. | Второе окно для цифр, которые нужны во время речи. Размер шрифта и прозрачность у него свои. |
 
-Кнопка **12** открывает второе окно для цифр, которые нужны во время речи. Размер шрифта и прозрачность у него свои.
+### Tabs · Вкладки
 
 <p align="center">
   <img src="assets/readme/tabs.png" alt="Each tab has its own name and color" width="840">
 </p>
 
-Up to six tabs. Each one has its own text, name, and color. Pitch, questions, numbers, and the close can live apart.
+| **Tabs** | **Вкладки** |
+| --- | --- |
+| Up to six. Each one has its own text, name, and color. Pitch, questions, numbers, and the close can live apart. | До шести. У каждой свой текст, имя и цвет. Питч, вопросы, цифры и финал можно держать отдельно. |
 
-До шести вкладок. У каждой свой текст, имя и цвет. Питч, вопросы, цифры и финал можно держать отдельно.
+### Color · Цвет
 
 <p align="center">
   <img src="assets/readme/colors.png" alt="Colors for the body, headings, and highlights" width="840">
 </p>
 
-Body, heading, highlight, and the second highlight each have a color. The second highlight is a note. Glide does not read it.
+| **Color** | **Цвет** |
+| --- | --- |
+| Body, heading, highlight, and the second highlight each have a color. The second highlight is a note. Glide does not read it. | У обычного текста, заголовка, выделения и второго выделения свой цвет. Второе выделение — заметка. «Ход» её не читает. |
 
-У обычного текста, заголовка, выделения и второго выделения свой цвет. Второе выделение — заметка. «Ход» её не читает.
+### What to show · Что показывать
 
 <p align="center">
   <img src="assets/readme/what-to-show.png" alt="Checkboxes that hide controls you do not need" width="840">
 </p>
 
-**What to show** takes a control off the window. The last setting stays. Reading modes, the timer, search, and the lock can each leave the screen.
+| **What to show** | **Что показывать** |
+| --- | --- |
+| Takes a control off the window. The last setting stays. Reading modes, the timer, search, and the lock can each leave the screen. | Убирает кнопку с окна. Сама настройка остаётся. Режимы чтения, таймер, поиск и замок можно убрать по отдельности. |
 
-**Что показывать** убирает кнопку с окна. Сама настройка остаётся. Режимы чтения, таймер, поиск и замок можно убрать по отдельности.
-
-<p align="center">
-  <b>Support</b><br>
-  The app is free. If it is useful, you can send <b>USDT (TRC-20)</b>.<br>
-  Программа бесплатная. Если она вам пригодилась, можно отправить благодарность на любую сумму в <b>USDT (TRC-20)</b>.<br>
-  <code>TBoBBxmpbk5nkZWnaVK9nuDB4XH5c72mo7</code><br>
-  <img src="assets/usdt-trc20.jpg" alt="USDT TRC-20" width="220">
-</p>
-
-<details open>
-<summary><b id="english">English</b></summary>
+## English
 
 Notes on your screen. A recording and a screen share do not get them.
 
 BestPerformance is free forever, for everyone.
 
-Pitches and calls pile up. Sometimes there is no evening left to rehearse, and sometimes the brief is longer than the slot. BestPerformance started from that: a private script you can read while the other person only sees the slides.
+> Pitches and calls pile up. Sometimes there is no evening left to rehearse, and sometimes the brief is longer than the slot. This is a private script you can read while the other person only sees the slides.
 
-## Three ways to read
+### Three ways to read
 
-The same chapter can be read three ways. The buttons sit on the bottom bar: **Notes**, **Beat**, and **Glide**. Each tab remembers its own. A pitch can stay on Glide while Questions stays on Notes. Switching tabs does not start Glide by itself. Play does not pull the window forward. Clicking the window still focuses it, the way Windows does. The wheel over the text still scrolls when another program has the keyboard.
+The same chapter, three ways. The buttons sit on the bottom bar. Each tab remembers its own. A pitch can stay on Glide while Questions stays on Notes.
 
 | Mode | What you see | When to use it |
 | --- | --- | --- |
@@ -124,11 +145,15 @@ The same chapter can be read three ways. The buttons sit on the bottom bar: **No
 | **Beat** | One chapter. The rest is hidden. The wheel scrolls inside it | Rehearsing a single beat |
 | **Glide** | The line you are saying stays near the top, close to the camera | The call itself |
 
+#### Play
+
 Press play on Glide and the text moves. The wheel pauses it. Play again and it continues from that line, not from the end. At the end of a chapter the button becomes an arrow. That arrow opens the next chapter at its own pace. Choosing a chapter in the list starts there.
 
-Glide follows the time written beside the chapter, `0:45` or `1:30`. The last line you say reaches the eye line as that time runs out. If the chapter has no time, Glide uses the last rehearsal of that chapter. A short rehearsal does not override a time you already set.
+> Switching tabs does not start Glide. Play does not pull the window forward. Clicking the window still focuses it, the way Windows does. The wheel over the text still scrolls when another program has the keyboard.
 
-These lines are not read. They stay on screen, and Glide crosses them smoothly instead of jumping:
+#### Lines Glide does not read
+
+These lines stay on screen. Glide crosses them smoothly instead of jumping.
 
 - the chapter title, including the marks you use so the list can color that chapter
 - a line that starts with `//`
@@ -137,13 +162,26 @@ These lines are not read. They stay on screen, and Glide crosses them smoothly i
 
 A `[cue]` inside a sentence you do say stays on that sentence. It does not skip the line.
 
-Under the talk length in settings, **Start the timer with Glide** is off until you check it. With it on, play starts the chapter clock, pause stops both, and choosing a chapter starts that clock from the top. With it off, the clock and the text stay independent.
+#### The clock beside Glide
+
+Glide follows the time written beside the chapter, `0:45` or `1:30`. The last line you say reaches the eye line as that time runs out. If the chapter has no time, Glide uses the last rehearsal of that chapter. A short rehearsal does not override a time you already set.
+
+Under the talk length in settings, **Start the timer with Glide** is off until you check it.
+
+| The box | What happens |
+| --- | --- |
+| On | Play starts the chapter clock. Pause stops both. Choosing a chapter starts that clock from the top. |
+| Off | The clock and the text stay independent. |
 
 **What to show** has a checkbox for the reading modes. Uncheck it and Notes, Beat, Glide, and play leave the bar. The mode you last chose stays.
 
-The interface is in fifteen languages: English, Chinese, Spanish, Hindi, Arabic, Portuguese, Russian, Japanese, German, French, Korean, Italian, Turkish, Indonesian, and Vietnamese. The first launch follows the system language. Arabic reads from the right, and the chapter list moves to the right with it. A clock stays `1:30` and does not reverse.
+#### Fifteen languages
 
-## Who it is for
+English, Chinese, Spanish, Hindi, Arabic, Portuguese, Russian, Japanese, German, French, Korean, Italian, Turkish, Indonesian, and Vietnamese.
+
+The first launch follows the system language. Arabic reads from the right, and the chapter list moves to the right with it. A clock stays `1:30` and does not reverse.
+
+### Who it is for
 
 - A pitch or a customer call, when the deck is ready and the wording is not.
 - A teacher or a lecturer sharing their own screen. The class sees the slides. The speaker still has the plan, the aside, and the number they did not want to forget.
@@ -152,54 +190,97 @@ The interface is in fifteen languages: English, Chinese, Spanish, Hindi, Arabic,
 
 On Windows the window is left out of screen capture in Zoom, Microsoft Teams, VooV, Tencent Meeting, OBS, Webex, Yandex Telemost, the Snipping Tool, Bandicam, and other screenshot tools and video capture apps that use the same Windows capture. It stays above other programs. In Alt+Tab and in the share list it uses an ordinary system name, Node Terminal by default. You can pick another in settings. The share preview is empty. The Alt+Tab icon is still the BestPerformance icon.
 
-Do not take it into an exam, and do not use it to step around a school rule, a workplace rule, or someone else's terms. You decide how it is used.
+> Do not take it into an exam, and do not use it to step around a school rule, a workplace rule, or someone else's terms. You decide how it is used.
 
-## Chapters, then a saved talk
+### Chapters
 
 One talk lives in tabs. Six tabs is the limit. Each tab has its own text, name, and color.
 
-A chapter is a line you mark with **H**, or a line that starts with `# `. On a wide window those lines become the list on the left. Click one to jump. `Ctrl+Shift+←` and `Ctrl+Shift+→` move between chapters and leave the arrow keys for your slides. `Ctrl+Alt+↑` and `Ctrl+Alt+↓` walk the lines inside the current chapter. A white bar sits on the line you are reading.
+#### A chapter
 
-Give a chapter a time in the field beside its name, `0:45` or `1:30`. When half of that time is gone the label turns blue and the window edge flashes blue once. Orange is still the short remainder, then red when almost none is left and when the time is gone. If the chapter has no time of its own, the same colors follow the clock for the whole talk. **Review** shows how long each chapter actually took. A short last chapter can still scroll up to the top, so its clock starts the same way as the others.
+A chapter is a line you mark with **H**, or a line that starts with `# `. On a wide window those lines become the list on the left. Click one to jump.
+
+| Keys | What they do |
+| --- | --- |
+| `Ctrl+Shift+←` `Ctrl+Shift+→` | Previous or next chapter. The arrow keys stay with your slides. |
+| `Ctrl+Alt+↑` `Ctrl+Alt+↓` | The lines inside the current chapter. |
+
+A white bar sits on the line you are reading.
+
+#### Time on a chapter
+
+Give a chapter a time in the field beside its name, `0:45` or `1:30`.
+
+| Moment | What you see |
+| --- | --- |
+| Half the chapter time is gone | The label turns blue. The window edge flashes blue once. |
+| A short remainder | Orange. |
+| Almost none left, or the time is gone | Red. |
+| The chapter has no time of its own | The same colors follow the clock for the whole talk. |
+
+**Review** shows how long each chapter actually took. A short last chapter can still scroll up to the top, so its clock starts the same way as the others.
 
 On the whole talk, a note in the corner says one minute is left, then thirty seconds. At thirty seconds the total clock pulses orange. Both notes start on. Each has its own checkbox under **What to show**.
 
+#### Color
+
 Right-click a chapter in the left list to give that row one of six colors. The color is only in the list, so the script on the right stays as you typed it. Drag the edge of the list to make it wider or narrower. Each tab remembers its own width.
 
-Select a word and right-click to give that word its own color. The rest of the line keeps the line color. **Remove color** puts the word back. A heading, a highlight, and a note still color the whole line, the way they did before. The same colors show in the chapter list. A text export shows the words without those marks. A search hit opens on that line and the matched words flash blue twice, so a long question still shows which word was found. If that chapter was below the left list, the list scrolls until the heading is in view.
+Select a word and right-click to give that word its own color. The rest of the line keeps the line color. **Remove color** puts the word back. A heading, a highlight, and a note still color the whole line. The same colors show in the chapter list. A text export shows the words without those marks.
 
-The eye to the left of the lock hides the script and leaves the chapter list. That is for a rehearsal where you only want the headings. Hold `Ctrl+Alt+Shift+Period` to peek at the current line, then let go and it hides again. `Ctrl+Alt+Shift+J` jumps to the tab whose name is Questions, and the next press brings you back to the line you left.
+A search hit opens on that line and the matched words flash blue twice, so a long question still shows which word was found. If that chapter was below the left list, the list scrolls until the heading is in view.
+
+#### Rehearse from the headings
+
+The eye to the left of the lock hides the script and leaves the chapter list. Hold `Ctrl+Alt+Shift+Period` to peek at the current line, then let go and it hides again.
+
+`Ctrl+Alt+Shift+J` jumps to the tab whose name is Questions. The next press brings you back to the line you left.
+
+#### The pointer on a share
 
 The arrow just left of the eye hides your pointer from the person watching the share. It starts off. Over this window their cursor disappears at the edge, so it does not trace the notes. You still see a pointer, and you can still click and select text. The same switch covers the facts window. The checkbox at the top of settings does the same thing and applies at once.
 
-A practical split:
+#### A practical split
 
 | Tab | What goes there |
 | --- | --- |
 | Pitch | The story, one chapter per beat |
 | Questions | What they will ask, answer on the next line |
-| Numbers | Only if it is long; short figures belong in the **12** window |
+| Numbers | Only if it is long. Short figures belong in the **12** window |
 | Close | The ask, the date, the next step |
 
-The **12** window is a second page for figures and definitions. It has its own type size and its own opacity. It scrolls with the same thin dark bar as the chapter list. Closing it hides it. It does not quit the app.
+#### The 12 window
+
+A second page for figures and definitions. It has its own type size and its own opacity. It scrolls with the same thin dark bar as the chapter list. Closing it hides it. It does not quit the app.
+
+#### Search
 
 The search field sits with the tabs. It looks through the whole talk, and the match list uses the same thin dark scrollbar as the chapter list. The arrow beside the field is the part you will use more often than the field itself: uncheck the tabs you do not want in the results. A pitch tab can stay out while Questions and Numbers stay in. That choice is remembered for this talk, and a different talk keeps its own.
 
-## Less on the screen
+### Less on the screen
 
-Settings, **What to show**, is a set of checkboxes for the main window and the same idea for the numbers-and-definitions window. Uncheck opacity and the slider leaves the title bar. The window stays at the opacity you already chose. Uncheck the text colors, the timer, the chapter list, search, the lock, or the reading modes, and that control leaves the window. The last setting stays. The gear and the close button stay, so you can always put a control back. Everything starts checked. The point is a talk where you only need the text, and a rehearsal where you want the timer and the chapter list back.
+Settings, **What to show**, is a set of checkboxes for the main window and the same idea for the numbers-and-definitions window.
 
-## One talk as a file
+Uncheck opacity and the slider leaves the title bar. The window stays at the opacity you already chose. Uncheck the text colors, the timer, the chapter list, search, the lock, or the reading modes, and that control leaves the window. The last setting stays. The gear and the close button stay, so you can always put a control back.
 
-On a saved pitch, **File** is one button. **JSON** writes that talk alone: tabs, chapter times, list colors, list widths, and the facts window. **Open file** adds it to the list of saved pitches. It does not replace the notes already on the machine. Use it when you want to hand one lecture to another computer without carrying every other pitch. **Text**, in the same menu, writes the script for a notepad. The save dialog offers `.txt` or `.md`. That file is for reading. It does not bring the talk back into the app.
+Everything starts checked. The point is a talk where you only need the text, and a rehearsal where you want the timer and the chapter list back.
 
-## Thirty talks in memory
+### One talk as a file
+
+On a saved pitch, **File** is one button.
+
+| | |
+| --- | --- |
+| **JSON** | That talk alone: tabs, chapter times, list colors, list widths, and the facts window. **Open file** adds it to the list of saved pitches. It does not replace the notes already on the machine. |
+| **Text** | The script for a notepad. The save dialog offers `.txt` or `.md`. That file is for reading. It does not bring the talk back into the app. |
+
+### Thirty talks in memory
 
 Settings, **Saved pitches**, stores the tabs, the chapter times, and the facts window under a name you choose. You can keep 30. A short tag sits on the row, and its color opens from one button, so a lecture, a pitch, and a weekly meeting are easy to tell apart.
 
 **Open** brings that talk back in full and keeps the draft you were writing. **Delete** removes only the saved copy. Whatever is on screen stays.
 
-## Carry it on a USB stick
+### A USB stick
 
 The portable zip is the same program without an installer. Unpack it and leave the empty `portable` file next to `BestPerformance.exe`. Notes, pitches, and the facts window are written to a `data` folder beside the program, so the stick is the copy you open on the next laptop.
 
@@ -207,15 +288,15 @@ The first launch on a PC that already has BestPerformance installed copies that 
 
 Windows 10 and 11 draw the window themselves. Nothing else has to be installed.
 
-## macOS
+### macOS
 
 The Mac build does not call itself BestPerformance. The app is **Node Terminal**. It is absent from the Dock and from Cmd+Tab. The window title is the name you pick in settings, Node Terminal by default.
 
-That name change is in the project. Hiding the notes from a recording is not, once the Mac is on macOS 15.4 or newer. Screen capture there ignores the old protection, so Zoom, Teams, and OBS still record the window. On Windows the window stays out of capture.
+> On macOS 15.4 and newer, a recording still gets the window. Screen capture there ignores the old protection, so Zoom, Teams, and OBS still record it. On Windows the window stays out of capture.
 
 An unsigned Mac app needs a right-click **Open**, then **Open** again. Notes on a Mac stay in that Mac's user profile. They do not travel inside the app the way the Windows stick does.
 
-## Install on Windows
+### Install on Windows
 
 1. Open [releases](https://github.com/Edgunteralfa/BestPerformance/releases).
 2. Run `BestPerformance_{version}_x64-setup.exe`.
@@ -225,7 +306,7 @@ Or unpack `BestPerformance_{version}_x64-portable.zip`.
 
 Windows 10, build 2004 or newer, or Windows 11.
 
-## Build
+### Build
 
 Node.js 20+ and Rust 1.77+. A Mac app cannot be built on Windows.
 
@@ -236,7 +317,11 @@ npm install
 npm run tauri:build
 ```
 
-The installer is under `hidescreen-edhunter/src-edhunter/target/release/bundle/nsis/`. The portable zip is under `portable/`. Day-to-day work from the same folder: `npm run tauri dev`.
+| Result | Where it lands |
+| --- | --- |
+| Installer | `hidescreen-edhunter/src-edhunter/target/release/bundle/nsis/` |
+| Portable zip | `portable/` |
+| Day-to-day | `npm run tauri dev` from the same folder |
 
 On a Mac the same commands produce `dmg/Node Terminal_{version}_{aarch64 or x64}.dmg` and a portable zip that contains `Node Terminal.app`. The first build takes several minutes. Without git: **Code**, **Download ZIP**, then `cd` into `BestPerformance-main/hidescreen-edhunter`.
 
@@ -248,15 +333,24 @@ If macOS blocks the file:
 xattr -dr com.apple.quarantine "/path/to/Node Terminal.app"
 ```
 
-## Daily use
+### Daily use
 
-Drag the title to move the window. On Windows the title carries a small “by EdHunter”. Drag the bottom-right corner to resize. The next launch opens where you left it, at the size you left it. A first launch, or a window that was never resized from the old 400 by 200 size, opens at 800 by 400. `Ctrl+Shift+R` still puts it back to that default place and size. The gear opens settings. Colors, type, tab names, opacity, and the Alt+Tab name apply when you press Save. The checkboxes that hide controls, and the cursor checkbox, apply at once. The interface language switches at once.
+Drag the title to move the window. On Windows the title carries a small “by EdHunter”. Drag the bottom-right corner to resize. The next launch opens where you left it, at the size you left it. A first launch, or a window that was never resized from the old 400 by 200 size, opens at 800 by 400. `Ctrl+Shift+R` still puts it back to that default place and size.
+
+| Control | When it applies |
+| --- | --- |
+| Colors, type, tab names, opacity, the Alt+Tab name | When you press Save |
+| Checkboxes that hide controls, and the cursor checkbox | At once |
+| Interface language | At once |
 
 The lock lets clicks fall through. While it is on, use `Ctrl+Shift+L` or `Escape`. `Ctrl+Shift+E` unlocks for a quick edit and locks again when the click leaves the window.
 
 **Clear** asks first and erases only the open tab.
 
 ### Shortcuts
+
+<details>
+<summary><b>Show the full list</b></summary>
 
 | Shortcut | Action |
 | --- | --- |
@@ -281,7 +375,9 @@ The lock lets clicks fall through. While it is on, use `Ctrl+Shift+L` or `Escape
 | `Ctrl+Alt+Shift+Period` | While rehearsing blind, hold to show the current line |
 | `Ctrl+Shift+Y` | Reset the timer |
 
-### Where to put the window
+</details>
+
+#### Where to put the window
 
 The grid matches a numeric keypad: `Ctrl+Alt` and a digit.
 
@@ -293,24 +389,21 @@ The grid matches a numeric keypad: `Ctrl+Alt` and a digit.
 | Nudge up or down 20 px | `Ctrl+Shift+↑` / `↓` |
 | Nudge left or right 20 px | `Ctrl+Alt+←` / `→` |
 
-## Where the notes live
+### Where the notes live
 
 On the installed app they stay on that computer. If update checking is on, startup sends one request to the GitHub releases page. Turn the check off and nothing is sent.
 
-</details>
-
-<details>
-<summary><b id="russian">Русский</b></summary>
+<h2 id="russian">Русский</h2>
 
 Заметки остаются у вас на экране. В запись и в демонстрацию они не попадают.
 
 BestPerformance бесплатная. Навсегда и для всех.
 
-Питчи и созвоны бывают чаще, чем находится время спокойно к ним подготовиться. Иногда материалов столько, что в голове они не держатся. Программа как раз для этого: вы читаете свой текст, а собеседник видит только слайды.
+> Питчи и созвоны бывают чаще, чем находится время спокойно к ним подготовиться. Иногда материалов столько, что в голове они не держатся. Вы читаете свой текст, а собеседник видит только слайды.
 
-## Три способа читать
+### Три способа читать
 
-Один и тот же текст читается тремя способами. Кнопки на нижней панели: **Текст**, **Такт** и **Ход**. У каждой вкладки свой режим. Питч может оставаться на «Ходе», а «Вопросы» на «Тексте». При переключении «Ход» сам не запускается. Пуск не забирает окно вперёд. Клик по окну по-прежнему делает его активным, так устроена Windows. Колесо над текстом прокручивает его, даже если клавиатура в другой программе.
+Один и тот же текст, три способа. Кнопки на нижней панели. У каждой вкладки свой режим. Питч может оставаться на «Ходе», а «Вопросы» на «Тексте».
 
 | Режим | Что на экране | Когда нужен |
 | --- | --- | --- |
@@ -318,11 +411,15 @@ BestPerformance бесплатная. Навсегда и для всех.
 | **Такт** | Одна глава. Остальное скрыто. Колесо листает внутри неё | Репетировать один шаг |
 | **Ход** | Произносимая строка держится у верхнего края, ближе к камере | Сам созвон |
 
+#### Пуск
+
 ▶ на «Ходе» везёт текст. Колесо ставит паузу. Следующий ▶ продолжает с той строки, а не с конца. В конце главы кнопка становится стрелкой и открывает следующую главу в её собственном темпе. Выбор главы в списке начинает с неё.
 
-«Ход» идёт по времени у названия главы, `0:45` или `1:30`. Последняя произносимая строка доходит до линии глаза к концу этого времени. Если времени у главы нет, берётся последняя репетиция. Короткая репетиция не перебивает время, которое уже задано.
+> При переключении вкладок «Ход» сам не запускается. Пуск не забирает окно вперёд. Клик по окну по-прежнему делает его активным, так устроена Windows. Колесо над текстом прокручивает его, даже если клавиатура в другой программе.
 
-Эти строки не читаются. Они остаются на экране, и «Ход» проезжает их плавно, без скачка:
+#### Строки, которые «Ход» не читает
+
+Они остаются на экране. «Ход» проезжает их плавно, без скачка.
 
 - название главы, вместе со знаками, по которым список красит эту главу
 - строка, которая начинается с `//`
@@ -331,13 +428,26 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 `[cue]` внутри фразы, которую вы произносите, остаётся на этой фразе и строку не пропускает.
 
-Под длительностью выступления в настройках есть «Запускать таймер вместе с Ходом». Сначала галочка снята. Если её включить, пуск запускает часы главы, пауза останавливает и текст, и часы, а выбор главы начинает эти часы сначала. Если галочка снята, часы и текст идут отдельно.
+#### Часы рядом с «Ходом»
+
+«Ход» идёт по времени у названия главы, `0:45` или `1:30`. Последняя произносимая строка доходит до линии глаза к концу этого времени. Если времени у главы нет, берётся последняя репетиция. Короткая репетиция не перебивает время, которое уже задано.
+
+Под длительностью выступления в настройках есть «Запускать таймер вместе с Ходом». Сначала галочка снята.
+
+| Галочка | Что происходит |
+| --- | --- |
+| Включена | Пуск запускает часы главы. Пауза останавливает и текст, и часы. Выбор главы начинает эти часы сначала. |
+| Снята | Часы и текст идут отдельно. |
 
 В блоке «Что показывать» есть «Режимы чтения». Снимите галочку, и «Текст», «Такт», «Ход» и ▶ уйдут с панели. Режим, который был выбран, остаётся.
 
-Интерфейс на пятнадцати языках: английский, китайский, испанский, хинди, арабский, португальский, русский, японский, немецкий, французский, корейский, итальянский, турецкий, индонезийский и вьетнамский. Первый запуск берёт язык системы. Арабский читается справа налево, и список глав встаёт справа. Часы остаются `1:30` и не переворачиваются.
+#### Пятнадцать языков
 
-## Кому пригодится
+Английский, китайский, испанский, хинди, арабский, португальский, русский, японский, немецкий, французский, корейский, итальянский, турецкий, индонезийский и вьетнамский.
+
+Первый запуск берёт язык системы. Арабский читается справа налево, и список глав встаёт справа. Часы остаются `1:30` и не переворачиваются.
+
+### Кому пригодится
 
 - Когда презентация уже собрана, а что именно говорить — ещё нет.
 - Преподавателю на лекции, если он показывает свой экран. Студенты видят слайды, а у него под рукой план, короткая ремарка и цифра, которую легко забыть.
@@ -346,27 +456,57 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 На Windows окно не видно в Zoom, Microsoft Teams, VooV, Tencent Meeting, OBS, Webex, Яндекс Телемосте, «Ножницах», Bandicam и в других программах для снимков и записи экрана, если они снимают картинку обычным способом Windows. Окно всегда поверх остальных. В списке Alt+Tab и в окне «Поделиться экраном» оно называется как обычная системная программа. По умолчанию это Node Terminal, другое имя можно выбрать в настройках. В превью демонстрации этого окна нет. Значок в Alt+Tab — значок BestPerformance.
 
-Для экзаменов и для обхода правил учёбы, работы или чужих сервисов она не нужна.
+> Для экзаменов и для обхода правил учёбы, работы или чужих сервисов она не нужна.
 
-## Как разложить текст
+### Главы
 
 Одно выступление удобно разнести по вкладкам. Их можно сделать до шести, у каждой свой текст, название и цвет.
 
-Глава — строка с кнопкой **H** или строка, которая начинается с `# `. Если окно достаточно широкое, эти строки собираются в список слева. Нажатие открывает нужное место. `Ctrl+Shift+←` и `Ctrl+Shift+→` переключают главы и не мешают стрелкам в слайдах. `Ctrl+Alt+↑` и `Ctrl+Alt+↓` идут по строкам текущей главы. У строки, на которой вы остановились, слева белая черта.
+#### Глава
 
-Справа от названия главы можно задать время: `0:45` или `1:30`. Когда проходит половина этого времени, подпись становится голубой, и край окна один раз мигает голубым. Оранжевый по-прежнему значит, что осталось немного, красный — что почти ничего не осталось или время уже вышло. Если у главы своего времени нет, те же цвета идут по часам всего выступления. Кнопка «Итог» показывает, сколько на самом деле ушло на каждую главу. Короткая последняя глава тоже доезжает до верхнего края, и её таймер начинается так же, как у остальных.
+Глава — строка с кнопкой **H** или строка, которая начинается с `# `. Если окно достаточно широкое, эти строки собираются в список слева. Нажатие открывает нужное место.
+
+| Клавиши | Что делают |
+| --- | --- |
+| `Ctrl+Shift+←` `Ctrl+Shift+→` | Предыдущая или следующая глава. Стрелки в слайдах остаются слайдам. |
+| `Ctrl+Alt+↑` `Ctrl+Alt+↓` | Строки текущей главы. |
+
+У строки, на которой вы остановились, слева белая черта.
+
+#### Время главы
+
+Справа от названия главы можно задать время: `0:45` или `1:30`.
+
+| Момент | Что видно |
+| --- | --- |
+| Прошла половина времени главы | Подпись становится голубой. Край окна один раз мигает голубым. |
+| Осталось немного | Оранжевый. |
+| Почти ничего не осталось, или время вышло | Красный. |
+| У главы своего времени нет | Те же цвета идут по часам всего выступления. |
+
+Кнопка «Итог» показывает, сколько на самом деле ушло на каждую главу. Короткая последняя глава тоже доезжает до верхнего края, и её таймер начинается так же, как у остальных.
 
 На всё выступление в углу появляется надпись «Осталась 1 минута», затем «Осталось 30 секунд». На последних тридцати секундах общие часы пульсируют оранжевым. Обе подсказки сначала включены. У каждой своя галочка в блоке «Что показывать».
 
+#### Цвет
+
 Правый клик по главе в списке слева ставит строке один из шести цветов. Цвет только в списке, текст справа остаётся таким, каким вы его написали. Край списка можно потянуть и сделать его шире или уже. У каждой вкладки своя ширина, и она запоминается.
 
-Выделите слово и нажмите правую кнопку, чтобы задать цвет только ему. Остальная строка сохраняет цвет строки. «Убрать цвет» возвращает слово к цвету строки. Заголовок, выделение и заметка по-прежнему красят строку целиком. Те же цвета видны в списке глав слева. Текстовый файл показывает слова без этих меток. Результат поиска открывается на своей строке, и найденные слова дважды мигают синим, так что в длинном вопросе видно, какое слово нашлось. Если эта глава была ниже левого списка, список прокручивается, пока заголовок не окажется в поле зрения.
+Выделите слово и нажмите правую кнопку, чтобы задать цвет только ему. Остальная строка сохраняет цвет строки. «Убрать цвет» возвращает слово к цвету строки. Заголовок, выделение и заметка по-прежнему красят строку целиком. Те же цвета видны в списке глав слева. Текстовый файл показывает слова без этих меток.
 
-Глаз слева от замка прячет текст и оставляет список глав. Так удобно репетировать, когда нужны только заголовки. Удерживайте `Ctrl+Alt+Shift+Period`, чтобы на секунду увидеть текущую строку. Отпустите — она снова спрячется. `Ctrl+Alt+Shift+J` переходит во вкладку, в названии которой есть «Вопросы», а следующее нажатие возвращает к строке, с которой вы ушли.
+Результат поиска открывается на своей строке, и найденные слова дважды мигают синим, так что в длинном вопросе видно, какое слово нашлось. Если эта глава была ниже левого списка, список прокручивается, пока заголовок не окажется в поле зрения.
+
+#### Репетиция по заголовкам
+
+Глаз слева от замка прячет текст и оставляет список глав. Удерживайте `Ctrl+Alt+Shift+Period`, чтобы на секунду увидеть текущую строку. Отпустите — она снова спрячется.
+
+`Ctrl+Alt+Shift+J` переходит во вкладку, в названии которой есть «Вопросы». Следующее нажатие возвращает к строке, с которой вы ушли.
+
+#### Курсор на демонстрации
 
 Стрелка сразу слева от глаза прячет курсор от того, кто смотрит демонстрацию. Сначала она выключена. Над окном заметок его курсор пропадает у границы и не обводит невидимый текст. Вы свою стрелку видите и по-прежнему можете нажимать и выделять текст. Та же кнопка действует и на окно цифр. Галочка в самом верху настроек делает то же самое и срабатывает сразу.
 
-Пример, как разложить питч:
+#### Как разложить питч
 
 | Вкладка | Что там держать |
 | --- | --- |
@@ -375,25 +515,38 @@ BestPerformance бесплатная. Навсегда и для всех.
 | Цифры | Если цифр много. Короткие лучше вынести в окно **12** |
 | Финал | Просьба, дата, следующий шаг |
 
-Окно **12** — отдельная страница для цифр и коротких формулировок. Размер шрифта и прозрачность у него свои. Полоса прокрутки такая же тонкая и тёмная, как у списка глав. Крестик только прячет это окно, программа при этом не закрывается.
+#### Окно 12
+
+Отдельная страница для цифр и коротких формулировок. Размер шрифта и прозрачность у него свои. Полоса прокрутки такая же тонкая и тёмная, как у списка глав. Крестик только прячет это окно, программа при этом не закрывается.
+
+#### Поиск
 
 Поле поиска стоит рядом с вкладками и смотрит по всему выступлению. Список совпадений прокручивается такой же тонкой тёмной полосой, как список глав. Стрелка у поля важнее самого поля: снимите галочки с вкладок, в которых искать не нужно. Питч можно исключить, а «Вопросы» и «Цифры» оставить. Выбор запоминается для этого выступления. У другого выступления свой.
 
-## Меньше на экране
+### Меньше на экране
 
-В настройках, в блоке «Что показывать», стоят галочки для главного окна и такие же для окна цифр и определений. Снимите прозрачность — ползунок уйдёт из заголовка, а окно останется с той прозрачностью, которую вы уже выставили. То же с цветами текста, таймером, списком глав, поиском, замком и режимами чтения: элемент пропадает с окна, настройка остаётся. Шестерёнка и крестик остаются всегда, чтобы галочку можно было вернуть. Сначала включено всё. Смысл в том, чтобы на сам питч оставить только текст, а на репетицию снова показать таймер и список глав.
+В настройках, в блоке «Что показывать», стоят галочки для главного окна и такие же для окна цифр и определений.
 
-## Одно выступление файлом
+Снимите прозрачность — ползунок уйдёт из заголовка, а окно останется с той прозрачностью, которую вы уже выставили. То же с цветами текста, таймером, списком глав, поиском, замком и режимами чтения: элемент пропадает с окна, настройка остаётся. Шестерёнка и крестик остаются всегда, чтобы галочку можно было вернуть.
 
-У сохранённого питча кнопка **Файл** открывает два варианта. **JSON** записывает только это выступление: вкладки, время глав, цвета и ширину списка, окно с фактами. «Открыть файл» добавляет его в список сохранённых. Остальные заметки на компьютере не затираются. Так удобно передать одну лекцию на другой компьютер, не таская все остальные питчи. **Текст** в том же меню сохраняет сценарий для блокнота. В окне сохранения можно выбрать `.txt` или `.md`. Этот файл обратно в программу не загружается.
+Сначала включено всё. Смысл в том, чтобы на сам питч оставить только текст, а на репетицию снова показать таймер и список глав.
 
-## Память на 30 выступлений
+### Одно выступление файлом
+
+У сохранённого питча кнопка **Файл** открывает два варианта.
+
+| | |
+| --- | --- |
+| **JSON** | Только это выступление: вкладки, время глав, цвета и ширину списка, окно с фактами. «Открыть файл» добавляет его в список сохранённых. Остальные заметки на компьютере не затираются. |
+| **Текст** | Сценарий для блокнота. В окне сохранения можно выбрать `.txt` или `.md`. Этот файл обратно в программу не загружается. |
+
+### Тридцать выступлений
 
 В настройках, в разделе «Память питчей», можно сохранить вкладки, время глав и окно «Цифры и детали» под своим названием. Таких сохранений до 30: лекции, питчи, планёрки. У каждой записи короткий тег, а цвет тега открывается одной кнопкой, чтобы в списке их не путать.
 
 «Открыть» полностью возвращает выбранное выступление. То, что вы писали сейчас, тоже остаётся в списке. «Удалить» убирает только сохранённую копию. Текст на экране никуда не девается.
 
-## Флешка
+### Флешка
 
 Портативная версия — та же программа, только без установки. Распакуйте архив и не удаляйте пустой файл `portable` рядом с `BestPerformance.exe`. Заметки, питчи и окно с цифрами сохраняются в папку `data` рядом с программой. Флешку можно воткнуть в другой ноутбук и продолжить с теми же материалами.
 
@@ -401,15 +554,15 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 На Windows 10 и 11 ничего дополнительно ставить не нужно.
 
-## macOS
+### macOS
 
 На Mac программа называется не BestPerformance, а **Node Terminal**. В Dock и в Cmd+Tab её нет. В заголовке окна то имя, которое выбрано в настройках. По умолчанию это тоже Node Terminal.
 
-Название таким образом спрятано. Сами заметки на macOS 15.4 и новее от записи не прячутся: система не даёт программе запретить съёмку экрана, поэтому Zoom, Teams и OBS окно всё равно видят. На Windows оно в запись не попадает.
+> На macOS 15.4 и новее запись окно всё равно видит. Система не даёт программе запретить съёмку экрана, поэтому Zoom, Teams и OBS его снимают. На Windows оно в запись не попадает.
 
 Подписи Apple у программы нет. В Finder нажмите на `Node Terminal.app` правой кнопкой, выберите **Открыть** и подтвердите ещё раз. Заметки на Mac остаются на этом компьютере. На флешку, как в Windows, они не переносятся.
 
-## Установка на Windows
+### Установка на Windows
 
 1. Откройте [релизы](https://github.com/Edgunteralfa/BestPerformance/releases).
 2. Запустите `BestPerformance_{версия}_x64-setup.exe`.
@@ -419,7 +572,7 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 Подойдёт Windows 10 сборки 2004 и новее или Windows 11.
 
-## Сборка
+### Сборка
 
 Нужны [Node.js](https://nodejs.org/) 20 или новее и [Rust](https://rustup.rs/) 1.77 или новее. Версию для Mac на Windows собрать нельзя.
 
@@ -430,7 +583,11 @@ npm install
 npm run tauri:build
 ```
 
-Установщик будет в `hidescreen-edhunter/src-edhunter/target/release/bundle/nsis/`. Архив без установки — в папке `portable/`. Для обычной работы над программой из той же папки запускайте `npm run tauri dev`.
+| Что получится | Куда ляжет |
+| --- | --- |
+| Установщик | `hidescreen-edhunter/src-edhunter/target/release/bundle/nsis/` |
+| Архив без установки | `portable/` |
+| Обычная работа | `npm run tauri dev` из той же папки |
 
 На Mac те же команды собирают `dmg/Node Terminal_{версия}_{aarch64 или x64}.dmg` и архив с `Node Terminal.app`. Первый раз это занимает несколько минут: скачиваются библиотеки Rust. Если git нет, на GitHub нажмите **Code**, затем **Download ZIP** и откройте папку `BestPerformance-main/hidescreen-edhunter`.
 
@@ -442,15 +599,24 @@ npm run tauri:build
 xattr -dr com.apple.quarantine "/путь/к/Node Terminal.app"
 ```
 
-## В работе
+### В работе
 
-Окно переносится за заголовок. На Windows рядом с названием мелким шрифтом написано by EdHunter. За правый нижний угол меняются ширина и высота. Следующий запуск открывает его там же и того же размера. Первый запуск, или окно, которое так и осталось старым 400 на 200, открывается 800 на 400. `Ctrl+Shift+R` по-прежнему возвращает это место и размер по умолчанию. Шестерёнка открывает настройки. Цвета, шрифт, названия вкладок, прозрачность и имя в Alt+Tab начинают действовать после кнопки «Сохранить». Галочки, которые прячут кнопки с окна, и галочка курсора срабатывают сразу. Язык интерфейса меняется сразу.
+Окно переносится за заголовок. На Windows рядом с названием мелким шрифтом написано by EdHunter. За правый нижний угол меняются ширина и высота. Следующий запуск открывает его там же и того же размера. Первый запуск, или окно, которое так и осталось старым 400 на 200, открывается 800 на 400. `Ctrl+Shift+R` по-прежнему возвращает это место и размер по умолчанию.
+
+| Что меняете | Когда начинает действовать |
+| --- | --- |
+| Цвета, шрифт, названия вкладок, прозрачность, имя в Alt+Tab | После кнопки «Сохранить» |
+| Галочки, которые прячут кнопки, и галочка курсора | Сразу |
+| Язык интерфейса | Сразу |
 
 Замок пропускает клики в программу под окном. Пока он включён, снять его можно сочетанием `Ctrl+Shift+L` или клавишей `Escape`. `Ctrl+Shift+E` ненадолго открывает текст для правки и снова включает замок, когда вы нажимаете мимо окна.
 
 «Очистить» сначала спрашивает и стирает только открытую вкладку.
 
 ### Сочетания клавиш
+
+<details>
+<summary><b>Показать весь список</b></summary>
 
 | Сочетание | Что делает |
 | --- | --- |
@@ -475,7 +641,9 @@ xattr -dr com.apple.quarantine "/путь/к/Node Terminal.app"
 | `Ctrl+Alt+Shift+Period` | В репетиции вслепую удерживайте, чтобы показать текущую строку |
 | `Ctrl+Shift+Y` | Сбросить таймер |
 
-### Куда поставить окно
+</details>
+
+#### Куда поставить окно
 
 Сетка такая же, как на цифровой клавиатуре: `Ctrl+Alt` и цифра.
 
@@ -487,8 +655,14 @@ xattr -dr com.apple.quarantine "/путь/к/Node Terminal.app"
 | Сдвинуть вверх или вниз на 20 пикселей | `Ctrl+Shift+↑` / `↓` |
 | Сдвинуть влево или вправо на 20 пикселей | `Ctrl+Alt+←` / `→` |
 
-## Где хранятся заметки
+### Где хранятся заметки
 
 У установленной программы они остаются на этом компьютере. Если проверка обновлений включена, при запуске один раз спрашивается страница релизов на GitHub. Если проверку выключить, наружу ничего не уходит.
 
-</details>
+<p align="center">
+  <b>Support</b><br>
+  The app is free. If it is useful, you can send <b>USDT (TRC-20)</b>.<br>
+  Программа бесплатная. Если она вам пригодилась, можно отправить благодарность на любую сумму в <b>USDT (TRC-20)</b>.<br>
+  <code>TBoBBxmpbk5nkZWnaVK9nuDB4XH5c72mo7</code><br>
+  <img src="assets/usdt-trc20.jpg" alt="USDT TRC-20" width="220">
+</p>
