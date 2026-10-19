@@ -3,22 +3,38 @@
 </p>
 
 <p align="center">
+  <b>The script stays on your glass. The recording does not get it.</b><br>
+  <span>Сценарий остаётся на вашем стекле. В запись он не попадает.</span>
+</p>
+
+<p align="center">
   <a href="#english"><b>English</b></a>
   &nbsp;·&nbsp;
   <a href="#russian">Русский</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/Edgunteralfa/BestPerformance/releases/tag/v1.3.0"><b>Download 1.3.0</b></a>
 </p>
 
 <p align="center">
   <a href="https://github.com/Edgunteralfa">Edgunteralfa</a> (EdHunter)
-  · <a href="https://github.com/Edgunteralfa/BestPerformance">github.com/Edgunteralfa/BestPerformance</a>
-  · 1.2.1
+  · <a href="https://github.com/Edgunteralfa/BestPerformance">BestPerformance</a>
   · <a href="CHANGELOG.md">changelog</a>
 </p>
 
 <p align="center">
-  <img alt="Windows" src="https://img.shields.io/badge/Windows-10%2B-blue">
-  <img alt="macOS" src="https://img.shields.io/badge/macOS-10.15%2B-lightgrey">
-  <img alt="Tauri" src="https://img.shields.io/badge/Tauri-2-blue">
+  <img alt="version" src="https://img.shields.io/badge/release-1.3.0-2F6B4F">
+  <img alt="Windows" src="https://img.shields.io/badge/Windows-10%2B-2F5E8A">
+  <img alt="macOS" src="https://img.shields.io/badge/macOS-10.15%2B-5C4A8A">
+  <img alt="languages" src="https://img.shields.io/badge/languages-15-8A5A2F">
+  <img alt="Tauri" src="https://img.shields.io/badge/Tauri-2-4E6A3A">
+</p>
+
+<p align="center">
+  <img alt="Notes" src="https://img.shields.io/badge/Notes-the%20whole%20script-2F6B4F">
+  &nbsp;
+  <img alt="Beat" src="https://img.shields.io/badge/Beat-one%20chapter-2F5E8A">
+  &nbsp;
+  <img alt="Glide" src="https://img.shields.io/badge/Glide-the%20line%20near%20the%20camera-8A3E62">
 </p>
 
 <p align="center">
@@ -37,6 +53,35 @@ Notes on your screen. A recording and a screen share do not get them.
 BestPerformance is free forever, for everyone.
 
 Pitches and calls pile up. Sometimes there is no evening left to rehearse, and sometimes the brief is longer than the slot. BestPerformance started from that: a private script you can read while the other person only sees the slides.
+
+## Three ways to read
+
+The same chapter can be read three ways. The buttons sit on the bottom bar: **Notes**, **Beat**, and **Glide**. Each tab remembers its own. A pitch can stay on Glide while Questions stays on Notes. Switching tabs does not start Glide by itself. Play does not pull the window forward. Clicking the window still focuses it, the way Windows does. The wheel over the text still scrolls when another program has the keyboard.
+
+| Mode | What you see | When to use it |
+| --- | --- | --- |
+| **Notes** | The whole script, chapters in the list | Writing and finding a line |
+| **Beat** | One chapter. The rest is hidden. The wheel scrolls inside it | Rehearsing a single beat |
+| **Glide** | The line you are saying stays near the top, close to the camera | The call itself |
+
+Press play on Glide and the text moves. The wheel pauses it. Play again and it continues from that line, not from the end. At the end of a chapter the button becomes an arrow. That arrow opens the next chapter at its own pace. Choosing a chapter in the list starts there.
+
+Glide follows the time written beside the chapter, `0:45` or `1:30`. The last line you say reaches the eye line as that time runs out. If the chapter has no time, Glide uses the last rehearsal of that chapter. A short rehearsal does not override a time you already set.
+
+These lines are not read. They stay on screen, and Glide crosses them smoothly instead of jumping:
+
+- the chapter title, including the marks you use so the list can color that chapter
+- a line that starts with `//`
+- a line that starts with `[cue smile]`
+- a note made with the second highlight
+
+A `[cue]` inside a sentence you do say stays on that sentence. It does not skip the line.
+
+Under the talk length in settings, **Start the timer with Glide** is off until you check it. With it on, play starts the chapter clock, pause stops both, and choosing a chapter starts that clock from the top. With it off, the clock and the text stay independent.
+
+**What to show** has a checkbox for the reading modes. Uncheck it and Notes, Beat, Glide, and play leave the bar. The mode you last chose stays.
+
+The interface is in fifteen languages: English, Chinese, Spanish, Hindi, Arabic, Portuguese, Russian, Japanese, German, French, Korean, Italian, Turkish, Indonesian, and Vietnamese. The first launch follows the system language. Arabic reads from the right, and the chapter list moves to the right with it. A clock stays `1:30` and does not reverse.
 
 ## Who it is for
 
@@ -82,7 +127,7 @@ The search field sits with the tabs. It looks through the whole talk, and the ma
 
 ## Less on the screen
 
-Settings, **What to show**, is a set of checkboxes for the main window and the same idea for the numbers-and-definitions window. Uncheck opacity and the slider leaves the title bar. The window stays at the opacity you already chose. Uncheck the text colors, the timer, the chapter list, search, or the lock, and that control leaves the window. The last setting stays. The gear and the close button stay, so you can always put a control back. Everything starts checked. The point is a talk where you only need the text, and a rehearsal where you want the timer and the chapter list back.
+Settings, **What to show**, is a set of checkboxes for the main window and the same idea for the numbers-and-definitions window. Uncheck opacity and the slider leaves the title bar. The window stays at the opacity you already chose. Uncheck the text colors, the timer, the chapter list, search, the lock, or the reading modes, and that control leaves the window. The last setting stays. The gear and the close button stay, so you can always put a control back. Everything starts checked. The point is a talk where you only need the text, and a rehearsal where you want the timer and the chapter list back.
 
 ## One talk as a file
 
@@ -203,6 +248,35 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 Питчи и созвоны бывают чаще, чем находится время спокойно к ним подготовиться. Иногда материалов столько, что в голове они не держатся. Программа как раз для этого: вы читаете свой текст, а собеседник видит только слайды.
 
+## Три способа читать
+
+Один и тот же текст читается тремя способами. Кнопки на нижней панели: **Текст**, **Такт** и **Ход**. У каждой вкладки свой режим. Питч может оставаться на «Ходе», а «Вопросы» на «Тексте». При переключении «Ход» сам не запускается. Пуск не забирает окно вперёд. Клик по окну по-прежнему делает его активным, так устроена Windows. Колесо над текстом прокручивает его, даже если клавиатура в другой программе.
+
+| Режим | Что на экране | Когда нужен |
+| --- | --- | --- |
+| **Текст** | Весь сценарий, главы в списке | Писать и искать строку |
+| **Такт** | Одна глава. Остальное скрыто. Колесо листает внутри неё | Репетировать один шаг |
+| **Ход** | Произносимая строка держится у верхнего края, ближе к камере | Сам созвон |
+
+▶ на «Ходе» везёт текст. Колесо ставит паузу. Следующий ▶ продолжает с той строки, а не с конца. В конце главы кнопка становится стрелкой и открывает следующую главу в её собственном темпе. Выбор главы в списке начинает с неё.
+
+«Ход» идёт по времени у названия главы, `0:45` или `1:30`. Последняя произносимая строка доходит до линии глаза к концу этого времени. Если времени у главы нет, берётся последняя репетиция. Короткая репетиция не перебивает время, которое уже задано.
+
+Эти строки не читаются. Они остаются на экране, и «Ход» проезжает их плавно, без скачка:
+
+- название главы, вместе со знаками, по которым список красит эту главу
+- строка, которая начинается с `//`
+- строка, которая начинается с `[cue улыбка]`
+- заметка второй кнопкой выделения
+
+`[cue]` внутри фразы, которую вы произносите, остаётся на этой фразе и строку не пропускает.
+
+Под длительностью выступления в настройках есть «Запускать таймер вместе с Ходом». Сначала галочка снята. Если её включить, пуск запускает часы главы, пауза останавливает и текст, и часы, а выбор главы начинает эти часы сначала. Если галочка снята, часы и текст идут отдельно.
+
+В блоке «Что показывать» есть «Режимы чтения». Снимите галочку, и «Текст», «Такт», «Ход» и ▶ уйдут с панели. Режим, который был выбран, остаётся.
+
+Интерфейс на пятнадцати языках: английский, китайский, испанский, хинди, арабский, португальский, русский, японский, немецкий, французский, корейский, итальянский, турецкий, индонезийский и вьетнамский. Первый запуск берёт язык системы. Арабский читается справа налево, и список глав встаёт справа. Часы остаются `1:30` и не переворачиваются.
+
 ## Кому пригодится
 
 - Когда презентация уже собрана, а что именно говорить — ещё нет.
@@ -247,7 +321,7 @@ BestPerformance бесплатная. Навсегда и для всех.
 
 ## Меньше на экране
 
-В настройках, в блоке «Что показывать», стоят галочки для главного окна и такие же для окна цифр и определений. Снимите прозрачность — ползунок уйдёт из заголовка, а окно останется с той прозрачностью, которую вы уже выставили. То же с цветами текста, таймером, списком глав, поиском и замком: элемент пропадает с окна, настройка остаётся. Шестерёнка и крестик остаются всегда, чтобы галочку можно было вернуть. Сначала включено всё. Смысл в том, чтобы на сам питч оставить только текст, а на репетицию снова показать таймер и список глав.
+В настройках, в блоке «Что показывать», стоят галочки для главного окна и такие же для окна цифр и определений. Снимите прозрачность — ползунок уйдёт из заголовка, а окно останется с той прозрачностью, которую вы уже выставили. То же с цветами текста, таймером, списком глав, поиском, замком и режимами чтения: элемент пропадает с окна, настройка остаётся. Шестерёнка и крестик остаются всегда, чтобы галочку можно было вернуть. Сначала включено всё. Смысл в том, чтобы на сам питч оставить только текст, а на репетицию снова показать таймер и список глав.
 
 ## Одно выступление файлом
 

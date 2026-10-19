@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.0
+
+- Three ways to read the same script. Notes is the full text. Beat shows one chapter. Glide keeps the line you are saying near the top, close to the camera, and does not pull the window forward.
+- Glide follows the time set on that chapter. If the chapter has no time, it uses the last rehearsal. A chapter title is not read. A line that starts with `//` or `[cue]`, and a note from the second highlight, is crossed smoothly and does not take the chapter time.
+- The wheel pauses Glide. Play continues from that line. At the end of a chapter the button becomes an arrow to the next one. Choosing a chapter in the list starts there.
+- Each tab keeps its own Notes, Beat, or Glide. Switching tabs does not start Glide by itself.
+- A setting starts the chapter timer with Glide. It is off until you turn it on. Play starts both, pause stops both, and choosing a chapter starts that chapter's clock from the top.
+- The interface is in fifteen languages. The first launch follows the system language. Arabic reads from the right, and the chapter list moves to the right. Clocks stay as `1:30`.
+- Reading modes can be hidden from the main window. The last mode stays.
+
 ## 1.2.1
 
 - The update check uses the version of the build itself. After 1.2.1 is installed, the app no longer asks to install 1.2.0 again.
@@ -31,6 +41,16 @@
 - First public release. A notes window for talks and calls, on top of other programs, and on Windows left out of screen capture.
 
 # История изменений
+
+## 1.3.0
+
+- Три способа читать один и тот же текст. «Текст» показывает всё. «Такт» оставляет одну главу. «Ход» держит произносимую строку у верхнего края, ближе к камере, и сам не вытаскивает окно вперёд.
+- «Ход» идёт по времени, заданному главе. Если времени нет, берётся последняя репетиция. Название главы не читается. Строка с `//` или `[cue]` и строка второго цвета проезжаются плавно и не забирают время главы.
+- Колесо ставит «Ход» на паузу. Пуск продолжает с той же строки. В конце главы кнопка становится стрелкой на следующую. Выбор главы в списке начинает с неё.
+- У каждой вкладки свой «Текст», «Такт» или «Ход». При переключении «Ход» сам не запускается.
+- В настройках можно запускать таймер главы вместе с «Ходом». Сначала галочка снята. Пуск включает оба, пауза останавливает оба, а выбор главы начинает её часы сначала.
+- Интерфейс на пятнадцати языках. Первый запуск берёт язык системы. Арабский читается справа налево, и список глав встаёт справа. Часы остаются как `1:30`.
+- Режимы чтения можно убрать с главного окна. Последний режим остаётся.
 
 ## 1.2.1
 
