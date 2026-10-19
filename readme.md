@@ -37,6 +37,66 @@
   <img alt="Glide" src="https://img.shields.io/badge/Glide-the%20line%20near%20the%20camera-8A3E62">
 </p>
 
+## On screen
+
+The window below is a demo pitch, Harbor. The recording of a real talk does not get this window. These pictures were taken from a local copy made only for the page.
+
+<p align="center">
+  <img src="assets/readme/notes.png" alt="Notes: the whole script, with chapters on the left" width="840">
+</p>
+
+**Notes** is the whole script. Chapters sit on the left, each with its own time. A heading is gold, a line you say is green, and a line that starts with `//` is a reminder you do not say.
+
+**Текст** — весь сценарий. Главы слева, у каждой своё время. Заголовок золотой, речь зелёная, строка с `//` — ремарка, её не произносят.
+
+<p align="center">
+  <img src="assets/readme/beat.png" alt="Beat: one chapter fills the window" width="840">
+</p>
+
+**Beat** keeps a single chapter on screen. The list on the left still jumps to the others.
+
+**Такт** оставляет на экране одну главу. Список слева по-прежнему переключает остальные.
+
+<p align="center">
+  <img src="assets/readme/glide.png" alt="Glide: the line you are saying stays near the top" width="840">
+</p>
+
+**Glide** holds the line you are saying near the top, close to the camera. The thin line across the text is the eye line. Play moves the script. The wheel pauses it.
+
+**Ход** держит произносимую строку у верхнего края, ближе к камере. Тонкая черта — линия глаза. Пуск везёт текст, колесо ставит паузу.
+
+<p align="center">
+  <img src="assets/readme/figures.png" alt="A second window for figures" width="840">
+</p>
+
+The **12** button opens a second window for the few numbers you need while you talk. It has its own type size and its own opacity.
+
+Кнопка **12** открывает второе окно для цифр, которые нужны во время речи. Размер шрифта и прозрачность у него свои.
+
+<p align="center">
+  <img src="assets/readme/tabs.png" alt="Each tab has its own name and color" width="840">
+</p>
+
+Up to six tabs. Each one has its own text, name, and color. Pitch, questions, numbers, and the close can live apart.
+
+До шести вкладок. У каждой свой текст, имя и цвет. Питч, вопросы, цифры и финал можно держать отдельно.
+
+<p align="center">
+  <img src="assets/readme/colors.png" alt="Colors for the body, headings, and highlights" width="840">
+</p>
+
+Body, heading, highlight, and the second highlight each have a color. The second highlight is a note. Glide does not read it.
+
+У обычного текста, заголовка, выделения и второго выделения свой цвет. Второе выделение — заметка. «Ход» её не читает.
+
+<p align="center">
+  <img src="assets/readme/what-to-show.png" alt="Checkboxes that hide controls you do not need" width="840">
+</p>
+
+**What to show** takes a control off the window. The last setting stays. Reading modes, the timer, search, and the lock can each leave the screen.
+
+**Что показывать** убирает кнопку с окна. Сама настройка остаётся. Режимы чтения, таймер, поиск и замок можно убрать по отдельности.
+
 <p align="center">
   <b>Support</b><br>
   The app is free. If it is useful, you can send <b>USDT (TRC-20)</b>.<br>
