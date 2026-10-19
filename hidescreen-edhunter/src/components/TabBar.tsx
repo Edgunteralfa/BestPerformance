@@ -1,6 +1,6 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useRef, useState, type PointerEvent } from 'react';
 import type { Pace } from '../hooks/usePitchTimer';
 import type { NoteTab } from '../types';
 import PitchSearch from './PitchSearch';
@@ -63,12 +63,10 @@ function TabBar({
   const suppressClickRef = useRef(false);
   const [dragId, setDragId] = useState<string | null>(null);
   const [orderIds, setOrderIds] = useState<string[] | null>(null);
-
-  useEffect(() => {
-    if (!orderIds) return;
-    const same = orderIds.length === tabs.length && orderIds.every((id, index) => tabs[index]?.id === id);
-    if (same) setOrderIds(null);
-  }, [orderIds, tabs]);
+  const orderMatches = orderIds !== null
+    && orderIds.length === tabs.length
+    && orderIds.every((id, index) => tabs[index]?.id === id);
+  if (orderMatches) setOrderIds(null);
 
   const shown = (orderIds ?? tabs.map((tab) => tab.id))
     .map((id) => tabs.find((tab) => tab.id === id))

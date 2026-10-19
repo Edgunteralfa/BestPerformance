@@ -312,7 +312,7 @@ function CardShell({
             if (root && saved && selection) {
               selection.removeAllRanges();
               selection.addRange(saved);
-              if (applyWordInk(root, color)) publish();
+              if (applyWordInk(root, color, config.noteColor)) publish();
             }
             setWordMenu(null);
           }}

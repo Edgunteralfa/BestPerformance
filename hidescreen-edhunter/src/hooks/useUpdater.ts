@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { exit } from '@tauri-apps/plugin-process';
-import { appConfirm, appMessage } from '../components/AppDialog';
+import { appConfirm, appMessage } from '../dialogQueue';
 import { checkForUpdates } from '../utils/updateChecker';
 import type { Language } from '../i18n';
 

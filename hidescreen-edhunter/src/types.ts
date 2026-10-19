@@ -15,6 +15,7 @@ export interface MainChrome {
   clear: boolean;
   blind: boolean;
   lock: boolean;
+  reading: boolean;
 }
 
 export interface CardChrome {
@@ -39,6 +40,7 @@ export const DEFAULT_MAIN_CHROME: MainChrome = {
   clear: true,
   blind: true,
   lock: true,
+  reading: true,
 };
 
 export const DEFAULT_CARD_CHROME: CardChrome = {
@@ -73,6 +75,13 @@ export interface NoteTab {
 }
 
 export const MAX_TABS = 6;
+
+export type ReadingMode = 'outline' | 'beat' | 'glide';
+
+export function normalizeReadingMode(value: unknown): ReadingMode {
+  if (value === 'beat' || value === 'glide' || value === 'outline') return value;
+  return 'outline';
+}
 
 export const TAB_COLORS = [
   '#2F6B4F',
@@ -195,8 +204,10 @@ export interface Config {
   language: 'en' | 'ru';
 
   // Pitch clock. 0 shows elapsed time. Chapter budgets are seconds, keyed by tab and heading.
+  // chapterPaces is the last rehearsal, in seconds, for the same keys.
   pitchSeconds: number;
   chapterBudgets: Record<string, number>;
+  chapterPaces: Record<string, number>;
   chapterListColors: Record<string, string>;
   chapterNavWidths: Record<string, number>;
   mainChrome: MainChrome;
@@ -210,6 +221,9 @@ export interface Config {
   cardHeight: number;
   cardFontSize: number;
   cardOpacity: number;
+
+  // How the open tab is read. Outline is the full script.
+  readingMode: ReadingMode;
 
   // OS window title shown in Alt+Tab and share pickers. The in-app title stays BestPerformance.
   windowMask: WindowMaskId;
@@ -229,6 +243,7 @@ export interface PitchMemory {
   activeTabId: string;
   pitchSeconds: number;
   chapterBudgets: Record<string, number>;
+  chapterPaces: Record<string, number>;
   chapterListColors: Record<string, string>;
   chapterNavWidths: Record<string, number>;
   cardText: string;
@@ -263,6 +278,7 @@ export const DEFAULT_CONFIG: Config = {
   language: 'en',
   pitchSeconds: 300,
   chapterBudgets: {},
+  chapterPaces: {},
   chapterListColors: {},
   chapterNavWidths: {},
   mainChrome: DEFAULT_MAIN_CHROME,
@@ -275,6 +291,7 @@ export const DEFAULT_CONFIG: Config = {
   cardHeight: 240,
   cardFontSize: 16,
   cardOpacity: 0.85,
+  readingMode: 'outline',
   windowMask: 'node',
   pitchMemories: [],
   activePitchId: null,
@@ -329,6 +346,7 @@ export function normalizePitchMemories(value: unknown): PitchMemory[] {
       activeTabId,
       pitchSeconds: normalizePitchSeconds(row.pitchSeconds),
       chapterBudgets: normalizeChapterBudgets(row.chapterBudgets),
+      chapterPaces: normalizeChapterBudgets(row.chapterPaces),
       chapterListColors: normalizeChapterListColors(row.chapterListColors),
       chapterNavWidths: normalizeChapterNavWidths(row.chapterNavWidths),
       cardText: typeof row.cardText === 'string' ? row.cardText : '',

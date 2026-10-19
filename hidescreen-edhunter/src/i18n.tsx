@@ -77,6 +77,7 @@ const en = {
   chromeClear: 'Clear',
   chromeBlind: 'Blind rehearsal',
   chromeLock: 'Lock',
+  chromeReading: 'Reading modes',
   cursorCloak: 'Hide the cursor from the other person',
   cursorCloakHint: 'You still see the pointer and can select text. For the other person the cursor disappears while it is over this window.',
   cursorCloakButton: 'Hide cursor from screen share',
@@ -124,7 +125,16 @@ const en = {
   clear: 'reset',
   lock: 'Lock: clicks pass through the window',
   unlock: 'Unlock: clicks hit this window again',
-  placeholder: 'Write your notes… H is a heading, the colored buttons highlight a line.',
+  placeholder: 'Write your notes… H is a heading. A line that starts with // or [cue smile] is a reminder you do not say.',
+  modeOutline: 'Notes',
+  modeBeat: 'Beat',
+  modeGlide: 'Glide',
+  modeOutlineHint: 'The whole script. Chapters stay in the list on the left.',
+  modeBeatHint: 'One chapter fills the window. The wheel still scrolls inside that chapter.',
+  modeGlideHint: 'The line you are reading stays near the top, close to the camera. A line that starts with // or [cue], or a note from the second highlight, is skipped. Speed is the last rehearsal of that chapter, or the chapter time if you have not rehearsed it. Play does not pull the window forward until you click.',
+  glidePlay: 'Play',
+  glidePause: 'Pause',
+  glideNext: 'This chapter is done. Play opens the next one.',
   noticeTitle: '{app} — please read',
   updateTitle: '{app} update',
   updatePrompt: 'Version v{version} is out.\n\nDownload and install it now?',
@@ -134,6 +144,8 @@ const en = {
     'How you use it is your decision.\n\n' +
     'Notes stay in a file on this PC. The only optional outbound request is an update check.\n\n' +
     'OK means you have read this.',
+  updateDownloadFailed: 'The update could not be downloaded. Close the app with the X and install the file from the release page.',
+  updateCheckFailed: 'Could not check for a new version.\n\n{detail}',
 };
 
 const ru: typeof en = {
@@ -210,6 +222,7 @@ const ru: typeof en = {
   chromeClear: 'Очистить',
   chromeBlind: 'Слепая репетиция',
   chromeLock: 'Замок',
+  chromeReading: 'Режимы чтения',
   cursorCloak: 'Скрыть курсор от собеседника',
   cursorCloakHint: 'Вы по-прежнему видите указатель и можете выделять текст. Для собеседника курсор пропадает, пока находится над этим окном.',
   cursorCloakButton: 'Скрыть курсор от захвата экрана',
@@ -257,7 +270,16 @@ const ru: typeof en = {
   clear: 'очистить',
   lock: 'Заблокировать: клики проходят сквозь окно',
   unlock: 'Снять блокировку: клики снова попадают в окно',
-  placeholder: 'Напишите заметку… H — заголовок, цветные кнопки выделяют строку.',
+  placeholder: 'Напишите заметку… H — заголовок. Строка с // или [cue улыбка] — ремарка, её не произносят.',
+  modeOutline: 'Текст',
+  modeBeat: 'Такт',
+  modeGlide: 'Ход',
+  modeOutlineHint: 'Весь сценарий. Главы остаются в списке слева.',
+  modeBeatHint: 'В окне одна глава. Колёсико по-прежнему листает её.',
+  modeGlideHint: 'Читаемая строка держится у верхнего края, ближе к камере. Строка с // или [cue], и строка второго цвета, проскакиваются. Скорость — последняя репетиция этой главы, а если её не было, время главы. Пуск сам не забирает окно вперёд, пока вы не нажмёте его.',
+  glidePlay: 'Пуск',
+  glidePause: 'Пауза',
+  glideNext: 'Глава закончилась. Пуск открывает следующую.',
   noticeTitle: '{app}. Прочитайте',
   updateTitle: 'Обновление {app}',
   updatePrompt: 'Вышла версия v{version}.\n\nСкачать и установить сейчас?',
@@ -271,6 +293,8 @@ const ru: typeof en = {
     'Если проверка обновлений включена,\nпри запуске программа один раз спрашивает,\nне вышла ли новая версия.\n' +
     'Больше ничего никуда не отправляется.\n\n' +
     'Кнопка «ОК» значит, что вы это прочитали.',
+  updateDownloadFailed: 'Не удалось скачать обновление. Закройте программу крестиком и установите файл из релиза вручную.',
+  updateCheckFailed: 'Не удалось проверить, есть ли новая версия.\n\n{detail}',
 };
 
 const dictionaries = { en, ru };

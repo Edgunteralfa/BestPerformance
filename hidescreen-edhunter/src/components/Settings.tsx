@@ -1,10 +1,10 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { emit } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-shell';
 import { open as openFile, save } from '@tauri-apps/plugin-dialog';
-import { appConfirm, appMessage } from './AppDialog';
+import { appConfirm, appMessage } from '../dialogQueue';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { pitchFromFile, pitchToFile, pitchToText } from '../pitchFile';
 import type { CardChrome, Config, MainChrome, PitchMemory } from '../types';
@@ -27,6 +27,11 @@ interface SettingsProps {
 function Settings({ config, setConfig, onClose, appVersion, updateAvailable, updateVersion, onUpdateInstall }: SettingsProps) {
   const { t } = useI18n();
   const [opacity, setOpacity] = useState(config.opacity);
+  const [seenOpacity, setSeenOpacity] = useState(config.opacity);
+  if (config.opacity !== seenOpacity) {
+    setSeenOpacity(config.opacity);
+    setOpacity(config.opacity);
+  }
   const [fontFamily, setFontFamily] = useState(config.fontFamily);
   const [fontSize, setFontSize] = useState(config.fontSize);
   const [fontColor, setFontColor] = useState(config.fontColor);
@@ -45,10 +50,6 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
   const [memoryEdits, setMemoryEdits] = useState<Record<string, { name: string; tag: string }>>({});
   const [editingTagId, setEditingTagId] = useState<string | null>(null);
   const [pitchMenu, setPitchMenu] = useState<{ id: string; kind: 'file' | 'color' } | null>(null);
-
-  useEffect(() => {
-    setOpacity(config.opacity);
-  }, [config.opacity]);
 
   const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -124,6 +125,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       activeTabId: active.id,
       pitchSeconds: parseDuration(pitchDraft) ?? config.pitchSeconds,
       chapterBudgets: config.chapterBudgets,
+      chapterPaces: config.chapterPaces,
       chapterListColors: config.chapterListColors,
       chapterNavWidths: config.chapterNavWidths,
       cardText: config.cardText,
@@ -168,6 +170,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       text: active.text,
       pitchSeconds: memory.pitchSeconds,
       chapterBudgets: memory.chapterBudgets,
+      chapterPaces: memory.chapterPaces,
       chapterListColors: memory.chapterListColors,
       chapterNavWidths: memory.chapterNavWidths,
       cardText: memory.cardText,
@@ -377,6 +380,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
               ['clear', 'chromeClear'],
               ['blind', 'chromeBlind'],
               ['lock', 'chromeLock'],
+              ['reading', 'chromeReading'],
             ] as const).map(([key, label]) => (
               <label key={key} className="chrome-row">
                 <input

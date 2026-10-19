@@ -1,7 +1,7 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
 import { emit } from '@tauri-apps/api/event';
-import type { Config } from '../types';
+import type { Config, ReadingMode } from '../types';
 import '../styles/BottomBar.css';
 import { useI18n } from '../i18n';
 
@@ -22,6 +22,12 @@ interface BottomBarProps {
   showClear: boolean;
   showBlind: boolean;
   showLock: boolean;
+  showReading: boolean;
+  readingMode: ReadingMode;
+  glideOn: boolean;
+  glideHeld: boolean;
+  onReadingMode: (mode: ReadingMode) => void;
+  onToggleGlide: () => void;
 }
 
 const LockIcon = () => (
@@ -54,7 +60,7 @@ const EyeOffIcon = () => (
   </svg>
 );
 
-function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading, onToggleMark, onToggleNote, onClearText, blind, onToggleBlind, showFontSize, showHeading, showMarks, showClear, showBlind, showLock }: BottomBarProps) {
+function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading, onToggleMark, onToggleNote, onClearText, blind, onToggleBlind, showFontSize, showHeading, showMarks, showClear, showBlind, showLock, showReading, readingMode, glideOn, glideHeld, onReadingMode, onToggleGlide }: BottomBarProps) {
   const { t } = useI18n();
   const increaseFontSize = () => {
     const newSize = Math.min(48, config.fontSize + 1);
@@ -113,6 +119,30 @@ function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading,
 
       <div className="spacer" />
 
+      {showReading ? <div className="mode-switch">
+        {(['outline', 'beat', 'glide'] as const).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            className={`control-button mode-button${readingMode === mode ? ' on' : ''}`}
+            title={modeTitle(mode, t)}
+            onClick={() => onReadingMode(mode)}
+          >
+            {modeLabel(mode, t)}
+          </button>
+        ))}
+        {readingMode === 'glide' ? (
+          <button
+            type="button"
+            className={`control-button glide-play${glideOn ? ' on' : ''}`}
+            title={glideHeld ? t('glideNext') : glideOn ? t('glidePause') : t('glidePlay')}
+            onClick={onToggleGlide}
+          >
+            {glideHeld ? '›' : glideOn ? '❚❚' : '▶'}
+          </button>
+        ) : null}
+      </div> : null}
+
       <button
         type="button"
         className={`control-button cursor-cloak-button${config.cursorCloak ? ' on' : ''}`}
@@ -143,6 +173,36 @@ function BottomBar({ config, setConfig, isLocked, onToggleLock, onToggleHeading,
       </button> : null}
     </div>
   );
+}
+
+function modeLabel(mode: ReadingMode, t: (key: 'modeOutline' | 'modeBeat' | 'modeGlide') => string): string {
+  switch (mode) {
+    case 'outline':
+      return t('modeOutline');
+    case 'beat':
+      return t('modeBeat');
+    case 'glide':
+      return t('modeGlide');
+    default: {
+      const unexpected: never = mode;
+      return unexpected;
+    }
+  }
+}
+
+function modeTitle(mode: ReadingMode, t: (key: 'modeOutlineHint' | 'modeBeatHint' | 'modeGlideHint') => string): string {
+  switch (mode) {
+    case 'outline':
+      return t('modeOutlineHint');
+    case 'beat':
+      return t('modeBeatHint');
+    case 'glide':
+      return t('modeGlideHint');
+    default: {
+      const unexpected: never = mode;
+      return unexpected;
+    }
+  }
 }
 
 export default BottomBar;

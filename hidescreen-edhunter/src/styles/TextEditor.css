@@ -158,6 +158,32 @@
   border-radius: 4px;
 }
 
+.text-stage {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  display: flex;
+}
+
+.eye-line {
+  position: absolute;
+  left: 10px;
+  right: 14px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+.notes .line.beat-hidden {
+  display: none;
+}
+
+.notes .line.line-aside,
+.notes .cue-mark {
+  font-style: italic;
+}
+
 .text-area {
   flex: 1;
   min-width: 0;

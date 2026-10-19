@@ -1,50 +1,9 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
 import { useEffect, useState } from 'react';
+import { bindDialogQueue, shiftDialog, type DialogRequest } from '../dialogQueue';
 import { useI18n } from '../i18n';
 import '../styles/AppDialog.css';
-
-type DialogKind = 'info' | 'warning' | 'error';
-
-interface DialogRequest {
-  title: string;
-  body: string;
-  kind: DialogKind;
-  confirm: boolean;
-  resolve: (value: boolean) => void;
-}
-
-let enqueue: ((request: DialogRequest) => void) | null = null;
-const pending: DialogRequest[] = [];
-
-function push(request: DialogRequest) {
-  if (enqueue) enqueue(request);
-  else pending.push(request);
-}
-
-export function appMessage(body: string, options: { title: string; kind?: DialogKind }): Promise<void> {
-  return new Promise((resolve) => {
-    push({
-      title: options.title,
-      body,
-      kind: options.kind ?? 'info',
-      confirm: false,
-      resolve: () => resolve(),
-    });
-  });
-}
-
-export function appConfirm(body: string, options: { title: string; kind?: DialogKind }): Promise<boolean> {
-  return new Promise((resolve) => {
-    push({
-      title: options.title,
-      body,
-      kind: options.kind ?? 'warning',
-      confirm: true,
-      resolve,
-    });
-  });
-}
 
 function AppDialog() {
   const { t } = useI18n();
@@ -52,21 +11,18 @@ function AppDialog() {
 
   useEffect(() => {
     const showNext = () => {
-      setCurrent((shown) => shown ?? pending.shift() ?? null);
+      setCurrent((shown) => shown ?? shiftDialog());
     };
-    enqueue = (request) => {
-      pending.push(request);
-      showNext();
-    };
+    bindDialogQueue(showNext);
     showNext();
     return () => {
-      enqueue = null;
+      bindDialogQueue(null);
     };
   }, []);
 
   const close = (value: boolean) => {
     current?.resolve(value);
-    const next = pending.shift() ?? null;
+    const next = shiftDialog();
     setCurrent(next);
   };
 

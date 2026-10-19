@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { load } from '@tauri-apps/plugin-store';
 import type { Config } from '../types';
-import { DEFAULT_CONFIG, normalizeCardChrome, normalizeChapterBudgets, normalizeChapterListColors, normalizeChapterNavWidths, normalizeMainChrome, normalizeOpacity, normalizePitchMemories, normalizePitchSeconds, normalizeSearchExcluded, normalizeTabs, normalizeWindowMask } from '../types';
+import { DEFAULT_CONFIG, normalizeCardChrome, normalizeChapterBudgets, normalizeChapterListColors, normalizeChapterNavWidths, normalizeMainChrome, normalizeOpacity, normalizePitchMemories, normalizePitchSeconds, normalizeReadingMode, normalizeSearchExcluded, normalizeTabs, normalizeWindowMask } from '../types';
 import { detectLanguage } from '../i18n';
 
 const STORE_FILE = 'config.json';
@@ -56,6 +56,7 @@ export function useConfig() {
           text: active.text,
           pitchSeconds: normalizePitchSeconds(loaded.pitchSeconds),
           chapterBudgets: normalizeChapterBudgets(loaded.chapterBudgets),
+          chapterPaces: normalizeChapterBudgets(loaded.chapterPaces),
           chapterListColors: normalizeChapterListColors(loaded.chapterListColors),
           chapterNavWidths: normalizeChapterNavWidths(loaded.chapterNavWidths),
           mainChrome: normalizeMainChrome(loaded.mainChrome),
@@ -78,6 +79,7 @@ export function useConfig() {
           cardFontSize: Math.min(48, Math.max(8, finiteOr(loaded.cardFontSize, DEFAULT_CONFIG.cardFontSize))),
           opacity: normalizeOpacity(loaded.opacity),
           cardOpacity: normalizeOpacity(loaded.cardOpacity === undefined ? loaded.opacity : loaded.cardOpacity),
+          readingMode: normalizeReadingMode(loaded.readingMode),
           windowMask: normalizeWindowMask(loaded.windowMask),
           pitchMemories,
           activePitchId: pitchMemories.some((item) => item.id === loaded.activePitchId)

@@ -1,6 +1,6 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
-import type { Config } from './types';
+import { visibleText, type Config } from './types';
 
 export type LineKind = 'body' | 'heading' | 'mark' | 'note';
 
@@ -36,6 +36,28 @@ export function serialize(lines: Line[]): string {
 interface InkPiece {
   text: string;
   color: string | null;
+  cue?: boolean;
+}
+
+const CUE_PATTERN = /\[cue\b[^\]]*\]/gi;
+
+function splitCues(pieces: InkPiece[]): InkPiece[] {
+  const next: InkPiece[] = [];
+  for (const piece of pieces) {
+    const pattern = new RegExp(CUE_PATTERN.source, 'gi');
+    let last = 0;
+    let matched = false;
+    for (const match of piece.text.matchAll(pattern)) {
+      matched = true;
+      const index = match.index ?? 0;
+      if (index > last) next.push({ text: piece.text.slice(last, index), color: piece.color });
+      next.push({ text: match[0], color: piece.color, cue: true });
+      last = index + match[0].length;
+    }
+    if (!matched) next.push(piece);
+    else if (last < piece.text.length) next.push({ text: piece.text.slice(last), color: piece.color });
+  }
+  return next;
 }
 
 function mergePieces(pieces: InkPiece[]): InkPiece[] {
@@ -96,14 +118,22 @@ function piecesFromDom(block: HTMLElement): InkPiece[] {
   return mergePieces(pieces);
 }
 
-function writePieces(block: HTMLElement, pieces: InkPiece[]) {
+function writePieces(block: HTMLElement, pieces: InkPiece[], noteColor: string) {
   block.replaceChildren();
-  const merged = mergePieces(pieces);
-  if (merged.length === 0) {
+  const merged = splitCues(mergePieces(pieces));
+  if (merged.length === 0 || merged.every((piece) => piece.text.length === 0)) {
     block.appendChild(document.createElement('br'));
     return;
   }
   for (const piece of merged) {
+    if (piece.cue) {
+      const span = document.createElement('span');
+      span.className = 'cue-mark';
+      span.style.color = noteColor;
+      span.textContent = piece.text;
+      block.appendChild(span);
+      continue;
+    }
     if (!piece.color) {
       block.appendChild(document.createTextNode(piece.text));
       continue;
@@ -195,7 +225,7 @@ export function readLines(root: HTMLElement): Line[] {
   }));
 }
 
-export function applyWordInk(root: HTMLElement, color: string | null): boolean {
+export function applyWordInk(root: HTMLElement, color: string | null, noteColor: string): boolean {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return false;
   const range = selection.getRangeAt(0);
@@ -206,7 +236,7 @@ export function applyWordInk(root: HTMLElement, color: string | null): boolean {
   if (start === null || end === null || start === end) return false;
   const from = Math.min(start, end);
   const to = Math.max(start, end);
-  writePieces(line, paintRange(piecesFromDom(line), from, to, color ? color.toUpperCase() : null));
+  writePieces(line, paintRange(piecesFromDom(line), from, to, color ? color.toUpperCase() : null), noteColor);
   placeRange(line, from, to);
   return true;
 }
@@ -220,8 +250,18 @@ function colorFor(kind: LineKind, config: Config): string {
 
 export function paintLine(block: HTMLElement, line: Line, config: Config) {
   block.dataset.kind = line.kind;
-  block.style.color = colorFor(line.kind, config);
+  const aside = line.kind === 'body' && isAside(line.text);
+  block.classList.toggle('line-aside', aside);
+  block.style.color = aside ? config.noteColor : colorFor(line.kind, config);
   block.style.fontWeight = line.kind === 'heading' ? '650' : '400';
+  block.querySelectorAll<HTMLElement>('.cue-mark').forEach((mark) => {
+    mark.style.color = config.noteColor;
+  });
+}
+
+function isAside(raw: string): boolean {
+  const trimmed = visibleText(raw).trim();
+  return trimmed.startsWith('//') || /^\[cue\b/i.test(trimmed);
 }
 
 export function fillEditor(root: HTMLElement, lines: Line[], config: Config) {
@@ -230,7 +270,7 @@ export function fillEditor(root: HTMLElement, lines: Line[], config: Config) {
     const block = document.createElement('div');
     block.className = 'line';
     paintLine(block, line, config);
-    writePieces(block, parsePieces(line.text));
+    writePieces(block, parsePieces(line.text), config.noteColor);
     root.appendChild(block);
   }
 }

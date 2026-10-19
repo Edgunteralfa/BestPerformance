@@ -38,7 +38,10 @@ export function usePitchTimer(chapterKey: string) {
   const [totalMs, setTotalMs] = useState(0);
   const [byChapter, setByChapter] = useState<Record<string, number>>({});
   const keyRef = useRef(chapterKey);
-  keyRef.current = chapterKey;
+
+  useEffect(() => {
+    keyRef.current = chapterKey;
+  }, [chapterKey]);
 
   useEffect(() => {
     if (!running) return;

@@ -58,16 +58,17 @@ function PitchSearch({ tabs, excludedTabIds, onExcludedChange, onJump }: PitchSe
   const [open, setOpen] = useState(false);
   const [scopeOpen, setScopeOpen] = useState(false);
   const [selected, setSelected] = useState(0);
+  const [seenQuery, setSeenQuery] = useState(query);
+  if (query !== seenQuery) {
+    setSeenQuery(query);
+    setSelected(0);
+  }
   const boxRef = useRef<HTMLDivElement>(null);
   const searchable = useMemo(
     () => tabs.filter((tab) => !excludedTabIds.includes(tab.id)),
     [tabs, excludedTabIds],
   );
   const hits = useMemo(() => hitsFor(searchable, query), [searchable, query]);
-
-  useEffect(() => {
-    setSelected(0);
-  }, [query]);
 
   useEffect(() => {
     if (!open && !scopeOpen) return;

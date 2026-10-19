@@ -4,14 +4,17 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow, LogicalPosition, LogicalSize, Window } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
-import AppDialog, { appConfirm, appMessage } from './components/AppDialog';
+import AppDialog from './components/AppDialog';
+import { appConfirm, appMessage } from './dialogQueue';
 import { formatMessage, I18nProvider, useI18n } from './i18n';
 import { useConfig } from './hooks/useConfig';
 import { useUpdater } from './hooks/useUpdater';
 import { useGlobalHotkeys } from './hooks/useGlobalHotkeys';
 import { formatClock, paceOf, usePitchTimer } from './hooks/usePitchTimer';
+import { parseText } from './lineMarkup';
 import { isMac } from './platform';
-import { OPACITY_LEVELS, DEFAULT_CONFIG, chapterBudgetKey, headingAt, windowMaskTitle, type NoteTab } from './types';
+import { mergeRehearsal } from './reading';
+import { OPACITY_LEVELS, DEFAULT_CONFIG, chapterBudgetKey, headingAt, visibleText, windowMaskTitle, type NoteTab, type ReadingMode } from './types';
 import LocalCursor from './components/LocalCursor';
 import TitleBar from './components/TitleBar';
 import TabBar from './components/TabBar';
@@ -63,14 +66,19 @@ function AppShell({
   const quickEditRef = useRef(false);
   const editorRef = useRef<TextEditorHandle | null>(null);
   const scrollByTab = useRef<Record<string, number>>({});
-  const [liveNavWidth, setLiveNavWidth] = useState<number | null>(null);
+  const [liveNav, setLiveNav] = useState<{ tabId: string; width: number } | null>(null);
+  const [queuedReveal, setQueuedReveal] = useState<{ line: number; query: string } | null>(null);
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [showReview, setShowReview] = useState(false);
   const [edgeAlarm, setEdgeAlarm] = useState<'off' | 'mid' | 'soon' | 'over'>('off');
   const [blind, setBlind] = useState(false);
+  const [glideOn, setGlideOn] = useState(false);
+  const [glideHeld, setGlideHeld] = useState(false);
+  const [glideEpoch, setGlideEpoch] = useState(config.pitchEpoch);
+  const glideLive = glideOn && glideEpoch === config.pitchEpoch;
   const [peek, setPeek] = useState(false);
-  const pendingReveal = useRef<{ line: number; query: string } | null>(null);
-  const consumeReveal = useCallback(() => { pendingReveal.current = null; }, []);
+  const readScroll = useCallback((tabId: string) => scrollByTab.current[tabId] ?? 0, []);
+  const consumeReveal = useCallback(() => { setQueuedReveal(null); }, []);
   const questionPlace = useRef<{ tabId: string; line: number | null } | null>(null);
   const seenPitchEpoch = useRef(config.pitchEpoch);
   const overChapter = useRef('');
@@ -338,10 +346,6 @@ function AppShell({
   // Copy all text
   const activeTab = config.tabs.find((tab) => tab.id === config.activeTabId) ?? config.tabs[0];
 
-  useEffect(() => {
-    setLiveNavWidth(null);
-  }, [activeTab.id]);
-
   const writeActiveText = useCallback(async (text: string) => {
     const tabs = config.tabs.map((tab) => (tab.id === activeTab.id ? { ...tab, text } : tab));
     await setConfig({ tabs, text, activeTabId: activeTab.id });
@@ -356,6 +360,8 @@ function AppShell({
     if (!tab || tab.id === activeTab.id) return;
     const area = document.querySelector('.text-area');
     if (area instanceof HTMLElement) scrollByTab.current[activeTab.id] = area.scrollTop;
+    setGlideOn(false);
+    setGlideHeld(false);
     await setConfig({ activeTabId: tab.id, text: tab.text });
   }, [activeTab.id, config.tabs, setConfig]);
 
@@ -430,16 +436,79 @@ function AppShell({
   const nextLine = useCallback(() => {
     editorRef.current?.moveReading(1);
   }, []);
+  const storeRehearsal = useCallback(() => {
+    const chapters = config.tabs.flatMap((tab) => (
+      parseText(tab.text).flatMap((line, index) => {
+        if (line.kind !== 'heading') return [];
+        const name = visibleText(line.text).trim();
+        if (!name) return [];
+        return [{ paceKey: chapterBudgetKey(tab.id, name), timerKey: `${tab.id}:${index}` }];
+      })
+    ));
+    const chapterPaces = mergeRehearsal(config.chapterPaces, timer.byChapter, chapters);
+    const same = Object.keys(chapterPaces).length === Object.keys(config.chapterPaces).length
+      && Object.entries(chapterPaces).every(([key, value]) => config.chapterPaces[key] === value);
+    if (same) return;
+    const pitchMemories = config.activePitchId
+      ? config.pitchMemories.map((item) => (
+        item.id === config.activePitchId ? { ...item, chapterPaces } : item
+      ))
+      : config.pitchMemories;
+    void setConfig({ chapterPaces, pitchMemories });
+  }, [config.activePitchId, config.chapterPaces, config.pitchMemories, config.tabs, setConfig, timer.byChapter]);
+
+  const toggleTimer = useCallback(() => {
+    if (timer.running) storeRehearsal();
+    timer.toggle();
+  }, [storeRehearsal, timer]);
+
+  const resetTimer = useCallback(() => {
+    storeRehearsal();
+    timer.reset();
+  }, [storeRehearsal, timer]);
+
   const toggleReview = useCallback(() => {
+    storeRehearsal();
     setShowReview((open) => !open);
-  }, []);
+  }, [storeRehearsal]);
+
+  const setReadingMode = useCallback((mode: ReadingMode) => {
+    void setConfig({ readingMode: mode });
+    if (mode !== 'glide') {
+      setGlideOn(false);
+      setGlideHeld(false);
+    }
+  }, [setConfig]);
+
+  const toggleGlide = useCallback(() => {
+    if (config.readingMode !== 'glide') return;
+    if (glideHeld && glideLive) {
+      if (editorRef.current?.atLastChapter()) {
+        setGlideOn(false);
+        setGlideHeld(false);
+        return;
+      }
+      editorRef.current?.moveChapter(1);
+      setGlideHeld(false);
+      return;
+    }
+    if (glideLive) {
+      setGlideOn(false);
+      setGlideHeld(false);
+      return;
+    }
+    storeRehearsal();
+    setGlideEpoch(config.pitchEpoch);
+    setGlideHeld(false);
+    setGlideOn(true);
+  }, [config.pitchEpoch, config.readingMode, glideHeld, glideLive, storeRehearsal]);
 
   const jumpToLine = useCallback((tabId: string, line: number, query: string) => {
     if (tabId === activeTab.id) {
       editorRef.current?.revealLine(line, query);
       return;
     }
-    pendingReveal.current = { line, query };
+    setQueuedReveal({ line, query });
     void selectTab(tabId);
   }, [activeTab.id, selectTab]);
 
@@ -456,7 +525,7 @@ function AppShell({
     const saved = questionPlace.current;
     if (saved) {
       questionPlace.current = null;
-      if (saved.line !== null) pendingReveal.current = { line: saved.line, query: '' };
+      if (saved.line !== null) setQueuedReveal({ line: saved.line, query: '' });
       if (saved.tabId !== activeTab.id) void selectTab(saved.tabId);
       else if (saved.line !== null) editorRef.current?.revealLine(saved.line);
       return;
@@ -475,6 +544,11 @@ function AppShell({
     if (visible) editorRef.current?.ensureReading();
     setPeek(visible);
   }, [blind]);
+
+  const pauseGlide = useCallback(() => {
+    setGlideOn(false);
+    setGlideHeld(false);
+  }, []);
 
   useEffect(() => {
     if (seenPitchEpoch.current === config.pitchEpoch) return;
@@ -529,8 +603,8 @@ function AppShell({
     nextChapter,
     previousLine,
     nextLine,
-    toggleTimer: timer.toggle,
-    resetTimer: timer.reset,
+    toggleTimer,
+    resetTimer,
     toggleQuestion,
     setLinePeek,
   });
@@ -624,8 +698,8 @@ function AppShell({
         chapterPace={paceOf(chapterRemaining, chapterBudgetMs)}
         totalPulse={totalPulse}
         running={timer.running}
-        onToggleTimer={timer.toggle}
-        onResetTimer={timer.reset}
+        onToggleTimer={toggleTimer}
+        onResetTimer={resetTimer}
         onReview={toggleReview}
         startLabel={t('timerStart')}
         pauseLabel={t('timerPause')}
@@ -668,26 +742,30 @@ function AppShell({
           text={activeTab.text}
           onTextChange={updateText}
           editorRef={editorRef}
-          navWidth={liveNavWidth ?? config.chapterNavWidths[activeTab.id] ?? 168}
-          onNavWidthChange={setLiveNavWidth}
+          navWidth={liveNav?.tabId === activeTab.id ? liveNav.width : (config.chapterNavWidths[activeTab.id] ?? 168)}
+          onNavWidthChange={(width) => setLiveNav({ tabId: activeTab.id, width })}
           onNavWidthCommit={(width) => {
-            setLiveNavWidth(null);
+            setLiveNav(null);
             void setConfig({
               chapterNavWidths: { ...config.chapterNavWidths, [activeTab.id]: width },
             });
           }}
           onActiveChapterChange={setActiveChapter}
           tabId={activeTab.id}
-          initialScroll={scrollByTab.current[activeTab.id] ?? 0}
+          readScroll={readScroll}
           onScrollPosition={rememberScroll}
           onChapterBudget={setChapterBudget}
           onChapterListColor={setChapterListColor}
-          initialReveal={pendingReveal.current?.line ?? null}
-          initialQuery={pendingReveal.current?.query ?? ''}
+          queuedReveal={queuedReveal}
           onRevealConsumed={consumeReveal}
           blind={blind}
           peek={peek}
           showChapters={config.mainChrome.chapters}
+          readingMode={config.readingMode}
+          glideOn={glideLive}
+          glideHeld={glideHeld}
+          onGlideHold={setGlideHeld}
+          onGlidePause={pauseGlide}
         />
       )}
 
@@ -711,6 +789,12 @@ function AppShell({
         showClear={config.mainChrome.clear}
         showBlind={config.mainChrome.blind}
         showLock={config.mainChrome.lock}
+        showReading={config.mainChrome.reading}
+        readingMode={config.readingMode}
+        glideOn={glideLive}
+        glideHeld={glideHeld}
+        onReadingMode={setReadingMode}
+        onToggleGlide={toggleGlide}
       />
       {minuteLeft || totalPulse ? (
         <div className={`timer-callout${totalPulse ? ' urgent' : ''}`}>
