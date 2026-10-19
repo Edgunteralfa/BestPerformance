@@ -80,12 +80,12 @@ A demo pitch called Harbor. A recording of a real talk does not get this window.
 ### Glide · Ход
 
 <p align="center">
-  <img src="assets/readme/glide-clear.png" alt="Glide: the line you are saying stays near the top" width="840">
+  <img src="assets/readme/glide.gif" alt="Glide moving the script so the spoken line stays near the top" width="840">
 </p>
 
 | **Glide** | **Ход** |
 | --- | --- |
-| The line you are saying stays near the top, close to the camera. The thin line across the text is the eye line. Play moves the script. The wheel pauses it. | Произносимая строка держится у верхнего края, ближе к камере. Тонкая черта — линия глаза. Пуск везёт текст, колесо ставит паузу. |
+| Play moves the script. The spoken line stays near the top, on the eye line. The wheel pauses it. | Пуск везёт текст. Произносимая строка держится у верхнего края, на линии глаза. Колесо ставит паузу. |
 
 ### Figures · Цифры
 
