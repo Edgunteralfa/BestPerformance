@@ -5,7 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { load } from '@tauri-apps/plugin-store';
 import type { Config } from '../types';
 import { DEFAULT_CONFIG, normalizeCardChrome, normalizeChapterBudgets, normalizeChapterListColors, normalizeChapterNavWidths, normalizeMainChrome, normalizeOpacity, normalizePitchMemories, normalizePitchSeconds, normalizeReadingMode, normalizeSearchExcluded, normalizeTabs, normalizeWindowMask } from '../types';
-import { detectLanguage } from '../i18n';
+import { detectLanguage, normalizeLanguage } from '../languages';
 
 const STORE_FILE = 'config.json';
 
@@ -87,6 +87,7 @@ export function useConfig() {
             : null,
           pitchEpoch: finiteOr(loaded.pitchEpoch, 0),
           searchExcludedTabIds: normalizeSearchExcluded(loaded.searchExcludedTabIds),
+          language: normalizeLanguage(savedLanguage ? loaded.language : detectLanguage()),
         });
       } catch (error) {
         console.error('Failed to load config:', error);

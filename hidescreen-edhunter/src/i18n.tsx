@@ -1,315 +1,53 @@
 /* eslint-disable react-refresh/only-export-components -- context module also exports helpers */
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, type ReactNode } from 'react';
+import { languageDirection, type Language } from './languages';
+import { ar } from './locales/ar';
+import { de } from './locales/de';
+import { en } from './locales/en';
+import { es } from './locales/es';
+import { fr } from './locales/fr';
+import { hi } from './locales/hi';
+import { id } from './locales/id';
+import { it } from './locales/it';
+import { ja } from './locales/ja';
+import { ko } from './locales/ko';
+import { pt } from './locales/pt';
+import { ru } from './locales/ru';
+import { tr } from './locales/tr';
+import { vi } from './locales/vi';
+import { zh } from './locales/zh';
+import type { Messages } from './locales/types';
 
-export type Language = 'en' | 'ru';
+export type { Language } from './languages';
+export { detectLanguage } from './languages';
 
-const en = {
-  settings: 'Settings',
-  close: 'Close',
-  opacity: 'Opacity',
-  opacityHint: 'This slider changes the main window. The facts window has its own slider in the title bar.',
-  titleOpacity: 'Opacity of this window',
-  font: 'Font',
-  fontFamily: 'Family:',
-  fontSize: 'Size:',
-  fontUnit: 'pt',
-  textColor: 'Body text',
-  headingColor: 'Heading color',
-  markColor: 'Highlight color',
-  noteColor: 'Second highlight',
-  headingHint: 'H marks a heading. The two colored buttons mark the current line with the highlight colors. Press the same button again to clear it.',
-  toggleHeading: 'Mark this line as a heading',
-  toggleMark: 'Mark this line with the highlight color',
-  toggleNote: 'Mark this line with the second highlight',
-  backgroundColor: 'Background Color',
-  updates: 'Updates',
-  checkUpdates: 'Check for updates on startup',
-  language: 'Language',
-  altTab: 'Name in Alt+Tab',
-  altTabHint: 'Both windows use this name in the share list. On Windows it is also the Alt+Tab name, while the title inside the window stays BestPerformance. On macOS it is the Mission Control label and the title inside the window. The Mac app is not listed in the Dock or Cmd+Tab.',
-  upToDate: 'up to date',
-  updateInstall: 'v{version} is out — install',
-  docs: 'Docs & Help',
-  notice: 'Notice',
-  cancel: 'Cancel',
-  dialogOk: 'OK',
-  dialogYes: 'Yes',
-  save: 'Save',
-  updateBadge: 'v{version} available',
-  updateTooltip: 'Update available: v{version}',
-  upToDateTooltip: 'Up to date',
-  decreaseFont: 'Decrease font size',
-  increaseFont: 'Increase font size',
-  tabs: 'Tabs',
-  tabHint: 'Each tab has its own notes, name, and color. The name and color here are separate from the text colors. Click a colored name at the top to switch.',
-  chapters: 'Chapters',
-  chapterEmpty: 'Put the cursor on a question and press H. That line appears here.',
-  chapterListColor: 'List color',
-  chapterListColorReset: 'Default',
-  wordInk: 'Word color',
-  wordInkReset: 'Remove color',
-  searchPlaceholder: 'Search this pitch',
-  searchEmpty: 'Nothing matches',
-  searchTabs: 'Tabs included in search',
-  blindOn: 'Rehearse from the chapter list. Hold Ctrl+Alt+Shift+Period to show the current line.',
-  blindOff: 'Show the notes again',
-  pitchFileMenu: 'File',
-  pitchFileExport: 'JSON',
-  pitchFileText: 'Text',
-  pitchMemoryColor: 'Tag color',
-  pitchFileImport: 'Open file',
-  pitchFileBad: 'This file is not a BestPerformance pitch.',
-  chromeTitle: 'What to show',
-  chromeHint: 'Hiding a control only removes it from the window. The last setting stays.',
-  chromeMain: 'Main window',
-  chromeCard: 'Numbers and definitions',
-  chromeOpacity: 'Opacity slider',
-  chromeCardButton: 'Numbers window button',
-  chromeTabs: 'Tabs',
-  chromeSearch: 'Search',
-  chromeTimer: 'Timer',
-  chromeMinuteCue: '1 minute left',
-  chromeThirtyCue: '30 seconds left',
-  chromeChapters: 'Chapter list',
-  chromeFontSize: 'Font size',
-  chromeHeading: 'Heading button',
-  chromeMarks: 'Text colors',
-  chromeClear: 'Clear',
-  chromeBlind: 'Blind rehearsal',
-  chromeLock: 'Lock',
-  chromeReading: 'Reading modes',
-  cursorCloak: 'Hide the cursor from the other person',
-  cursorCloakHint: 'You still see the pointer and can select text. For the other person the cursor disappears while it is over this window.',
-  cursorCloakButton: 'Hide cursor from screen share',
-  timerStart: 'Start',
-  timerPause: 'Pause',
-  timerReset: 'Reset',
-  timerReview: 'Review',
-  reviewTitle: 'Rehearsal',
-  reviewEmpty: 'Start the timer and walk the chapters. Spent time shows up here.',
-  reviewOpen: '{spent}',
-  reviewOk: '{spent} of {plan}',
-  reviewOver: '{spent}, over {over}',
-  reviewPitch: 'Whole pitch',
-  timerTotal: 'Total {time}',
-  timerLeft: 'Left {time}',
-  timerOver: 'Over {time}',
-  timerChapter: 'Chapter {time}',
-  timerChapterLeft: 'Chapter {time}',
-  timerChapterOver: 'Chapter over {time}',
-  timerMinute: '1 minute left',
-  timerThirty: '30 seconds left',
-  cardToggle: 'Numbers and definitions',
-  cardTitle: 'Facts and details',
-  cardPlaceholder: '12% — conversion\nARR — annual recurring revenue',
-  pitchLength: 'Pitch length',
-  pitchHint: 'How long the whole pitch may run, as m:ss. 0:00 shows elapsed time instead of a countdown. Each chapter time is set beside its name in the left list.',
-  pitchMemory: 'Saved pitches',
-  pitchMemoryHint: 'Stores the tabs, chapter times, and the facts window. Opening another pitch keeps the one you are writing.',
-  pitchMemoryName: 'Pitch name',
-  pitchMemoryTag: 'Tag',
-  pitchMemorySave: 'Remember',
-  pitchMemoryOpen: 'Open',
-  pitchMemoryCurrent: 'Current',
-  pitchMemoryDelete: 'Delete',
-  pitchMemoryDeleteTitle: 'Delete this pitch?',
-  pitchMemoryDeleteConfirm: 'Delete “{name}” from saved pitches? The pitch on screen stays as it is.',
-  pitchMemoryFull: 'Thirty pitches are already saved. Delete one before remembering another.',
-  pitchDraftName: 'Draft',
-  addTab: 'Add tab',
-  removeTab: 'Remove',
-  tabDefault: 'Notes',
-  clearText: 'Clear the current tab',
-  clearConfirmTitle: 'Clear this tab?',
-  clearConfirm: 'Erase the notes in the open tab only? The other tabs stay as they are.',
-  clear: 'reset',
-  lock: 'Lock: clicks pass through the window',
-  unlock: 'Unlock: clicks hit this window again',
-  placeholder: 'Write your notes… H is a heading. A line that starts with // or [cue smile] is a reminder you do not say.',
-  modeOutline: 'Notes',
-  modeBeat: 'Beat',
-  modeGlide: 'Glide',
-  modeOutlineHint: 'The whole script. Chapters stay in the list on the left.',
-  modeBeatHint: 'One chapter fills the window. The wheel still scrolls inside that chapter.',
-  modeGlideHint: 'The line you are reading stays near the top, close to the camera. A line that starts with // or [cue], or a note from the second highlight, is skipped. Speed is the last rehearsal of that chapter, or the chapter time if you have not rehearsed it. Play does not pull the window forward until you click.',
-  glidePlay: 'Play',
-  glidePause: 'Pause',
-  glideNext: 'This chapter is done. Play opens the next one.',
-  noticeTitle: '{app} — please read',
-  updateTitle: '{app} update',
-  updatePrompt: 'Version v{version} is out.\n\nDownload and install it now?',
-  ethicalNotice:
-    '{app} keeps a private script on your own screen during a talk or a call.\n\n' +
-    'Leave it unused for exams, for breaking a school or office rule, for sidestepping a service agreement, and for anything the law forbids.\n\n' +
-    'How you use it is your decision.\n\n' +
-    'Notes stay in a file on this PC. The only optional outbound request is an update check.\n\n' +
-    'OK means you have read this.',
-  updateDownloadFailed: 'The update could not be downloaded. Close the app with the X and install the file from the release page.',
-  updateCheckFailed: 'Could not check for a new version.\n\n{detail}',
+const dictionaries: Record<Language, Messages> = {
+  en,
+  zh,
+  es,
+  hi,
+  ar,
+  pt,
+  ru,
+  ja,
+  de,
+  fr,
+  ko,
+  it,
+  tr,
+  id,
+  vi,
 };
 
-const ru: typeof en = {
-  settings: 'Настройки',
-  close: 'Закрыть',
-  opacity: 'Непрозрачность',
-  opacityHint: 'Этот ползунок меняет главное окно. У окна «Цифры и детали» свой ползунок в шапке.',
-  titleOpacity: 'Непрозрачность этого окна',
-  font: 'Шрифт',
-  fontFamily: 'Гарнитура:',
-  fontSize: 'Размер:',
-  fontUnit: 'пт',
-  textColor: 'Основной текст',
-  headingColor: 'Цвет заголовка',
-  markColor: 'Цвет выделения',
-  noteColor: 'Второй цвет',
-  headingHint: 'H делает строку заголовком. Две цветные кнопки красят текущую строку цветами выделения. Повторное нажатие той же кнопки снимает цвет.',
-  toggleHeading: 'Сделать строку заголовком',
-  toggleMark: 'Покрасить строку цветом выделения',
-  toggleNote: 'Покрасить строку вторым цветом',
-  backgroundColor: 'Цвет фона',
-  updates: 'Обновления',
-  checkUpdates: 'Проверять обновления при запуске',
-  language: 'Язык интерфейса',
-  altTab: 'Имя в Alt+Tab',
-  altTabHint: 'Оба окна показываются под этим именем в списке «поделиться». На Windows это же имя в Alt+Tab, а внутри окна остаётся BestPerformance. На macOS это подпись в Mission Control и текст в шапке окна. В Dock и в Cmd+Tab приложение не появляется.',
-  upToDate: 'актуальная версия',
-  updateInstall: 'вышла v{version} — установить',
-  docs: 'Справка',
-  notice: 'Предупреждение',
-  cancel: 'Отмена',
-  dialogOk: 'Хорошо',
-  dialogYes: 'Да',
-  save: 'Сохранить',
-  updateBadge: 'есть v{version}',
-  updateTooltip: 'Доступно обновление: v{version}',
-  upToDateTooltip: 'Актуальная версия',
-  decreaseFont: 'Уменьшить шрифт',
-  increaseFont: 'Увеличить шрифт',
-  tabs: 'Вкладки',
-  tabHint: 'У каждой вкладки свой текст, своё название и свой цвет. Название и цвет вкладки задаются здесь и не связаны с цветами текста. Сверху нажмите цветное название, чтобы переключиться.',
-  chapters: 'Главы',
-  chapterEmpty: 'Поставьте курсор на вопрос и нажмите H. Строка появится в этом списке.',
-  chapterListColor: 'Цвет в списке',
-  chapterListColorReset: 'Как обычно',
-  wordInk: 'Цвет слова',
-  wordInkReset: 'Убрать цвет',
-  searchPlaceholder: 'Поиск по выступлению',
-  searchEmpty: 'Ничего не нашлось',
-  searchTabs: 'Вкладки, в которых искать',
-  blindOn: 'Репетиция по списку глав. Удерживайте Ctrl+Alt+Shift+Period, чтобы показать текущую строку.',
-  blindOff: 'Снова показать текст',
-  pitchFileMenu: 'Файл',
-  pitchFileExport: 'JSON',
-  pitchFileText: 'Текст',
-  pitchMemoryColor: 'Цвет тега',
-  pitchFileImport: 'Открыть файл',
-  pitchFileBad: 'Этот файл не является выступлением BestPerformance.',
-  chromeTitle: 'Что показывать',
-  chromeHint: 'Снятая галочка только убирает элемент с окна. Последняя настройка остаётся.',
-  chromeMain: 'Основное окно',
-  chromeCard: 'Окно цифр и определений',
-  chromeOpacity: 'Ползунок прозрачности',
-  chromeCardButton: 'Кнопка окна цифр',
-  chromeTabs: 'Вкладки',
-  chromeSearch: 'Поиск',
-  chromeTimer: 'Таймер',
-  chromeMinuteCue: 'Осталась 1 минута',
-  chromeThirtyCue: 'Осталось 30 секунд',
-  chromeChapters: 'Список глав',
-  chromeFontSize: 'Размер шрифта',
-  chromeHeading: 'Кнопка заголовка',
-  chromeMarks: 'Цвета текста',
-  chromeClear: 'Очистить',
-  chromeBlind: 'Слепая репетиция',
-  chromeLock: 'Замок',
-  chromeReading: 'Режимы чтения',
-  cursorCloak: 'Скрыть курсор от собеседника',
-  cursorCloakHint: 'Вы по-прежнему видите указатель и можете выделять текст. Для собеседника курсор пропадает, пока находится над этим окном.',
-  cursorCloakButton: 'Скрыть курсор от захвата экрана',
-  timerStart: 'Старт',
-  timerPause: 'Пауза',
-  timerReset: 'Сброс',
-  timerReview: 'Итог',
-  reviewTitle: 'Итог репетиции',
-  reviewEmpty: 'Запусти таймер и пройди главы. Здесь появится, сколько ушло на каждую.',
-  reviewOpen: '{spent}',
-  reviewOk: '{spent} из {plan}',
-  reviewOver: '{spent}, сверх {over}',
-  reviewPitch: 'Весь питч',
-  timerTotal: 'Всего {time}',
-  timerLeft: 'Осталось {time}',
-  timerOver: 'Сверх {time}',
-  timerChapter: 'Глава {time}',
-  timerChapterLeft: 'Глава {time}',
-  timerChapterOver: 'Глава сверх {time}',
-  timerMinute: 'Осталась 1 минута',
-  timerThirty: 'Осталось 30 секунд',
-  cardToggle: 'Цифры и определения',
-  cardTitle: 'Цифры и детали',
-  cardPlaceholder: '12% — конверсия\nARR — годовая выручка',
-  pitchLength: 'Длина питча',
-  pitchHint: 'Сколько может длиться весь питч, в виде м:сс. 0:00 показывает прошедшее время. Время каждой главы задаётся справа от её названия в левом списке.',
-  pitchMemory: 'Память питчей',
-  pitchMemoryHint: 'Запоминает вкладки, время глав и окно «Цифры и детали». Когда открываешь другой питч, текущая заготовка остаётся в списке.',
-  pitchMemoryName: 'Название питча',
-  pitchMemoryTag: 'Тег',
-  pitchMemorySave: 'Запомнить',
-  pitchMemoryOpen: 'Открыть',
-  pitchMemoryCurrent: 'Сейчас',
-  pitchMemoryDelete: 'Удалить',
-  pitchMemoryDeleteTitle: 'Удалить этот питч?',
-  pitchMemoryDeleteConfirm: 'Удалить «{name}» из памяти? То, что сейчас на экране, останется.',
-  pitchMemoryFull: 'Уже сохранено тридцать питчей. Удалите один, чтобы запомнить новый.',
-  pitchDraftName: 'Черновик',
-  addTab: 'Добавить вкладку',
-  removeTab: 'Удалить',
-  tabDefault: 'Заметки',
-  clearText: 'Очистить текст текущей вкладки',
-  clearConfirmTitle: 'Очистить эту вкладку?',
-  clearConfirm: 'Стереть текст только открытой вкладки? Остальные вкладки не изменятся.',
-  clear: 'очистить',
-  lock: 'Заблокировать: клики проходят сквозь окно',
-  unlock: 'Снять блокировку: клики снова попадают в окно',
-  placeholder: 'Напишите заметку… H — заголовок. Строка с // или [cue улыбка] — ремарка, её не произносят.',
-  modeOutline: 'Текст',
-  modeBeat: 'Такт',
-  modeGlide: 'Ход',
-  modeOutlineHint: 'Весь сценарий. Главы остаются в списке слева.',
-  modeBeatHint: 'В окне одна глава. Колёсико по-прежнему листает её.',
-  modeGlideHint: 'Читаемая строка держится у верхнего края, ближе к камере. Строка с // или [cue], и строка второго цвета, проскакиваются. Скорость — последняя репетиция этой главы, а если её не было, время главы. Пуск сам не забирает окно вперёд, пока вы не нажмёте его.',
-  glidePlay: 'Пуск',
-  glidePause: 'Пауза',
-  glideNext: 'Глава закончилась. Пуск открывает следующую.',
-  noticeTitle: '{app}. Прочитайте',
-  updateTitle: 'Обновление {app}',
-  updatePrompt: 'Вышла версия v{version}.\n\nСкачать и установить сейчас?',
-  ethicalNotice:
-    '{app} показывает ваш текст только вам:\nна выступлении, на созвоне, на лекции.\n\n' +
-    'Не берите её на экзамен.\n' +
-    'Не используйте её там, где это запрещено\nправилами учёбы, работы или сервиса.\n' +
-    'И не используйте её для того,\nчто запрещено законом.\n\n' +
-    'Как ей пользоваться, решаете вы.\n\n' +
-    'Заметки лежат в файле на этом компьютере.\n' +
-    'Если проверка обновлений включена,\nпри запуске программа один раз спрашивает,\nне вышла ли новая версия.\n' +
-    'Больше ничего никуда не отправляется.\n\n' +
-    'Кнопка «ОК» значит, что вы это прочитали.',
-  updateDownloadFailed: 'Не удалось скачать обновление. Закройте программу крестиком и установите файл из релиза вручную.',
-  updateCheckFailed: 'Не удалось проверить, есть ли новая версия.\n\n{detail}',
-};
-
-const dictionaries = { en, ru };
-
-export type MessageKey = keyof typeof en;
+export type MessageKey = keyof Messages;
 
 export function formatMessage(template: string, values: Record<string, string>) {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
 }
 
-function detectLanguage(): Language {
-  return navigator.language.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+export function text(language: Language, key: MessageKey): string {
+  return dictionaries[language][key];
 }
-
-export { detectLanguage };
 
 interface I18nValue {
   language: Language;
@@ -328,7 +66,13 @@ export function I18nProvider({
   language: Language;
   children: ReactNode;
 }) {
-  const table = dictionaries[language];
+  useEffect(() => {
+    const root = document.documentElement;
+    root.lang = language;
+    root.dir = languageDirection(language);
+  }, [language]);
+
+  const table = dictionaries[language] ?? en;
   const value: I18nValue = {
     language,
     t: (key) => table[key],

@@ -5,7 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { exit } from '@tauri-apps/plugin-process';
 import { appConfirm, appMessage } from '../dialogQueue';
 import { checkForUpdates } from '../utils/updateChecker';
-import type { Language } from '../i18n';
+import { formatMessage, text, type Language } from '../i18n';
 
 const APP_VERSION = __APP_VERSION__;
 let updateCheckStarted = false;
@@ -44,16 +44,11 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
       console.error('Update failed:', error);
       setState((s) => ({ ...s, downloading: false }));
       const name = displayNameRef.current;
-      const copy = languageRef.current === 'ru'
-        ? {
-            title: `Обновление ${name}`,
-            body: 'Не удалось скачать обновление. Закройте программу крестиком и установите файл из релиза вручную.',
-          }
-        : {
-            title: `${name} update`,
-            body: 'The update could not be downloaded. Close the app with the X and install the file from the release page.',
-          };
-      await appMessage(copy.body, { title: copy.title, kind: 'error' });
+      const language = languageRef.current;
+      await appMessage(text(language, 'updateDownloadFailed'), {
+        title: formatMessage(text(language, 'updateTitle'), { app: name }),
+        kind: 'error',
+      });
     }
   }, []);
 
@@ -70,11 +65,12 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
         console.error('Update check failed:', error);
         setState((s) => ({ ...s, checked: true }));
         const name = displayNameRef.current;
+        const language = languageRef.current;
         const detail = error instanceof Error ? error.message : String(error);
-        const copy = languageRef.current === 'ru'
-          ? { title: `Обновление ${name}`, body: `Не удалось проверить, есть ли новая версия.\n\n${detail}` }
-          : { title: `${name} update`, body: `Could not check for a new version.\n\n${detail}` };
-        await appMessage(copy.body, { title: copy.title, kind: 'error' });
+        await appMessage(formatMessage(text(language, 'updateCheckFailed'), { detail }), {
+          title: formatMessage(text(language, 'updateTitle'), { app: name }),
+          kind: 'error',
+        });
         return;
       }
 
@@ -93,16 +89,11 @@ export function useUpdater(autoCheck: boolean, language: Language, displayName: 
 
       // Auto-popup the update dialog
       const name = displayNameRef.current;
-      const copy = languageRef.current === 'ru'
-        ? {
-            title: `Обновление ${name}`,
-            body: `Вышла версия v${info.latestVersion}.\n\nСкачать и установить сейчас?`,
-          }
-        : {
-            title: `${name} update`,
-            body: `Version v${info.latestVersion} is out.\n\nDownload and install it now?`,
-          };
-      const yes = await appConfirm(copy.body, { title: copy.title, kind: 'info' });
+      const language = languageRef.current;
+      const yes = await appConfirm(
+        formatMessage(text(language, 'updatePrompt'), { version: info.latestVersion }),
+        { title: formatMessage(text(language, 'updateTitle'), { app: name }), kind: 'info' },
+      );
 
       if (yes) {
         await doDownloadAndInstall(info.downloadUrl);

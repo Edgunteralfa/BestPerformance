@@ -1,5 +1,7 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
+import type { Language } from './languages';
+
 export interface MainChrome {
   opacity: boolean;
   card: boolean;
@@ -200,8 +202,7 @@ export interface Config {
   // Updates
   autoCheckUpdates: boolean;
 
-  // UI language: 'en' | 'ru'
-  language: 'en' | 'ru';
+  language: Language;
 
   // Pitch clock. 0 shows elapsed time. Chapter budgets are seconds, keyed by tab and heading.
   // chapterPaces is the last rehearsal, in seconds, for the same keys.

@@ -9,6 +9,7 @@ import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { pitchFromFile, pitchToFile, pitchToText } from '../pitchFile';
 import type { CardChrome, Config, MainChrome, PitchMemory } from '../types';
 import { formatMessage, useI18n, type Language } from '../i18n';
+import { LANGUAGES, isLanguage } from '../languages';
 import { formatClock, parseDuration } from '../hooks/usePitchTimer';
 import { isMac } from '../platform';
 import { TEXT_COLORS, BG_COLORS, FONT_FAMILIES, TAB_COLORS, MAX_PITCH_MEMORIES, MAX_TABS, WINDOW_MASKS, normalizeWindowMask, windowMaskTitle, type NoteTab, type WindowMaskId } from '../types';
@@ -861,14 +862,15 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
               <select
                 value={language}
                 onChange={(e) => {
-                  const next = e.target.value === 'ru' ? 'ru' : 'en';
+                  const next: Language = isLanguage(e.target.value) ? e.target.value : language;
                   setLanguage(next);
                   void setConfig({ language: next });
                 }}
                 className="font-select"
               >
-                <option value="ru">Русский</option>
-                <option value="en">English</option>
+                {LANGUAGES.map((item) => (
+                  <option key={item.id} value={item.id}>{item.native}</option>
+                ))}
               </select>
             </div>
           </div>
