@@ -6,6 +6,7 @@ mod windows_api;
 mod mouse_hook;
 #[cfg(windows)]
 mod keyboard_hook;
+mod lingua_query;
 
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager, WebviewWindow};
@@ -357,6 +358,8 @@ pub fn run() {
                     log::error!("Failed to apply capture exclusion: {}", e);
                 }
             }
+
+            lingua_query::start(app.handle().clone());
 
             Ok(())
         })
