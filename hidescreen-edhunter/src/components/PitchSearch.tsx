@@ -1,6 +1,7 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { listen } from '@tauri-apps/api/event';
 import { visibleText, type NoteTab } from '../types';
 import { useI18n } from '../i18n';
 import '../styles/PitchSearch.css';
@@ -69,6 +70,18 @@ function PitchSearch({ tabs, excludedTabIds, onExcludedChange, onJump }: PitchSe
     [tabs, excludedTabIds],
   );
   const hits = useMemo(() => hitsFor(searchable, query), [searchable, query]);
+
+  useEffect(() => {
+    const unlisten = listen<string>('lingua-query', (event) => {
+      const word = event.payload.trim();
+      if (!word) return;
+      setQuery(word);
+      setOpen(true);
+    });
+    return () => {
+      void unlisten.then((stop) => stop());
+    };
+  }, []);
 
   useEffect(() => {
     if (!open && !scopeOpen) return;
