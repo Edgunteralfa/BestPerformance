@@ -139,6 +139,12 @@ A demo pitch called Harbor. A recording of a real talk does not get this window.
 
 ## English
 
+### Local Ollama Q&A search (experimental)
+
+The development branch `experiment/b25-contextual-qa` adds **local semantic search of prepared Q&A answers** using Ollama embeddings and BM25. Optional AI drafts are **disabled by default** and must be reviewed. **Quick start:** install [Ollama](https://ollama.com/download), run `ollama pull qwen3-embedding:0.6b`, and choose the model and source tabs under BestPerformance Settings → **Semantic Q&A Search / Ollama**. If you have more resources, compare `qwen3-embedding:4b`.
+
+**Important:** manually typing in BP's ordinary search bar invokes *literal text search*; the optional local Sokuji B25 integration passes full questions into semantic search. Read the [Ollama setup and lightweight-model guide](hidescreen-edhunter/OLLAMA_QUICKSTART.md) or the [technical description](hidescreen-edhunter/OLLAMA_SEMANTIC_SEARCH.md). **Not yet included in published v1.3.0 binaries.** Private Q&A banks and backups are **not stored in this public repository**.
+
 Notes on your screen. A recording and a screen share do not get them.
 
 BestPerformance is free forever, for everyone.
@@ -404,6 +410,12 @@ The grid matches a numeric keypad: `Ctrl+Alt` and a digit.
 On the installed app they stay on that computer. If update checking is on, startup sends one request to the GitHub releases page. Turn the check off and nothing is sent.
 
 <h2 id="russian">Русский</h2>
+
+### Локальный поиск Q&A с Ollama (экспериментально)
+
+В ветке `experiment/b25-contextual-qa` добавлен **локальный семантический поиск готовых ответов** через Ollama embeddings и BM25. Генерация AI-черновиков **отключена по умолчанию** и требует проверки человеком. **Быстрый старт:** установи [Ollama](https://ollama.com/download), выполни `ollama pull qwen3-embedding:0.6b`, выбери модель и вкладки в настройках BestPerformance → **Semantic Q&A Search / Ollama**. Для более мощного компьютера можно проверить `qwen3-embedding:4b`.
+
+**Важно:** обычное поле BP ищет *точное текстовое совпадение*; для семантического поиска по целому вопросу используется локальная интеграция Sokuji B25. См. [инструкцию по Ollama и лёгким моделям](hidescreen-edhunter/OLLAMA_QUICKSTART.md) и [техническое описание](hidescreen-edhunter/OLLAMA_SEMANTIC_SEARCH.md). **В выпущенных сборках v1.3.0 этой функции пока нет.** Личные Q&A-базы и резервные копии **не загружаются в этот публичный репозиторий**.
 
 Заметки остаются у вас на экране. В запись и в демонстрацию они не попадают.
 
