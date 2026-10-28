@@ -1,6 +1,6 @@
 # Ollama + BestPerformance — Quick Start / Инструкция
 
-**Status:** Experimental functionality in `experiment/b25-contextual-qa`, not in the released v1.3.0 binaries. **This repository does not contain private Q&A databases, user configurations or backups.**
+**Status:** Experimental functionality in `experiment/b25-contextual-qa`, introduced in the v1.4.0 release. **This repository does not contain private Q&A databases, user configurations or backups.**
 
 ## English
 

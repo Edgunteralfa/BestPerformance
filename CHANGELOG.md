@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.0
+
+- Added opt-in local semantic Q&A search using Ollama embeddings and hybrid BM25 matching across selected tabs. BP retrieves the original prepared answers; similarity is not factual confidence.
+- Added authored `A_SHORT`, `A_MEDIUM`, and `A_DETAILED` answer variants, separate candidate and primary-answer thresholds, match diagnostics, and incremental local vector caching.
+- Added optional local full-question integration with Sokuji B25. Sokuji is a separate app, not included with BestPerformance.
+- Added optional Ollama chat-generated UNVERIFIED AI drafts with human review required; disabled by default.
+- Added per-pitch source selection, contest context, safer partial import, indexing progress, tests, and bilingual Ollama setup guidance.
+- Personal Q&A banks, local configuration and backups are not bundled or uploaded. Ollama models must be installed separately.
+- The unsigned macOS build may appear in screen recordings on macOS 15.4 and later.
+
 ## 1.3.0
 
 - Three ways to read the same script. Notes is the full text. Beat shows one chapter. Glide keeps the line you are saying near the top, close to the camera, and does not pull the window forward.
@@ -41,6 +51,16 @@
 - First public release. A notes window for talks and calls, on top of other programs, and on Windows left out of screen capture.
 
 # История изменений
+
+## 1.4.0
+
+- Добавлен необязательный локальный семантический поиск готовых ответов с Ollama embeddings и BM25 по выбранным вкладкам. BP показывает исходные ответы; similarity не является показателем достоверности.
+- Добавлены подготовленные варианты `A_SHORT`, `A_MEDIUM`, `A_DETAILED`, раздельные пороги кандидатов и основного ответа, диагностика совпадений и локальный кеш векторов.
+- Добавлена передача вопросов из Sokuji B25 по локальному интерфейсу. Sokuji — отдельная программа и не входит в комплект BestPerformance.
+- Добавлены необязательные UNVERIFIED AI-черновики с отдельной Ollama chat-моделью и обязательной проверкой человеком; по умолчанию выключены.
+- Добавлены выбор вкладок для индексации, контекст конкурса, безопасный частичный импорт, статус индексации, тесты и двуязычная инструкция Ollama.
+- Личные Q&A-базы, конфигурации и резервные копии не включаются в сборки и не отправляются на GitHub. Ollama нужно установить отдельно.
+- Неподписанная сборка macOS может попадать в записи экрана на macOS 15.4 и новее.
 
 ## 1.3.0
 
