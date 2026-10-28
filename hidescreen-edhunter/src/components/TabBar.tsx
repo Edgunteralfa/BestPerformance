@@ -2,7 +2,7 @@
 
 import { useRef, useState, type PointerEvent } from 'react';
 import type { Pace } from '../hooks/usePitchTimer';
-import type { NoteTab } from '../types';
+import type { NoteTab, SemanticSettings } from '../types';
 import PitchSearch from './PitchSearch';
 import '../styles/TabBar.css';
 
@@ -26,6 +26,9 @@ interface TabBarProps {
   reviewLabel: string;
   onSearchJump: (tabId: string, line: number, query: string) => void;
   searchExcludedTabIds: string[];
+  semantic: SemanticSettings;
+  semanticExcludedTabIds: string[];
+  contestContext: string;
   onSearchTabsChange: (excluded: string[]) => void;
   showTabs: boolean;
   showSearch: boolean;
@@ -52,6 +55,9 @@ function TabBar({
   reviewLabel,
   onSearchJump,
   searchExcludedTabIds,
+  semantic,
+  semanticExcludedTabIds,
+  contestContext,
   onSearchTabsChange,
   showTabs,
   showSearch,
@@ -169,6 +175,9 @@ function TabBar({
         <PitchSearch
           tabs={tabs}
           excludedTabIds={searchExcludedTabIds}
+          semantic={semantic}
+          semanticExcludedTabIds={semanticExcludedTabIds}
+          contestContext={contestContext}
           onExcludedChange={onSearchTabsChange}
           onJump={onSearchJump}
         />

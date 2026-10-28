@@ -678,7 +678,7 @@ function TextEditor({ config, text, onTextChange, editorRef, navWidth, onNavWidt
         style={{
           fontFamily: config.fontFamily,
           fontSize: `${config.fontSize}px`,
-          backgroundColor: config.bgColor,
+          backgroundColor: 'transparent',
         }}
         onPointerDown={() => {
           if (document.activeElement instanceof HTMLElement && navRef.current?.contains(document.activeElement)) {

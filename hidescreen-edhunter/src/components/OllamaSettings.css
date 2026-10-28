@@ -1,0 +1,163 @@
+/* MIT License - Copyright (c) 2026 BestPerformance Contributors */
+/* Semantic search controls: ensure contrast on dark Tauri settings panels. */
+.ollama-settings {
+  color: #f4f4f4;
+}
+.ollama-settings .ollama-source-title {
+  color: #f9fafb;
+  font-size: 13px;
+  font-weight: 700;
+}
+.ollama-index-progress {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #626d76;
+  border-radius: 8px;
+  background-color: #22292d;
+  color: #f5f7fa;
+}
+.ollama-index-progress__headline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+.ollama-index-progress__headline strong { color: #ffffff; }
+.ollama-index-progress__percent {
+  color: #dcecf8;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+}
+.ollama-index-progress__bar {
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+  height: 11px;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  color: #75bdd8;
+  accent-color: #75bdd8;
+  background: #4b5561;
+}
+.ollama-index-progress__bar::-webkit-progress-bar {
+  background-color: #4b5561;
+  border-radius: 999px;
+}
+.ollama-index-progress__bar::-webkit-progress-value {
+  background-color: #75bdd8;
+  border-radius: 999px;
+  transition: width 160ms linear;
+}
+.ollama-index-progress__detail {
+  margin: 9px 0 0;
+  line-height: 1.45;
+  font-size: 12px;
+  color: #e0e8ef;
+  overflow-wrap: anywhere;
+}
+.ollama-index-progress__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+  color: #c4d0d9;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  margin-top: 9px;
+}
+
+/* User-chosen default answer length, independent of Ollama/index settings. */
+.ollama-answer-default {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #64727d;
+  border-radius: 8px;
+  background: #252d35;
+  color: #f2f6f9;
+}
+.ollama-answer-default strong { color: #fff; font-size: 13px; }
+.ollama-answer-default .settings-hint { color: #d4e0e7; line-height: 1.45; margin: 5px 0; }
+.ollama-answer-default__choices, .pitch-answer-modes { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 4px; }
+.ollama-answer-default__choices button, .pitch-answer-modes button {
+  background: #34444e; border: 1px solid #647b89; border-radius: 7px;
+  color: #e5eff5; padding: 6px 10px; font-size: 11px; cursor: pointer;
+}
+.ollama-answer-default__choices button.active, .pitch-answer-modes button.active {
+  background: #406884; border-color: #a9d5ec; color: #fff; font-weight: 700;
+}
+.ollama-answer-default__choices button:focus-visible, .pitch-answer-modes button:focus-visible {
+  outline: 2px solid #d0eaff; outline-offset: 2px;
+}
+
+/* One-column responsive AI settings, regardless of parent flex/grid defaults. */
+.ollama-settings {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+.ollama-settings > *,
+.ollama-answer-default,
+.ollama-answer-default > * {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.ollama-answer-default {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: stretch;
+  gap: 7px;
+}
+.ollama-answer-default label:not(.checkbox-label) {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 550;
+  margin-top: 8px;
+}
+.ollama-answer-default textarea,
+.ollama-answer-default input[type="text"],
+.ollama-answer-default select {
+  display: block;
+  width: 100% !important;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 7px;
+  padding: 9px 11px;
+  font: inherit;
+  font-size: 12px;
+}
+.ollama-answer-default textarea {
+  min-height: 145px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.ollama-prepare-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+}
+.ollama-prepare-row button {
+  background: #3b6d84;
+  border: 1px solid #8dbed4;
+  border-radius: 7px;
+  padding: 8px 12px;
+  color: #f6fcff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+}
+.ollama-prepare-row button:disabled { opacity: .55; cursor: not-allowed; }
+.ollama-prepare-row span { flex: 1 1 220px; font-size: 11px; color: #d1e0e9; line-height: 1.45; }

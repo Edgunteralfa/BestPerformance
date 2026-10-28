@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { load } from '@tauri-apps/plugin-store';
 import type { Config } from '../types';
-import { DEFAULT_CONFIG, normalizeCardChrome, normalizeChapterBudgets, normalizeChapterListColors, normalizeChapterNavWidths, normalizeMainChrome, normalizeOpacity, normalizePitchMemories, normalizePitchSeconds, normalizeReadingMode, normalizeSearchExcluded, normalizeTabs, normalizeWindowMask } from '../types';
+import { DEFAULT_CONFIG, normalizeCardChrome, normalizeChapterBudgets, normalizeChapterListColors, normalizeChapterNavWidths, normalizeMainChrome, normalizeOpacity, normalizePitchMemories, normalizePitchSeconds, normalizeReadingMode, normalizeSearchExcluded, normalizeSemantic, normalizeTabs, normalizeWindowMask } from '../types';
 import { detectLanguage, normalizeLanguage } from '../languages';
 
 const STORE_FILE = 'config.json';
@@ -61,6 +61,7 @@ export function useConfig() {
           chapterListColors: normalizeChapterListColors(loaded.chapterListColors),
           chapterNavWidths: normalizeChapterNavWidths(loaded.chapterNavWidths),
           mainChrome: normalizeMainChrome(loaded.mainChrome),
+          sokujiLauncherPath: typeof loaded.sokujiLauncherPath === 'string' ? loaded.sokujiLauncherPath.slice(0, 800) : '',
           cardChrome: normalizeCardChrome(loaded.cardChrome),
           cardText: typeof loaded.cardText === 'string' ? loaded.cardText : '',
           cursorCloak: loaded.cursorCloak === true,
@@ -79,6 +80,7 @@ export function useConfig() {
           cardHeight: finiteOr(loaded.cardHeight, DEFAULT_CONFIG.cardHeight),
           cardFontSize: Math.min(48, Math.max(8, finiteOr(loaded.cardFontSize, DEFAULT_CONFIG.cardFontSize))),
           opacity: normalizeOpacity(loaded.opacity),
+          textOpacity: normalizeOpacity(loaded.textOpacity, 1),
           cardOpacity: normalizeOpacity(loaded.cardOpacity === undefined ? loaded.opacity : loaded.cardOpacity),
           readingMode: active.readingMode,
           glideWithTimer: loaded.glideWithTimer === true,
@@ -89,6 +91,9 @@ export function useConfig() {
             : null,
           pitchEpoch: finiteOr(loaded.pitchEpoch, 0),
           searchExcludedTabIds: normalizeSearchExcluded(loaded.searchExcludedTabIds),
+          semantic: normalizeSemantic(loaded.semantic),
+          semanticExcludedTabIds: normalizeSearchExcluded(loaded.semanticExcludedTabIds),
+          contestContext: typeof loaded.contestContext === 'string' ? loaded.contestContext.slice(0, 6000) : '',
           language: normalizeLanguage(savedLanguage ? loaded.language : detectLanguage()),
         });
       } catch (error) {

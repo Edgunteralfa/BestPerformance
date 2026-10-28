@@ -1,12 +1,13 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { emit } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-shell';
 import { open as openFile, save } from '@tauri-apps/plugin-dialog';
 import { appConfirm, appMessage } from '../dialogQueue';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { pitchFromFile, pitchToFile, pitchToText } from '../pitchFile';
+import { exportPitchPart, parsePitchPart, mergePitchPart, type ImportedPart, type PartKind } from '../pitchParts';
 import type { CardChrome, Config, MainChrome, PitchMemory } from '../types';
 import { formatMessage, useI18n, type Language } from '../i18n';
 import { LANGUAGES, isLanguage } from '../languages';
@@ -14,6 +15,7 @@ import { formatClock, parseDuration } from '../hooks/usePitchTimer';
 import { isMac } from '../platform';
 import { TEXT_COLORS, BG_COLORS, FONT_FAMILIES, TAB_COLORS, MAX_PITCH_MEMORIES, MAX_TABS, WINDOW_MASKS, normalizeWindowMask, windowMaskTitle, type NoteTab, type WindowMaskId } from '../types';
 import '../styles/Settings.css';
+import { OllamaSettings } from './OllamaSettings';
 
 interface SettingsProps {
   config: Config;
@@ -26,6 +28,11 @@ interface SettingsProps {
 }
 
 function Settings({ config, setConfig, onClose, appVersion, updateAvailable, updateVersion, onUpdateInstall }: SettingsProps) {
+  useEffect(() => {
+    if (config.mainChrome.sokuji && !config.sokujiLauncherPath) {
+      document.getElementById('b25-sokuji-launcher-settings')?.scrollIntoView({ block: 'center' });
+    }
+  }, [config.mainChrome.sokuji, config.sokujiLauncherPath]);
   const { t } = useI18n();
   const [opacity, setOpacity] = useState(config.opacity);
   const [seenOpacity, setSeenOpacity] = useState(config.opacity);
@@ -33,6 +40,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
     setSeenOpacity(config.opacity);
     setOpacity(config.opacity);
   }
+  const [textOpacity, setTextOpacity] = useState(config.textOpacity);
   const [fontFamily, setFontFamily] = useState(config.fontFamily);
   const [fontSize, setFontSize] = useState(config.fontSize);
   const [fontColor, setFontColor] = useState(config.fontColor);
@@ -51,6 +59,9 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
   const [memoryEdits, setMemoryEdits] = useState<Record<string, { name: string; tag: string }>>({});
   const [editingTagId, setEditingTagId] = useState<string | null>(null);
   const [pitchMenu, setPitchMenu] = useState<{ id: string; kind: 'file' | 'color' } | null>(null);
+  const [partialImport, setPartialImport] = useState<{ content: ImportedPart; selected: string[] } | null>(null);
+  const [partialExport, setPartialExport] = useState<'questions' | null>(null);
+  const [exportSelected, setExportSelected] = useState<string[]>([]);
 
   const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -85,6 +96,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
   const handleSave = async () => {
     await setConfig({
       opacity,
+      textOpacity,
       fontFamily,
       fontSize,
       fontColor,
@@ -133,6 +145,8 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       cardText: config.cardText,
       cardFontSize: config.cardFontSize,
       searchExcludedTabIds: config.searchExcludedTabIds,
+      semanticExcludedTabIds: config.semanticExcludedTabIds,
+      contestContext: config.contestContext,
     };
   };
 
@@ -178,6 +192,8 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
       cardText: memory.cardText,
       cardFontSize: memory.cardFontSize,
       searchExcludedTabIds: memory.searchExcludedTabIds,
+      semanticExcludedTabIds: memory.semanticExcludedTabIds,
+      contestContext: memory.contestContext,
       pitchMemories: list,
       activePitchId: memory.id,
       readingMode: active.readingMode,
@@ -274,6 +290,52 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
     await setConfig({
       pitchMemories: [...config.pitchMemories, { ...pitch, id: `pitch-${Date.now()}`, name, savedAt: Date.now() }],
     });
+  };
+
+  const loadPart = async (kind: PartKind) => {
+    if (!config.activePitchId || !config.pitchMemories.some(p => p.id === config.activePitchId)) {
+      await appMessage('Сначала сохрани и выбери конкурс в списке питчдеков.', { title: 'Частичный импорт', kind: 'warning' });
+      return;
+    }
+    const file = await openFile({ multiple: false, filters: [{ name: 'BestPerformance JSON', extensions: ['json'] }] });
+    if (typeof file !== 'string') return;
+    const payload = parsePitchPart(await readTextFile(file), kind);
+    if (!payload?.tabs.length) {
+      await appMessage('Не найдено подходящих вкладок. Используй JSON BestPerformance либо экспортированную часть.', { title: 'Частичный импорт', kind: 'warning' });
+      return;
+    }
+    setPartialImport({ content: payload, selected: payload.tabs.map(tab => tab.id) });
+  };
+  const commitPart = async () => {
+    if (!partialImport || !config.activePitchId) return;
+    const target = config.pitchMemories.find(p => p.id === config.activePitchId);
+    if (!target) return;
+    let merged: PitchMemory;
+    try { merged = mergePitchPart(liveMemory(target), partialImport.content, partialImport.selected); }
+    catch (error) { await appMessage(String(error), { title: 'Частичный импорт', kind: 'warning' }); return; }
+    const selectedNames = partialImport.content.tabs
+      .filter(t => partialImport.selected.includes(t.id)).map(t => t.name).join(', ');
+    const confirmed = await appConfirm(
+      `Конкурс: ${target.name}\nИсточник JSON: ${partialImport.content.name || 'Без названия'}\nЗаменить выбранные данные (${selectedNames})? Остальные вкладки и контекст конкурса сохранятся.`,
+      { title: 'Подтвердить частичный импорт', kind: 'warning' },
+    );
+    if (!confirmed) return;
+    const list = config.pitchMemories.map(p => p.id === target.id ? merged : p);
+    await applyMemory(list, merged);
+    setPartialImport(null);
+  };
+  const savePart = async (kind: PartKind, selected?: string[]) => {
+    const target = config.pitchMemories.find(p => p.id === config.activePitchId);
+    if (!target) return;
+    const live = liveMemory(target);
+    const ids = selected ?? live.tabs.slice(1).map(t => t.id);
+    try {
+      const destination = await save({
+        defaultPath: `${live.name.replace(/[<>:"/\\|?*]/g, ' ').trim() || 'competition'}-${kind}.json`,
+        filters: [{ name: 'BestPerformance JSON', extensions: ['json'] }],
+      });
+      if (typeof destination === 'string') await writeTextFile(destination, exportPitchPart(live, kind, ids));
+    } catch (error) { await appMessage(String(error), { title: 'Экспорт части конкурса', kind: 'warning' }); }
   };
 
   const patchMemory = async (id: string, patch: Partial<Pick<PitchMemory, 'name' | 'tag' | 'tagColor'>>) => {
@@ -384,6 +446,7 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
               ['blind', 'chromeBlind'],
               ['lock', 'chromeLock'],
               ['reading', 'chromeReading'],
+              ['sokuji', 'chromeReading'],
             ] as const).map(([key, label]) => (
               <label key={key} className="chrome-row">
                 <input
@@ -394,9 +457,24 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
                     void setConfig({ mainChrome: next });
                   }}
                 />
-                {t(label)}
+                {key === 'sokuji' ? (config.language === 'ru' ? 'Кнопка Sokuji в заголовке' : 'Sokuji launcher in title bar') : t(label)}
               </label>
             ))}
+          </div>
+          <div className="b25-sokuji-config" id="b25-sokuji-launcher-settings">
+            <label htmlFor="b25-sokuji-launcher"><strong>Sokuji — путь к программе</strong></label>
+            <p className="settings-hint">Используется кнопкой Sokuji в заголовке. При отсутствии пути кнопка открывает настройки. Поддерживаются локальные .exe и .bat.</p>
+            <div className="b25-sokuji-config__row">
+              <input id="b25-sokuji-launcher" value={config.sokujiLauncherPath}
+                placeholder="Выбрать Sokuji.exe или START_B25_SOKUJI.bat"
+                onChange={event => { void setConfig({ sokujiLauncherPath: event.target.value.slice(0, 800) }); }}/>
+              <button type="button" onClick={() => void (async () => {
+                const chosen = await openFile({ multiple: false, directory: false, filters: [
+                  { name: 'Sokuji launcher', extensions: ['exe', 'bat', 'cmd'] },
+                ] });
+                if (typeof chosen === 'string') void setConfig({ sokujiLauncherPath: chosen });
+              })()}>Обзор…</button>
+            </div>
           </div>
           <p className="chrome-group">{t('chromeCard')}</p>
           <div className="chrome-grid">
@@ -486,9 +564,55 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
               {t('pitchMemorySave')}
             </button>
             <button type="button" className="button" onClick={() => { void importMemory(); }}>
-              {t('pitchFileImport')}
+              Загрузить всё (новый конкурс)
             </button>
+            <button type="button" className="button" disabled={!config.activePitchId}
+              onClick={() => { void loadPart('pitch'); }}>Заменить только питч</button>
+            <button type="button" className="button" disabled={!config.activePitchId}
+              onClick={() => { void loadPart('questions'); }}>Обновить вопросы / вкладки</button>
+            <button type="button" className="button" disabled={!config.activePitchId}
+              onClick={() => { void savePart('pitch'); }}>Экспорт только питча</button>
+            <button type="button" className="button" disabled={!config.activePitchId}
+              onClick={() => {
+                const current = config.pitchMemories.find(p => p.id === config.activePitchId);
+                setExportSelected(current?.tabs.slice(1).map(t => t.id) ?? []);
+                setPartialExport('questions');
+              }}>Экспорт вопросов…</button>
           </div>
+          {partialImport && (
+            <div className="bp-partial-import" role="region" aria-label="Предпросмотр частичного импорта">
+              <strong>Импорт в текущий конкурс: {partialImport.content.kind === 'pitch' ? 'питчдек' : 'вопросы'}</strong>
+              <p>JSON: {partialImport.content.name || 'без названия'} · Выбери, какие вкладки заменить или добавить. Остальные данные не изменятся.</p>
+              {partialImport.content.tabs.map(tab => (
+                <label key={tab.id}><input type="checkbox"
+                  checked={partialImport.selected.includes(tab.id)}
+                  onChange={event => setPartialImport(prev => prev && ({
+                    ...prev, selected: event.target.checked
+                      ? [...prev.selected, tab.id]
+                      : prev.selected.filter(id => id !== tab.id),
+                  }))} />{tab.name} · {tab.text.length.toLocaleString()} знаков</label>
+              ))}
+              <div className="bp-partial-import__actions">
+                <button type="button" disabled={!partialImport.selected.length} onClick={() => { void commitPart(); }}>Применить выбранное</button>
+                <button type="button" onClick={() => setPartialImport(null)}>Отмена</button>
+              </div>
+            </div>
+          )}
+          {partialExport && (
+            <div className="bp-partial-import" role="region" aria-label="Экспорт выбранных вопросов">
+              <strong>Экспорт списка вопросов отдельным JSON</strong>
+              {config.pitchMemories.find(p => p.id === config.activePitchId)?.tabs.slice(1).map(tab => (
+                <label key={tab.id}><input type="checkbox" checked={exportSelected.includes(tab.id)}
+                  onChange={event => setExportSelected(ids => event.target.checked ? [...ids, tab.id] : ids.filter(id => id !== tab.id))} />{tab.name}</label>
+              ))}
+              <div className="bp-partial-import__actions">
+                <button type="button" disabled={!exportSelected.length} onClick={() => {
+                  void savePart('questions', exportSelected).then(() => setPartialExport(null));
+                }}>Сохранить JSON</button>
+                <button type="button" onClick={() => setPartialExport(null)}>Отмена</button>
+              </div>
+            </div>
+          )}
           {config.pitchMemories.length > 0 && (
             <ul className="pitch-memory-list">
               {config.pitchMemories.map((memory) => {
@@ -696,7 +820,12 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
             onChange={handleOpacityChange}
             className="opacity-slider"
           />
-          <p className="settings-hint">{t('opacityHint')}</p>
+          <p className="settings-hint">Прозрачность фона (ползунок заголовка и настроек синхронизированы). Тексты сохраняют независимую яркость.</p>
+          <label><strong>Непрозрачность текста и заголовков</strong><span className="opacity-value">{Math.round(textOpacity * 100)}%</span></label>
+          <input type="range" min="0.5" max="1" step="0.05" value={textOpacity}
+            aria-label="Непрозрачность текста и заголовков"
+            onChange={event => { const value = Number(event.target.value); setTextOpacity(value); void setConfig({ textOpacity: value }); }}
+            className="opacity-slider" />
         </div>
 
         {/* Font */}
@@ -890,6 +1019,21 @@ function Settings({ config, setConfig, onClose, appVersion, updateAvailable, upd
           </div>
         </div>
 
+        <OllamaSettings
+          value={config.semantic}
+          onChange={semantic => { void setConfig({ semantic }); }}
+          contestContext={config.contestContext}
+          onContestContextChange={contestContext => { void setConfig({ contestContext }); }}
+          tabs={config.tabs}
+          excludedTabIds={config.semanticExcludedTabIds}
+          onSourcesChange={(excluded) => {
+            const pitchMemories = config.activePitchId
+              ? config.pitchMemories.map(item => item.id === config.activePitchId
+                ? { ...item, semanticExcludedTabIds: excluded } : item)
+              : config.pitchMemories;
+            void setConfig({ semanticExcludedTabIds: excluded, pitchMemories });
+          }}
+        />
       </div>
 
       <div className="settings-version-info">

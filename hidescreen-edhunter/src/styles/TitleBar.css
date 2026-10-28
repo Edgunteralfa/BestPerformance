@@ -128,3 +128,51 @@
   align-items: center;
   white-space: nowrap;
 }
+
+.title-bar-button.sokuji-launch {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15px;
+  display: inline-flex;
+  gap: 5px;
+  height: 23px;
+  margin-right: 2px;
+  padding: 3px 9px;
+  background: #24485a;
+  border: 1px solid #547c91;
+  border-radius: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+  color: #ebf7ff;
+}
+.title-bar-button.sokuji-launch:hover { background: #35677e; }
+.title-bar-button.sokuji-launch:focus-visible { outline: 2px solid #b6dff5; outline-offset: 1px; }
+.title-bar-button.sokuji-launch:disabled { opacity: .65; }
+.sokuji-launch__dot { width: 6px; height: 6px; border-radius: 50%; background: #78d1ae; flex: 0 0 auto; }
+
+.title-bar-buttons { position: relative; }
+.sokuji-launch__error {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 4px);
+  right: 48px;
+  display: block;
+  width: min(300px, 75vw);
+  box-sizing: border-box;
+  padding: 8px 11px;
+  background: #422b31;
+  border: 1px solid #b17a81;
+  border-radius: 7px;
+  color: #fff1f1;
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-shadow: 0 5px 20px #0007;
+}
+
+/* Keep the title bar and main text separately readable as the background fades. */
+.app .title-bar {
+  background-color: color-mix(in srgb, #333333 var(--bp-bg-opacity, 85%), transparent);
+}
+/* Text glyph transparency is managed via -webkit-text-fill-color in App.css. */

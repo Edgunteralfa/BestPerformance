@@ -18,6 +18,7 @@ export interface MainChrome {
   blind: boolean;
   lock: boolean;
   reading: boolean;
+  sokuji: boolean;
 }
 
 export interface CardChrome {
@@ -43,6 +44,7 @@ export const DEFAULT_MAIN_CHROME: MainChrome = {
   blind: true,
   lock: true,
   reading: true,
+  sokuji: false,
 };
 
 export const DEFAULT_CARD_CHROME: CardChrome = {
@@ -176,6 +178,54 @@ export function normalizeTabs(value: unknown, fallbackText: string, fallbackMode
   });
 }
 
+export type AnswerDetail = 'brief' | 'normal' | 'complete';
+export interface AnswerVariants { brief?: string; normal?: string; complete?: string }
+
+export interface SemanticSettings {
+  enabled: boolean;
+  endpoint: string;
+  model: string;
+  minimum: number;
+  mainAnswerMinimum: number;
+  includeExcerpts: boolean;
+  defaultAnswerDetail: AnswerDetail;
+  generateAnswers: boolean;
+  answerModel: string;
+  revision: number;
+}
+
+export const DEFAULT_SEMANTIC: SemanticSettings = {
+  enabled: false,
+  endpoint: 'http://127.0.0.1:11434',
+  model: '',
+  minimum: 0.52,
+  mainAnswerMinimum: 0.65,
+  includeExcerpts: true,
+  defaultAnswerDetail: 'normal',
+  generateAnswers: false,
+  answerModel: '',
+  revision: 0,
+};
+export function normalizeSemantic(value: unknown): SemanticSettings {
+  const v = value !== null && typeof value === 'object' ? value as Record<string, unknown> : {};
+  return {
+    enabled: v.enabled === true,
+    endpoint: typeof v.endpoint === 'string' && v.endpoint.length < 160 ? v.endpoint : DEFAULT_SEMANTIC.endpoint,
+    model: typeof v.model === 'string' && v.model.length < 180 ? v.model : '',
+    minimum: typeof v.minimum === 'number' && Number.isFinite(v.minimum)
+      ? Math.max(0.15, Math.min(0.95, v.minimum)) : DEFAULT_SEMANTIC.minimum,
+    mainAnswerMinimum: typeof v.mainAnswerMinimum === 'number' && Number.isFinite(v.mainAnswerMinimum)
+      ? Math.max(0.25, Math.min(0.95, v.mainAnswerMinimum)) : DEFAULT_SEMANTIC.mainAnswerMinimum,
+    includeExcerpts: v.includeExcerpts !== false,
+    defaultAnswerDetail: v.defaultAnswerDetail === 'brief' || v.defaultAnswerDetail === 'complete'
+      ? v.defaultAnswerDetail : 'normal',
+    generateAnswers: v.generateAnswers === true,
+    answerModel: typeof v.answerModel === 'string' ? v.answerModel.slice(0, 180) : '',
+    revision: typeof v.revision === 'number' && Number.isSafeInteger(v.revision)
+      ? Math.max(0, v.revision) : 0,
+  };
+}
+
 export interface Config {
   // Window position and size
   x: number;
@@ -185,6 +235,7 @@ export interface Config {
 
   // Appearance
   opacity: number;
+  textOpacity: number;
   fontFamily: string;
   fontSize: number;
   fontColor: string;
@@ -215,6 +266,7 @@ export interface Config {
   chapterNavWidths: Record<string, number>;
   mainChrome: MainChrome;
   cardChrome: CardChrome;
+  sokujiLauncherPath: string;
 
   cardText: string;
   cardVisible: boolean;
@@ -237,6 +289,9 @@ export interface Config {
   pitchMemories: PitchMemory[];
   activePitchId: string | null;
   searchExcludedTabIds: string[];
+  semantic: SemanticSettings;
+  semanticExcludedTabIds: string[];
+  contestContext: string;
   pitchEpoch: number;
 }
 
@@ -254,6 +309,8 @@ export interface PitchMemory {
   cardText: string;
   cardFontSize: number;
   searchExcludedTabIds: string[];
+  semanticExcludedTabIds: string[];
+  contestContext: string;
   tag: string;
   tagColor: string;
 }
@@ -266,6 +323,7 @@ export const DEFAULT_CONFIG: Config = {
   width: 800,
   height: 400,
   opacity: 0.85,
+  textOpacity: 1,
   fontFamily: 'Consolas, "Courier New", monospace',
   fontSize: 14,
   fontColor: '#FFFFFF',
@@ -288,6 +346,7 @@ export const DEFAULT_CONFIG: Config = {
   chapterNavWidths: {},
   mainChrome: DEFAULT_MAIN_CHROME,
   cardChrome: DEFAULT_CARD_CHROME,
+  sokujiLauncherPath: '',
   cardText: '',
   cardVisible: false,
   cardX: 520,
@@ -302,6 +361,9 @@ export const DEFAULT_CONFIG: Config = {
   pitchMemories: [],
   activePitchId: null,
   searchExcludedTabIds: [],
+  semantic: DEFAULT_SEMANTIC,
+  semanticExcludedTabIds: [],
+  contestContext: '',
   pitchEpoch: 0,
 };
 
@@ -358,6 +420,8 @@ export function normalizePitchMemories(value: unknown, fallbackMode: ReadingMode
       cardText: typeof row.cardText === 'string' ? row.cardText : '',
       cardFontSize: Math.min(48, Math.max(8, fontSize)),
       searchExcludedTabIds: normalizeSearchExcluded(row.searchExcludedTabIds),
+      semanticExcludedTabIds: normalizeSearchExcluded(row.semanticExcludedTabIds),
+      contestContext: typeof row.contestContext === 'string' ? row.contestContext.slice(0, 6000) : '',
       tag: typeof row.tag === 'string' ? row.tag.trim().slice(0, 24) : '',
       tagColor,
     });

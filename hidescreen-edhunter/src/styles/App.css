@@ -133,3 +133,62 @@ body {
   color: #ffffff;
   font-size: 16px;
 }
+
+/*
+ * B25 two independent transparency channels.
+ * Avoid opacity on .app, .text-area, or .line: element opacity also fades
+ * child content, reading highlights, cursor, and selectable background.
+ * Each major pane paints ONE translucent background directly over the
+ * transparent Tauri WebView. Controls/text retain their original contrast.
+ */
+.app { background: transparent; }
+.app .title-bar,
+.app .bottom-bar,
+.app .tab-bar {
+  background-color: color-mix(in srgb, #333333 var(--bp-bg-opacity, 85%), transparent);
+}
+.app .tab-bar {
+  background-color: color-mix(in srgb, #2a2a2a var(--bp-bg-opacity, 85%), transparent);
+}
+.app .text-editor,
+.app .text-stage {
+  background-color: transparent;
+}
+.app .text-editor {
+  background-color: color-mix(in srgb, var(--bp-background-color, #1e1e1e) var(--bp-bg-opacity, 85%), transparent);
+}
+.app .text-area {
+  background: transparent !important;
+}
+.app .settings {
+  background-color: color-mix(in srgb, #2a2a2a var(--bp-bg-opacity, 85%), transparent);
+}
+.app .settings-section {
+  background-color: color-mix(in srgb, #333333 var(--bp-bg-opacity, 85%), transparent);
+}
+.app .chapter-color-pop,
+.app .chapter-editor-pop {
+  background-color: color-mix(in srgb, #2a2a2a var(--bp-bg-opacity, 85%), transparent);
+}
+.app .chapter-nav {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+/*
+ * -webkit-text-fill-color affects only the glyph pixels. Unlike opacity
+ * on a row element, it does NOT dim row backgrounds or highlights.
+ * currentColor preserves per-line heading/note styling.
+ */
+.app .text-area .line,
+.app .text-area .line *,
+.app .chapter-link,
+.app .chapter-budget,
+.app .chapter-empty,
+.app .title-bar .title,
+.app .title-bar .title-by,
+.app .title-bar .version-badge,
+.app .tab-bar .tab-name,
+.app .tab-bar .timer-total,
+.app .tab-bar .timer-chapter,
+.app .bottom-bar .font-label {
+  -webkit-text-fill-color: color-mix(in srgb, currentColor var(--bp-text-alpha, 100%), transparent);
+}

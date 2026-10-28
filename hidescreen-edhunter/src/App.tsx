@@ -675,9 +675,12 @@ function AppShell({
     <div
       className={`app${windowActive ? ' is-active' : ''}${config.cursorCloak ? ' cursor-cloak' : ''}${edgeAlarm === 'mid' ? ' chapter-alarm-mid' : ''}${edgeAlarm === 'soon' ? ' chapter-alarm-soon' : ''}${edgeAlarm === 'over' ? ' chapter-alarm-over' : ''}`}
       style={{
-        backgroundColor: config.bgColor,
-        opacity: config.opacity,
-      }}
+        backgroundColor: 'transparent',
+        '--bp-background-color': config.bgColor,
+        '--bp-text-alpha': `${Math.round(config.textOpacity * 100)}%`,
+        '--bp-text-opacity': config.textOpacity,
+        '--bp-bg-opacity': `${Math.round(config.opacity * 100)}%`,
+      } as React.CSSProperties}
     >
       <AppDialog />
       <LocalCursor active={config.cursorCloak} />
@@ -694,6 +697,9 @@ function AppShell({
         updateVersion={updater.updateVersion}
         appVersion={updater.appVersion}
         onUpdateClick={handleUpdateClick}
+        showSokuji={config.mainChrome.sokuji}
+        sokujiLauncherPath={config.sokujiLauncherPath}
+        onSokujiSetupClick={() => setShowSettings(true)}
       />
 
       <TabBar
@@ -716,6 +722,9 @@ function AppShell({
         reviewLabel={t('timerReview')}
         onSearchJump={jumpToLine}
         searchExcludedTabIds={config.searchExcludedTabIds}
+        semantic={config.semantic}
+        semanticExcludedTabIds={config.semanticExcludedTabIds}
+        contestContext={config.contestContext}
         onSearchTabsChange={setSearchExcluded}
         showTabs={config.mainChrome.tabs}
         showSearch={config.mainChrome.search}

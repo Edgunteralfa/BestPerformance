@@ -1,6 +1,8 @@
 // MIT License - Copyright (c) 2026 BestPerformance Contributors
 
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/core';
+import { useState } from 'react';
 import '../styles/TitleBar.css';
 import { formatMessage, useI18n } from '../i18n';
 
@@ -37,10 +39,24 @@ interface TitleBarProps {
   updateVersion?: string;
   appVersion?: string;
   onUpdateClick?: () => void;
+  showSokuji?: boolean;
+  sokujiLauncherPath?: string;
+  onSokujiSetupClick?: () => void;
 }
 
-function TitleBar({ title, showBrand, opacity, showOpacity = true, onOpacityChange, onSettingsClick, onCardClick, checked, updateAvailable, updateVersion, appVersion, onUpdateClick }: TitleBarProps) {
+function TitleBar({ title, showBrand, opacity, showOpacity = true, onOpacityChange, onSettingsClick, onCardClick, checked, updateAvailable, updateVersion, appVersion, onUpdateClick, showSokuji = false, sokujiLauncherPath = '', onSokujiSetupClick }: TitleBarProps) {
   const { t } = useI18n();
+  const [launching, setLaunching] = useState(false);
+  const [sokujiError, setSokujiError] = useState('');
+  const openSokuji = async () => {
+    if (!sokujiLauncherPath.trim()) { onSokujiSetupClick?.(); return; }
+    if (launching) return;
+    setLaunching(true);
+    setSokujiError('');
+    try { await invoke<string>('launch_sokuji', { launcherPath: sokujiLauncherPath, openSubtitles: true }); }
+    catch (error) { setSokujiError(String(error)); }
+    finally { setLaunching(false); }
+  };
   const handleClose = async () => {
     await appWindow.close();
   };
@@ -53,6 +69,12 @@ function TitleBar({ title, showBrand, opacity, showOpacity = true, onOpacityChan
         {showBrand ? <span data-tauri-drag-region className="title-by">by EdHunter</span> : null}
       </div>
       <div className="title-bar-buttons">
+        {sokujiError && <span role="alert" className="sokuji-launch__error" title={sokujiError}>{sokujiError}</span>}
+        {showSokuji && <button type="button" className="title-bar-button sokuji-launch"
+          aria-label="Открыть субтитры Sokuji" title={sokujiError || (launching ? 'Sokuji запускается в режиме субтитров…' : 'Открыть субтитры Sokuji · Q&A')}
+          disabled={launching} onClick={() => void openSokuji()}>
+          <span aria-hidden="true" className="sokuji-launch__dot"/> Sokuji
+        </button>}
         {updateAvailable ? (
           <button
             className="title-bar-button update-badge"

@@ -511,3 +511,28 @@
 .footer-spacer {
   flex: 1;
 }
+
+.b25-sokuji-config { margin: 11px 0; padding: 11px; background: #29363e; border: 1px solid #556d7c; border-radius: 8px; min-width: 0; }
+.b25-sokuji-config label { display: block; color: #f4f8fb; font-size: 12px; }
+.b25-sokuji-config__row { display: flex; gap: 8px; margin-top: 8px; min-width: 0; flex-wrap: wrap; }
+.b25-sokuji-config__row input { min-width: 170px; flex: 1; box-sizing: border-box; padding: 7px 9px; border-radius: 6px; font-size: 12px; }
+.b25-sokuji-config__row button { padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+
+.bp-partial-import {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 14px 0;
+  padding: 13px;
+  border: 1px solid #7695a5;
+  border-radius: 10px;
+  background: #26343d;
+  color: #eef5fa;
+}
+.bp-partial-import strong { font-size: 13px; color: #fff; }
+.bp-partial-import p { font-size: 12px; line-height: 1.45; color: #d8e5ed; }
+.bp-partial-import label { display: flex; align-items: center; gap: 9px; font-size: 12px; cursor: pointer; }
+.bp-partial-import label input { flex: 0 0 auto; }
+.bp-partial-import__actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 6px; }
+.bp-partial-import__actions button { padding: 7px 11px; border: 1px solid #79b6d2; border-radius: 7px; background: #38586a; color: #fff; cursor: pointer; }
+.bp-partial-import__actions button:disabled { opacity: .45; }

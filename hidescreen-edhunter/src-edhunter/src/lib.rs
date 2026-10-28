@@ -7,6 +7,10 @@ mod mouse_hook;
 #[cfg(windows)]
 mod keyboard_hook;
 mod lingua_query;
+#[cfg(windows)]
+mod b25_context_query;
+mod local_ollama;
+mod sokuji_launcher;
 
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager, WebviewWindow};
@@ -360,6 +364,8 @@ pub fn run() {
             }
 
             lingua_query::start(app.handle().clone());
+            #[cfg(windows)]
+            b25_context_query::start(app.handle().clone());
 
             Ok(())
         })
@@ -397,6 +403,12 @@ pub fn run() {
             download_and_launch_update,
             fetch_latest_release,
             config_store_path,
+            local_ollama::local_ollama_models,
+            local_ollama::local_ollama_model_identity,
+            local_ollama::local_ollama_embed,
+            local_ollama::local_ollama_answer,
+            local_ollama::local_ollama_prepare,
+            sokuji_launcher::launch_sokuji,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
